@@ -1,0 +1,127 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper functions ──────────────────────────────────────────────────────
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/adminUsers/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/adminUsers/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isEditorOrAbove() {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/adminUsers/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/adminUsers/$(request.auth.uid)).data.role in ['admin', 'editor'];
+    }
+
+    function isAuthorOrAbove() {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/adminUsers/$(request.auth.uid));
+    }
+
+    // ── Public read collections (published content) ───────────────────────────
+
+    // Blog posts — public read published only, write requires auth
+    match /blogPosts/{docId} {
+      allow read: if resource.data.status == 'published' || isAuthorOrAbove();
+      allow create: if isAuthorOrAbove();
+      allow update: if isEditorOrAbove() ||
+        (isAuthorOrAbove() && resource.data.createdBy == request.auth.uid);
+      allow delete: if isEditorOrAbove();
+    }
+
+    // Press mentions — public read published
+    match /pressMentions/{docId} {
+      allow read: if resource.data.status == 'published' || isEditorOrAbove();
+      allow write: if isEditorOrAbove();
+    }
+
+    // FAQ items — public read published
+    match /faqItems/{docId} {
+      allow read: if resource.data.status == 'published' || isEditorOrAbove();
+      allow write: if isEditorOrAbove();
+    }
+
+    // Manifesto sections — public read
+    match /manifestoSections/{docId} {
+      allow read: if true;
+      allow write: if isEditorOrAbove();
+    }
+
+    // Manifesto meta — public read
+    match /manifestoMeta/{docId} {
+      allow read: if true;
+      allow write: if isEditorOrAbove();
+    }
+
+    // About page — public read
+    match /aboutPage/{docId} {
+      allow read: if true;
+      allow write: if isEditorOrAbove();
+    }
+
+    // Home page — public read
+    match /homePage/{docId} {
+      allow read: if true;
+      allow write: if isEditorOrAbove();
+    }
+
+    // Ventures — public read active
+    match /ventures/{docId} {
+      allow read: if resource.data.status == 'active' || isEditorOrAbove();
+      allow write: if isEditorOrAbove();
+    }
+
+    // Gallery images — public read active
+    match /galleryImages/{docId} {
+      allow read: if resource.data.status == 'active' || isEditorOrAbove();
+      allow write: if isEditorOrAbove();
+    }
+
+    // Site settings — public read
+    match /siteSettings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Press page meta — public read
+    match /pressPageMeta/{docId} {
+      allow read: if true;
+      allow write: if isEditorOrAbove();
+    }
+
+    // ── Private collections (admin only) ──────────────────────────────────────
+
+    // Subscribers — write public (for signup), read admin only
+    match /subscribers/{docId} {
+      allow create: if true; // public signup
+      allow read, update, delete: if isEditorOrAbove();
+    }
+
+    // Contact submissions — create public, read admin
+    match /contactSubmissions/{docId} {
+      allow create: if true;
+      allow read, update, delete: if isEditorOrAbove();
+    }
+
+    // Admin users — admin only
+    match /adminUsers/{docId} {
+      allow read: if isAuthorOrAbove() && request.auth.uid == docId;
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Audit logs — admin/editor read, write only via server functions
+    match /auditLogs/{docId} {
+      allow read: if isEditorOrAbove();
+      allow create: if isAuthorOrAbove(); // written by services
+      allow update, delete: if false; // immutable
+    }
+  }
+}
