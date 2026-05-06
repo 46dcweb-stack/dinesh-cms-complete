@@ -56,7 +56,7 @@ export default function SettingsAdmin() {
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err: any) { setError(err.message); }
-    setSaving(false);
+    setSaving(false); 
   }
 
   if (loading) return <div className="p-8 text-white/40 text-sm">Loading...</div>;

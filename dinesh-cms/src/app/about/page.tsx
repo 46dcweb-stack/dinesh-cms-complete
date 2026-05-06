@@ -3,10 +3,8 @@ import StoryTimeline from "@/components/sections/StoryTimeline";
 import LeadershipTeam from "@/components/sections/LeadershipTeam";
 import { getAboutPage, getTeamMembers } from "@/lib/firebase-data";
 import { aboutData } from "@/lib/data";
-import { getDocs, collection, query, orderBy, where } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export const metadata = {
     title: "About",

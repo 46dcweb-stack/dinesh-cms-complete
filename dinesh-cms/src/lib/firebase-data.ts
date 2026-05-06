@@ -12,19 +12,12 @@ export {
 } from "./firebase-services";
 
 // ── SERIALIZATION HELPER ─────────────────────────────────────────────────────
-// Recursively converts any Firestore Timestamp to an ISO string so data is
-// safe to pass from Server Components to Client Components.
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function serialize<T>(data: T): T {
   if (data === null || data === undefined) return data;
-
-  // Firestore Timestamp via toDate() method (Admin SDK)
   if (typeof (data as any)?.toDate === "function") {
     return (data as any).toDate().toISOString() as unknown as T;
   }
-
-  // Raw Timestamp shape { _seconds, _nanoseconds } — fallback for edge cases
   if (
     typeof data === "object" &&
     "_seconds" in (data as any) &&
@@ -32,21 +25,16 @@ function serialize<T>(data: T): T {
   ) {
     return new Date((data as any)._seconds * 1000).toISOString() as unknown as T;
   }
-
-  if (Array.isArray(data)) {
-    return data.map(serialize) as unknown as T;
-  }
-
+  if (Array.isArray(data)) return data.map(serialize) as unknown as T;
   if (typeof data === "object") {
     return Object.fromEntries(
       Object.entries(data as Record<string, unknown>).map(([k, v]) => [k, serialize(v)])
     ) as unknown as T;
   }
-
   return data;
 }
 
-// ── SERVER-SIDE DATA FETCHERS (Admin SDK) ────────────────────────────────────
+// ── SERVER-SIDE DATA FETCHERS ─────────────────────────────────────────────────
 
 export async function getHomePage() {
   try {
@@ -154,7 +142,6 @@ export async function getSiteSettings() {
   } catch (e) { console.error("[getSiteSettings]", e); return null; }
 }
 
-// ── TEAM MEMBERS ─────────────────────────────────────────────────────────────
 export async function getTeamMembers() {
   try {
     const db = getAdminDb();

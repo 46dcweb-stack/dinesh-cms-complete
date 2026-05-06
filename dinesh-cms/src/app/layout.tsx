@@ -5,80 +5,68 @@ import CurveLoader from "@/components/ui/CurveLoader";
 import LenisProvider from "@/components/providers/LenisProvider";
 import SiteChrome from "@/components/providers/SiteChrome";
 import { PersonSchema, OrganizationSchema, WebsiteSchema } from "@/components/SEO/JsonLd";
+import { getSiteSettings } from "@/lib/firebase-data";
 
-export const metadata: Metadata = {
-    metadataBase: new URL("https://dineshkoyyalamudi.com"),
+const BASE_URL = "https://dineshkoyyalamudi.com";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+
+  const title       = (settings as any)?.seoDefaultTitle       ?? "Dinesh Koyyalamudi | Strategic Visionary & Venture Builder";
+  const description = (settings as any)?.seoDefaultDescription ?? "Official platform of Dinesh Koyyalamudi—Founder, thinker, and leader focused on building resilient systems and visionary companies.";
+  const ogImage     = (settings as any)?.seoOgImage            || "/og-image.jpg";
+  const siteName    = (settings as any)?.siteName              ?? "Dinesh Koyyalamudi";
+
+  return {
+    metadataBase: new URL(BASE_URL),
     title: {
-        default: "Dinesh Koyyalamudi | Strategic Visionary & Venture Builder",
-        template: "%s | Dinesh Koyyalamudi",
+      default: title,
+      template: `%s | ${siteName}`,
     },
-    description:
-        "Official platform of Dinesh Koyyalamudi—Founder, thinker, and leader focused on building resilient systems and visionary companies.",
+    description,
     keywords: [
-        "Dinesh Koyyalamudi",
-        "Founder",
-        "Venture Builder",
-        "Strategic Leadership",
-        "Technology Visionary",
-        "Building the Future",
+      "Dinesh Koyyalamudi", "Founder", "Venture Builder",
+      "Strategic Leadership", "Technology Visionary", "Building the Future",
     ],
     authors: [{ name: "Dinesh Koyyalamudi" }],
     creator: "Dinesh Koyyalamudi",
     openGraph: {
-        type: "website",
-        locale: "en_US",
-        url: "https://dineshkoyyalamudi.com",
-        siteName: "Dinesh Koyyalamudi",
-        title: "Dinesh Koyyalamudi | Building the Future",
-        description:
-            "Founder, thinker, and leader focused on building resilient systems and visionary companies.",
-        images: [
-            {
-                url: "/og-image.jpg",
-                width: 1200,
-                height: 630,
-                alt: "Dinesh Koyyalamudi",
-            },
-        ],
+      type: "website",
+      locale: "en_US",
+      url: BASE_URL,
+      siteName,
+      title,
+      description,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: siteName }],
     },
     twitter: {
-        card: "summary_large_image",
-        title: "Dinesh Koyyalamudi | Building the Future",
-        description:
-            "Founder, thinker, and leader focused on building resilient systems and visionary companies.",
-        creator: "@dineshkoyya",
-        images: ["/og-image.jpg"],
+      card: "summary_large_image",
+      title,
+      description,
+      creator: "@dineshkoyya",
+      images: [ogImage],
     },
-    robots: {
-        index: true,
-        follow: true,
-    },
-    icons: {
-        icon: "/logo.png",
-        shortcut: "/logo.png",
-        apple: "/logo.png",
-    },
-};
+    robots: { index: true, follow: true },
+    icons: { icon: "/logo.png", shortcut: "/logo.png", apple: "/logo.png" },
+  };
+}
 
 export default function RootLayout({
-    children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
-    return (
-        <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable}`}>
-            <body className="antialiased min-h-screen flex flex-col bg-brand-dark selection:bg-brand-primary/30">
-                {/* JSON-LD: Google understands Dinesh Koyyalamudi = Founder of FourSix46 */}
-                <PersonSchema />
-                <OrganizationSchema />
-                <WebsiteSchema />
-                <LenisProvider>
-                    <CurveLoader />
-                    <SiteChrome>
-                        {children}
-                    </SiteChrome>
-                </LenisProvider>
-            </body>
-        </html>
-    );
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable}`}>
+      <body className="antialiased min-h-screen flex flex-col bg-brand-dark selection:bg-brand-primary/30">
+        <PersonSchema />
+        <OrganizationSchema />
+        <WebsiteSchema />
+        <LenisProvider>
+          <CurveLoader />
+          <SiteChrome>
+            {children}
+          </SiteChrome>
+        </LenisProvider>
+      </body>
+    </html>
+  );
 }
