@@ -5,8 +5,9 @@ import { ArrowLeft, Share2, Twitter, Linkedin, Clock } from "lucide-react";
 import BlogContentWrapper from "@/components/blog/BlogContentWrapper";
 import { blogPosts } from "@/lib/data";
 import { getBlogBySlug, getPublishedBlogs } from "@/lib/firebase-data";
+import { ArticleSchema, BreadcrumbSchema } from "@/components/seo/JsonLd";
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 export async function generateStaticParams() {
     const fbPosts = await getPublishedBlogs().catch(() => []);
@@ -45,6 +46,21 @@ export default async function BlogPostPage({
 
     return (
         <article className="pt-32 pb-24 px-6">
+            {/* SEO: Article schema + Breadcrumb for Google */}
+            <ArticleSchema
+                title={post.title}
+                excerpt={post.excerpt || ""}
+                slug={post.slug}
+                publishDate={post.publishDate}
+                featuredImage={post.featuredImage}
+                tags={post.tags}
+                author={post.author}
+            />
+            <BreadcrumbSchema items={[
+                { name: "Home", url: "https://dineshkoyyalamudi.com" },
+                { name: "Blog", url: "https://dineshkoyyalamudi.com/blog" },
+                { name: post.title, url: `https://dineshkoyyalamudi.com/blog/${post.slug}` },
+            ]} />
             <div className="max-w-3xl mx-auto">
                 <Link
                     href="/blog"

@@ -12,16 +12,25 @@ export {
 } from "./firebase-services";
 
 // ── SERIALIZATION HELPER ─────────────────────────────────────────────────────
-// Converts Firestore Timestamps (and nested objects/arrays) to ISO strings
-// so data is safe to pass from Server Components to Client Components.
+// Recursively converts any Firestore Timestamp to an ISO string so data is
+// safe to pass from Server Components to Client Components.
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function serialize<T>(data: T): T {
   if (data === null || data === undefined) return data;
 
-  // Firestore Timestamp — has toDate() method
+  // Firestore Timestamp via toDate() method (Admin SDK)
   if (typeof (data as any)?.toDate === "function") {
     return (data as any).toDate().toISOString() as unknown as T;
+  }
+
+  // Raw Timestamp shape { _seconds, _nanoseconds } — fallback for edge cases
+  if (
+    typeof data === "object" &&
+    "_seconds" in (data as any) &&
+    "_nanoseconds" in (data as any)
+  ) {
+    return new Date((data as any)._seconds * 1000).toISOString() as unknown as T;
   }
 
   if (Array.isArray(data)) {
@@ -143,4 +152,16 @@ export async function getSiteSettings() {
     const snap = await db.collection("siteSettings").doc("main").get();
     return snap.exists ? serialize(snap.data()) : null;
   } catch (e) { console.error("[getSiteSettings]", e); return null; }
+}
+
+// ── TEAM MEMBERS ─────────────────────────────────────────────────────────────
+export async function getTeamMembers() {
+  try {
+    const db = getAdminDb();
+    const snap = await db.collection("teamMembers")
+      .where("status", "==", "active")
+      .orderBy("sortOrder", "asc")
+      .get();
+    return snap.docs.map(d => serialize({ id: d.id, ...d.data() }));
+  } catch (e) { console.error("[getTeamMembers]", e); return []; }
 }

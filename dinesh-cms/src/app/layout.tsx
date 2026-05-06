@@ -4,6 +4,7 @@ import "./globals.css";
 import CurveLoader from "@/components/ui/CurveLoader";
 import LenisProvider from "@/components/providers/LenisProvider";
 import SiteChrome from "@/components/providers/SiteChrome";
+import { PersonSchema, OrganizationSchema, WebsiteSchema } from "@/components/SEO/JsonLd";
 
 export const metadata: Metadata = {
     metadataBase: new URL("https://dineshkoyyalamudi.com"),
@@ -67,6 +68,10 @@ export default function RootLayout({
     return (
         <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable}`}>
             <body className="antialiased min-h-screen flex flex-col bg-brand-dark selection:bg-brand-primary/30">
+                {/* JSON-LD: Google understands Dinesh Koyyalamudi = Founder of FourSix46 */}
+                <PersonSchema />
+                <OrganizationSchema />
+                <WebsiteSchema />
                 <LenisProvider>
                     <CurveLoader />
                     <SiteChrome>

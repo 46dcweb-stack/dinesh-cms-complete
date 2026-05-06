@@ -1,8 +1,10 @@
 import NextImage from "next/image";
 import StoryTimeline from "@/components/sections/StoryTimeline";
 import LeadershipTeam from "@/components/sections/LeadershipTeam";
-import { getAboutPage } from "@/lib/firebase-data";
+import { getAboutPage, getTeamMembers } from "@/lib/firebase-data";
 import { aboutData } from "@/lib/data";
+import { getDocs, collection, query, orderBy, where } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 export const revalidate = 0;
 
@@ -12,8 +14,14 @@ export const metadata = {
 };
 
 export default async function AboutPage() {
-    const fbAbout = await getAboutPage();
+    const [fbAbout, fbTeam] = await Promise.all([
+        getAboutPage(),
+        getTeamMembers(),
+    ]);
     const raw = fbAbout ?? aboutData;
+
+    // Team members fetched via Admin SDK above (fbTeam)
+    const teamMembers: any[] = Array.isArray(fbTeam) ? fbTeam : [];
 
     // Safe fallbacks — if Firebase field is empty/missing, use static data
     const shortBio          = (raw as any).shortBio          ?? aboutData.shortBio;
@@ -114,7 +122,7 @@ export default async function AboutPage() {
             </div>
 
             {milestones.length > 0 && <StoryTimeline milestones={milestones} />}
-            <LeadershipTeam />
+            <LeadershipTeam members={teamMembers} />
         </div>
     );
 }

@@ -405,3 +405,44 @@ export const mediaService = {
     await deleteObject(storageRef);
   },
 };
+
+// ── TEAM MEMBERS ──────────────────────────────────────────────────────────────
+import type { TeamMember } from "./types";
+
+export const teamService = {
+  async getAll(): Promise<TeamMember[]> {
+    const q = query(collection(db, "teamMembers"), orderBy("sortOrder", "asc"));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() } as TeamMember));
+  },
+
+  async getActive(): Promise<TeamMember[]> {
+    const q = query(
+      collection(db, "teamMembers"),
+      where("status", "==", "active"),
+      orderBy("sortOrder", "asc")
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() } as TeamMember));
+  },
+
+  async create(data: Omit<TeamMember, "id">): Promise<string> {
+    const ref = await addDoc(collection(db, "teamMembers"),
+      stripUndefined({ ...data, createdAt: serverTimestamp(), updatedAt: serverTimestamp() })
+    );
+    await writeAudit("teamMembers", ref.id, "create", `Added team member: "${data.name}"`);
+    return ref.id;
+  },
+
+  async update(id: string, data: Partial<TeamMember>): Promise<void> {
+    await updateDoc(doc(db, "teamMembers", id),
+      stripUndefined({ ...data, updatedAt: serverTimestamp() })
+    );
+    await writeAudit("teamMembers", id, "update", `Updated team member: "${data.name || id}"`);
+  },
+
+  async delete(id: string): Promise<void> {
+    await deleteDoc(doc(db, "teamMembers", id));
+    await writeAudit("teamMembers", id, "delete", `Deleted team member ID: ${id}`);
+  },
+};

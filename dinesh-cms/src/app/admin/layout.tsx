@@ -8,17 +8,19 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import {
   LayoutDashboard, FileText, Newspaper, BookOpen, HelpCircle,
   User, Home, Image, Settings, Users, Mail, LogOut, Layers,
-  ClipboardList, Shield,
+  ClipboardList, Shield, UserCheck,
 } from "lucide-react";
 
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/home", label: "Home Page", icon: Home },
   { href: "/admin/about", label: "About", icon: User },
+  { href: "/admin/team", label: "Leadership & Team", icon: UserCheck },
   { href: "/admin/blog", label: "Blog Posts", icon: FileText },
   { href: "/admin/press", label: "Press & Media", icon: Newspaper },
   { href: "/admin/manifesto", label: "Manifesto", icon: BookOpen },
   { href: "/admin/ventures", label: "Ventures", icon: Layers },
+  { href: "/admin/team", label: "Leadership & Team", icon: Users },
   { href: "/admin/faq", label: "FAQ", icon: HelpCircle },
   { href: "/admin/gallery", label: "Gallery", icon: Image },
   { href: "/admin/subscribers", label: "Subscribers", icon: Mail },

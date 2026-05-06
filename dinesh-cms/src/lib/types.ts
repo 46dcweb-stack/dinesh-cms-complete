@@ -261,3 +261,19 @@ export interface PressPageMeta {
   mediaKitUrl: string;
   updatedAt?: Timestamp;
 }
+
+// ── LEADERSHIP / TEAM MEMBERS ─────────────────────────────────────────────────
+export interface TeamMember {
+  id?: string;
+  name: string;
+  role: string;
+  bio: string;
+  image: string;
+  linkedIn?: string;
+  twitter?: string;
+  sortOrder: number;
+  featured: boolean;
+  status: "active" | "hidden";
+  createdAt?: Timestamp;
+  updatedAt?: Timestamp;
+}

@@ -4,33 +4,58 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import Image from "next/image";
 
-const team = [
+// Static fallback data — used when no team members in Firebase yet
+const STATIC_TEAM = [
     {
         name: "Dinesh Koyyalamudi",
         role: "Founder & Visionary",
         image: "/images/dinesh_hero.png",
-        bio: "Strategist focused on resilient architectures and venture building."
+        bio: "Strategist focused on resilient architectures and venture building.",
+        linkedIn: "",
+        twitter: "",
     },
     {
         name: "Elena Rossi",
         role: "Head of Strategy",
         image: "/images/venture_1.png",
-        bio: "Specializing in global operations and cross-cultural scalability."
+        bio: "Specializing in global operations and cross-cultural scalability.",
+        linkedIn: "",
+        twitter: "",
     },
     {
         name: "Marcus Chen",
         role: "Technical Architect",
         image: "/images/venture_2.png",
-        bio: "Building the high-performance backbones of future ventures."
-    }
+        bio: "Building the high-performance backbones of future ventures.",
+        linkedIn: "",
+        twitter: "",
+    },
 ];
 
-export default function LeadershipTeam() {
+interface TeamMemberData {
+    name: string;
+    role: string;
+    image: string;
+    bio: string;
+    linkedIn?: string;
+    twitter?: string;
+}
+
+interface Props {
+    members?: TeamMemberData[];
+}
+
+export default function LeadershipTeam({ members }: Props) {
+    // Use CMS data if available, fall back to static
+    const team = members && members.length > 0 ? members : STATIC_TEAM;
+
     return (
         <section className="py-24 md:py-32 bg-brand-dark overflow-hidden">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="mb-20 max-w-2xl">
-                    <span className="text-brand-primary font-medium tracking-[0.3em] text-xs uppercase block mb-6 font-mono">The Collective</span>
+                    <span className="text-brand-primary font-medium tracking-[0.3em] text-xs uppercase block mb-6 font-mono">
+                        The Collective
+                    </span>
                     <h2 className="text-4xl md:text-6xl font-display leading-tight text-white italic">
                         Leadership & <span className="text-gradient">Logic.</span>
                     </h2>
@@ -46,7 +71,7 @@ export default function LeadershipTeam() {
     );
 }
 
-function TeamCard({ member, index }: { member: typeof team[0], index: number }) {
+function TeamCard({ member, index }: { member: TeamMemberData; index: number }) {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
@@ -59,10 +84,10 @@ function TeamCard({ member, index }: { member: typeof team[0], index: number }) 
             transition={{ delay: index * 0.1, duration: 0.8 }}
             className="group relative flex flex-col md:flex-row md:items-center justify-between py-12 border-b border-white/5 cursor-pointer overflow-hidden px-4 md:px-8"
         >
-            {/* Reveal Image Overflow Container */}
+            {/* Hover image reveal */}
             <div className="hidden md:block absolute right-32 top-1/2 -translate-y-1/2 w-[300px] h-[400px] pointer-events-none z-0">
                 <AnimatePresence>
-                    {isHovered && (
+                    {isHovered && member.image && (
                         <motion.div
                             initial={{ x: "100%", opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
@@ -75,6 +100,7 @@ function TeamCard({ member, index }: { member: typeof team[0], index: number }) 
                                 alt={member.name}
                                 fill
                                 className="object-cover grayscale"
+                                unoptimized
                             />
                             <div className="absolute inset-0 bg-brand-primary/10 mix-blend-overlay" />
                         </motion.div>
@@ -97,15 +123,12 @@ function TeamCard({ member, index }: { member: typeof team[0], index: number }) 
                 </div>
             </div>
 
-            {/* Mobile Image (Always visible or different transition) */}
-            <div className="md:hidden mt-6 overflow-hidden aspect-[4/5] rounded-xl relative grayscale">
-                <Image
-                    src={member.image}
-                    alt={member.name}
-                    fill
-                    className="object-cover"
-                />
-            </div>
+            {/* Mobile image */}
+            {member.image && (
+                <div className="md:hidden mt-6 overflow-hidden aspect-[4/5] rounded-xl relative grayscale">
+                    <Image src={member.image} alt={member.name} fill className="object-cover" unoptimized />
+                </div>
+            )}
         </motion.div>
     );
 }
