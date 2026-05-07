@@ -1,5 +1,5 @@
-import type { HomePage } from "@/lib/types";
 "use client";
+import type { HomePage } from "@/lib/types";
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";

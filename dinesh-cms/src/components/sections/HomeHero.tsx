@@ -1,4 +1,4 @@
-// "use client";
+"use client";
 import type { HomePage, BlogPost, PressMention } from "@/lib/types";
 
 // import { motion } from "framer-motion";
@@ -156,7 +156,6 @@ import type { HomePage, BlogPost, PressMention } from "@/lib/types";
 //         </section>
 //     );
 // }
-"use client";
 import type { HomePage, BlogPost, PressMention } from "@/lib/types";
 
 import { useEffect, useMemo, useState } from "react";

@@ -1,5 +1,5 @@
-import type { Venture } from "@/lib/types";
 "use client";
+import type { Venture } from "@/lib/types";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
