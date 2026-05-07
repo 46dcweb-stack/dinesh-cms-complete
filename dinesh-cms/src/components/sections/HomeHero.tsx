@@ -1,4 +1,5 @@
 // "use client";
+import type { HomePage, BlogPost, PressMention } from "@/lib/types";
 
 // import { motion } from "framer-motion";
 // import { ArrowRight, Calendar, Users, Globe, Briefcase } from "lucide-react";
@@ -156,6 +157,7 @@
 //     );
 // }
 "use client";
+import type { HomePage, BlogPost, PressMention } from "@/lib/types";
 
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
@@ -173,7 +175,7 @@ const GlowingEffect = dynamic(
 );
 
 interface HomeHeroProps {
-  data?: HomePageData & {
+  data?: Partial<HomePage> & {
     featuredBlog?: BlogPost;
     featuredPress?: PressMention;
   };

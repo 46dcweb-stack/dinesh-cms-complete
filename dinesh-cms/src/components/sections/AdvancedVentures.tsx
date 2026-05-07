@@ -1,3 +1,4 @@
+import type { Venture } from "@/lib/types";
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -45,7 +46,7 @@ const DEFAULT_VENTURES = [
     }
 ];
 
-export default function AdvancedVentures({ data }: { data?: VentureData[] }) {
+export default function AdvancedVentures({ data }: { data?: Venture[] }) {
     const ventures = data || DEFAULT_VENTURES;
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -140,7 +141,7 @@ export default function AdvancedVentures({ data }: { data?: VentureData[] }) {
     );
 }
 
-function VentureCard({ venture, index, onInView }: { venture: any, index: number, onInView: () => void }) {
+function VentureCard({ venture, index, onInView }: { venture: Venture, index: number, onInView: () => void }) {
     const cardRef = useRef(null);
 
     return (

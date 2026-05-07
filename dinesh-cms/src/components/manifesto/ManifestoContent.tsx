@@ -11,6 +11,15 @@ type ManifestoBlock = {
     author?: string;
     principles?: { title: string; description: string }[];
     items?: { icon: string; title: string; text: string }[];
+    isVisible?: boolean;
+    sectionType?: string;
+    highlightStyle?: "normal" | "emphasized";
+    heading?: string;
+    title?: string;
+    backgroundImage?: string;
+    body?: string;
+    description?: string;
+    pullQuote?: string;
 };
 
 export default function ManifestoContent({ blocks }: { blocks: ManifestoBlock[] }) {

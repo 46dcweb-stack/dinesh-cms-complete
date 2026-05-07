@@ -1,3 +1,4 @@
+import type { HomePage } from "@/lib/types";
 "use client";
 
 import { useRef } from "react";
@@ -36,7 +37,7 @@ const DEFAULT_PRINCIPLES = [
   },
 ];
 
-export default function EthosSection({ data }: { data?: EthosData }) {
+export default function EthosSection({ data }: { data?: HomePage["ethos"] }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Scroll progress over the whole section.
@@ -99,7 +100,7 @@ export default function EthosSection({ data }: { data?: EthosData }) {
             </motion.div>
 
             <p className="max-w-2xl text-xl sm:text-2xl md:text-4xl lg:text-5xl font-display leading-[1.1] flex flex-wrap text-left text-text-secondary">
-              {words.map((word, i) => {
+              {words.map((word: string, i: number) => {
                 const start = i / words.length;
                 const end = start + 1 / words.length;
 
@@ -119,7 +120,7 @@ export default function EthosSection({ data }: { data?: EthosData }) {
           {/* Right Column */}
           <div className="grid grid-cols-1 gap-6 pt-8 md:pt-0">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
-              {principles.map((p, idx) => (
+              {principles.map((p: NonNullable<HomePage['ethos']>['principles'][0], idx: number) => (
                 <PrincipleCard
                   key={p.id}
                   principle={p}
@@ -135,14 +136,22 @@ export default function EthosSection({ data }: { data?: EthosData }) {
   );
 }
 
+type Principle = {
+  id: string;
+  label: string;
+  title: string;
+  description: string;
+  color: string;
+};
+
 function PrincipleCard({
   principle,
   index,
   scrollProgress,
 }: {
-  principle: any;
+  principle: Principle;
   index: number;
-  scrollProgress: any;
+  scrollProgress: ReturnType<typeof useScroll>["scrollYProgress"];
 }) {
   const start = 0.2 + index * 0.1;
   const end = start + 0.2;
@@ -192,7 +201,7 @@ function Word({
   range,
 }: {
   children: string;
-  progress: any;
+  progress: ReturnType<typeof import('framer-motion').useScroll>['scrollYProgress'];
   range: [number, number];
 }) {
   const opacity = useTransform(progress, range, [0.15, 1]);

@@ -1,5 +1,13 @@
 "use client";
 
+interface PersonalIntroData {
+  quote?: string;
+  body?: string;
+  linkText?: string;
+  linkUrl?: string;
+}
+
+
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -30,7 +38,7 @@ export default function PersonalIntro({ data }: { data?: PersonalIntroData }) {
                     </div>
 
                     <h2 className="text-2xl md:text-5xl font-display leading-tight mb-8 md:mb-12 text-white">
-                        {words.map((word, i) => (
+                        {words.map((word: string, i: number) => (
                             <motion.span
                                 key={i}
                                 initial={{ opacity: 0 }}

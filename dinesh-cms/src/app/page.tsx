@@ -59,7 +59,7 @@ export default async function Home() {
 
   const blogs    = fbArr(fbBlogs,    blogPosts as any[]);
   const press    = fbArr(fbPress,    []);
-  const ventures = fbArr(fbVentures, static_home.ventures ?? []);
+  const ventures = fbArr(fbVentures, static_home.ventures ?? []) as Venture[];
 
   const faqItems = fbFaq.length > 0
     ? fbFaq.map((item: any) => ({ q: item.question, a: item.answer }))
