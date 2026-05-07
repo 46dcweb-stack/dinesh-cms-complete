@@ -1,6 +1,15 @@
 "use client";
 import type { Venture } from "@/lib/types";
 
+// Local display type — subset of Venture used for rendering
+type VentureDisplay = Pick<Venture, "name" | "role" | "description" | "image" | "color"> & {
+  url?: string;
+  sortOrder?: number;
+  featured?: boolean;
+  status?: string;
+  id?: string;
+};
+
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
@@ -46,8 +55,8 @@ const DEFAULT_VENTURES = [
     }
 ];
 
-export default function AdvancedVentures({ data }: { data?: Venture[] }) {
-    const ventures = data || DEFAULT_VENTURES;
+export default function AdvancedVentures({ data }: { data?: VentureDisplay[] }) {
+    const ventures: VentureDisplay[] = data || DEFAULT_VENTURES;
     const [activeIndex, setActiveIndex] = useState(0);
 
     return (
@@ -141,7 +150,7 @@ export default function AdvancedVentures({ data }: { data?: Venture[] }) {
     );
 }
 
-function VentureCard({ venture, index, onInView }: { venture: Venture, index: number, onInView: () => void }) {
+function VentureCard({ venture, index, onInView }: { venture: VentureDisplay, index: number, onInView: () => void }) {
     const cardRef = useRef(null);
 
     return (
