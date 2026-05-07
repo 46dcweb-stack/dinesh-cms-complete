@@ -59,7 +59,7 @@ export default async function Home() {
 
   const blogs    = fbArr(fbBlogs,    blogPosts as any[]);
   const press    = fbArr(fbPress,    []);
-  const ventures = fbArr(fbVentures, static_home.ventures ?? []) as Venture[];
+  const ventures = (fbVentures.length > 0 ? fbVentures : (static_home.ventures ?? []));
 
   const faqItems = fbFaq.length > 0
     ? fbFaq.map((item: any) => ({ q: item.question, a: item.answer }))
@@ -79,7 +79,7 @@ export default async function Home() {
       <HomeHero data={homeData} />
       <PersonalIntro data={homeData.personalIntro} />
       <EthosSection data={homeData.ethos} />
-      {show.ventures        && <AdvancedVentures data={ventures} />}
+      {show.ventures        && <AdvancedVentures data={ventures as any[]} />}
       {show.blog            && <HorizontalNewsroom posts={blogs.slice(0, 6) as any} />}
       {show.press           && <PressLogos items={press as any[]} />}
       {show.manifestoTeaser && <ManifestoTeaser />}
