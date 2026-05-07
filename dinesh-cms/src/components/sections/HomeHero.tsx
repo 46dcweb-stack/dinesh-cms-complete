@@ -156,7 +156,7 @@ import type { HomePage, BlogPost, PressMention } from "@/lib/types";
 //         </section>
 //     );
 // }
-import type { HomePage, BlogPost, PressMention } from "@/lib/types";
+
 
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
@@ -189,7 +189,7 @@ export default function HomeHero({ data }: HomeHeroProps) {
   const heroName = data?.heroName || "Dinesh Koyyalamudi";
   const heroSubtitle = data?.heroSubtitle || "I've earned the trust of over 250 clients and 40 brands, all of whom are very satisfied with my service!";
   const heroImage = data?.heroBackground || "/images/dinesh_hero.png";
-  const heroVideo = data?.heroVideoUrl || "";
+  const heroVideo = data?.heroBackgroundVideo || "";
   const heroImageAlt = data?.heroImageAlt || "Dinesh Koyyalamudi";
   const primaryCtaLabel = data?.primaryCtaLabel || "Schedule a Call";
   const primaryCtaUrl = data?.primaryCtaUrl || "/contact";
