@@ -18,7 +18,9 @@ function getAdminDb() {
       initializeApp({ credential: cert(sa) });
     } else {
       // Try service-account.json in dev
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { readFileSync, existsSync } = require("fs");
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const path = require("path");
       const filePath = path.join(process.cwd(), "service-account.json");
       if (existsSync(filePath)) {
