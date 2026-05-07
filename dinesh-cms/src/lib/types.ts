@@ -151,6 +151,9 @@ export interface HomePage {
   showManifestoTeaser: boolean;
   showFaq: boolean;
   showNewsletter: boolean;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoOgImage?: string;
   updatedAt?: Timestamp;
 }
 
