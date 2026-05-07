@@ -60,7 +60,11 @@ export default function AboutAdmin() {
         subtitle="Edit biography, milestones, values, and proof points"
         action={<SaveButton loading={saving} saved={saved} onClick={handleSave} />}
       />
-      {error && <Alert message={error} className="mb-6" />}
+      {error && (
+  <div className="mb-6">
+    <Alert message={error} />
+  </div>
+)}
 
       <div className="space-y-6">
         {/* Bio */}
