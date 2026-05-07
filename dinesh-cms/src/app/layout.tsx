@@ -10,50 +10,26 @@ import { getSiteSettings } from "@/lib/firebase-data";
 const BASE_URL = "https://dineshkoyyalamudi.com";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
-
-  const title       = (settings as any)?.seoDefaultTitle       ?? "Dinesh Koyyalamudi | Strategic Visionary & Venture Builder";
-  const description = (settings as any)?.seoDefaultDescription ?? "Official platform of Dinesh Koyyalamudi—Founder, thinker, and leader focused on building resilient systems and visionary companies.";
-  const ogImage     = (settings as any)?.seoOgImage            || "/og-image.jpg";
-  const siteName    = (settings as any)?.siteName              ?? "Dinesh Koyyalamudi";
-
+  const settings = await getSiteSettings() as any;
+  const title       = settings?.seoDefaultTitle       ?? "Dinesh Koyyalamudi | Strategic Visionary & Venture Builder";
+  const description = settings?.seoDefaultDescription ?? "Official platform of Dinesh Koyyalamudi — Founder, thinker, and leader focused on building resilient systems.";
+  const ogImage     = settings?.seoOgImage            || "/og-image.jpg";
+  const siteName    = settings?.siteName              ?? "Dinesh Koyyalamudi";
   return {
     metadataBase: new URL(BASE_URL),
-    title: {
-      default: title,
-      template: `%s | ${siteName}`,
-    },
+    title: { default: title, template: `%s | ${siteName}` },
     description,
-    keywords: [
-      "Dinesh Koyyalamudi", "Founder", "Venture Builder",
-      "Strategic Leadership", "Technology Visionary", "Building the Future",
-    ],
+    keywords: ["Dinesh Koyyalamudi","Founder","Venture Builder","Strategic Leadership","Technology Visionary"],
     authors: [{ name: "Dinesh Koyyalamudi" }],
     creator: "Dinesh Koyyalamudi",
-    openGraph: {
-      type: "website",
-      locale: "en_US",
-      url: BASE_URL,
-      siteName,
-      title,
-      description,
-      images: [{ url: ogImage, width: 1200, height: 630, alt: siteName }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      creator: "@dineshkoyya",
-      images: [ogImage],
-    },
-    robots: { index: true, follow: true },
-    icons: { icon: "/logo.png", shortcut: "/logo.png", apple: "/logo.png" },
+    openGraph: { type:"website", locale:"en_US", url:BASE_URL, siteName, title, description, images:[{ url:ogImage, width:1200, height:630, alt:siteName }] },
+    twitter: { card:"summary_large_image", title, description, creator:"@dineshkoyya", images:[ogImage] },
+    robots: { index:true, follow:true },
+    icons: { icon:"/logo.png", shortcut:"/logo.png", apple:"/logo.png" },
   };
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable}`}>
       <body className="antialiased min-h-screen flex flex-col bg-brand-dark selection:bg-brand-primary/30">
@@ -62,9 +38,7 @@ export default function RootLayout({
         <WebsiteSchema />
         <LenisProvider>
           <CurveLoader />
-          <SiteChrome>
-            {children}
-          </SiteChrome>
+          <SiteChrome>{children}</SiteChrome>
         </LenisProvider>
       </body>
     </html>

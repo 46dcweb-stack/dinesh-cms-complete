@@ -24,6 +24,7 @@ const DEFAULT: Omit<HomePage, "id"> = {
   },
   showVentures: true, showBlog: true, showPress: true,
   showManifestoTeaser: true, showFaq: true, showNewsletter: true,
+  seoTitle: "", seoDescription: "", seoOgImage: "",
 };
 
 export default function HomeAdmin() {
@@ -178,6 +179,36 @@ export default function HomeAdmin() {
             <Toggle checked={form.showManifestoTeaser} onChange={v => set("showManifestoTeaser", v)} label="Show Manifesto Teaser" />
             <Toggle checked={form.showFaq} onChange={v => set("showFaq", v)} label="Show FAQ Preview" />
             <Toggle checked={form.showNewsletter} onChange={v => set("showNewsletter", v)} label="Show Newsletter" />
+          </div>
+        </Card>
+
+        {/* Home Page SEO */}
+        <Card>
+          <SectionTitle>Page SEO</SectionTitle>
+          <p className="text-xs text-white/40 mb-4">Overrides the global SEO defaults for the home page specifically.</p>
+          <div className="space-y-4">
+            <Field label="SEO Title" hint="Shown in browser tab and Google search results">
+              <Input
+                value={(form as any).seoTitle || ""}
+                onChange={e => set("seoTitle" as any, e.target.value)}
+                placeholder="Dinesh Koyyalamudi | Strategic Visionary & Venture Builder"
+              />
+            </Field>
+            <Field label="SEO Description" hint="~155 characters shown under title in Google">
+              <Textarea
+                value={(form as any).seoDescription || ""}
+                onChange={e => set("seoDescription" as any, e.target.value)}
+                rows={3}
+                placeholder="Official platform of Dinesh Koyyalamudi..."
+              />
+            </Field>
+            <Field label="OG Image" hint="Preview image when shared on social media">
+              <ImageUpload
+                value={(form as any).seoOgImage || ""}
+                onChange={v => set("seoOgImage" as any, v)}
+                folder="seo"
+              />
+            </Field>
           </div>
         </Card>
 

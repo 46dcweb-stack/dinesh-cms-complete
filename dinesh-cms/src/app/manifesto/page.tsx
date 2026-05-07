@@ -8,30 +8,21 @@ export const revalidate = 60;
 
 export default async function ManifestoPage() {
   const fbManifesto = await getManifesto();
-
-  // Use Firebase data if available, otherwise fall back to static
-  const meta = fbManifesto.meta ?? null;
+  const meta     = fbManifesto.meta as any ?? null;
   const sections = fbManifesto.sections ?? [];
 
-  const title        = (meta as any)?.title        ?? manifestoData.title;
-  const subtitle     = (meta as any)?.subtitle     ?? manifestoData.subtitle;
-  const eyebrow      = (meta as any)?.eyebrow      ?? manifestoData.eyebrow;
-  const introLabel   = (meta as any)?.introLabel   ?? manifestoData.introLabel;
-  const versionTag   = (meta as any)?.versionTag   ?? manifestoData.versionTag;
-  const introStats   = (meta as any)?.introStats   ?? manifestoData.introStats;
-  const blocks       = sections.length > 0 ? sections : manifestoData.blocks;
+  const title      = meta?.title      ?? (manifestoData as any).title;
+  const subtitle   = meta?.subtitle   ?? (manifestoData as any).subtitle;
+  const eyebrow    = meta?.eyebrow    ?? (manifestoData as any).eyebrow;
+  const introLabel = meta?.introLabel ?? (manifestoData as any).introLabel;
+  const versionTag = meta?.versionTag ?? (manifestoData as any).versionTag;
+  const introStats = meta?.introStats ?? (manifestoData as any).introStats;
+  const blocks     = sections.length > 0 ? sections : (manifestoData as any).blocks;
 
   return (
     <div className="pt-20 lg:pt-12 pb-48 bg-brand-dark min-h-screen">
       <div className="max-w-7xl mx-auto px-6">
-        <ManifestoHeader
-          title={title}
-          subtitle={subtitle}
-          eyebrow={eyebrow}
-          introLabel={introLabel}
-          introStats={introStats}
-          versionTag={versionTag}
-        />
+        <ManifestoHeader title={title} subtitle={subtitle} eyebrow={eyebrow} introLabel={introLabel} introStats={introStats} versionTag={versionTag} />
         <ManifestoContent blocks={blocks as any} />
         <ManifestoCTA />
       </div>

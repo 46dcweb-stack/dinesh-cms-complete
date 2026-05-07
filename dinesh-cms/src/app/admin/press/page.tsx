@@ -134,6 +134,12 @@ export default function PressAdmin() {
             <Field label="Outlet Logo URL">
               <Input value={form.outletLogo || ""} onChange={e => set("outletLogo", e.target.value)} placeholder="Logo image URL" />
             </Field>
+            <Field label="Cover / Thumbnail Image">
+              <ImageUpload value={form.thumbnail || ""} onChange={v => set("thumbnail", v)} folder="press" />
+            </Field>
+            <Field label="Downloadable Asset URL" hint="Press kit, PDF, screenshots">
+              <Input value={form.downloadableAsset || ""} onChange={e => set("downloadableAsset", e.target.value)} placeholder="https://..." />
+            </Field>
             <Field label="Status">
               <Select value={form.status} onChange={e => set("status", e.target.value)}>
                 <option value="published">Published</option>

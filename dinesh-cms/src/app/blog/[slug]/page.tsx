@@ -7,7 +7,7 @@ import { blogPosts } from "@/lib/data";
 import { getBlogBySlug, getPublishedBlogs } from "@/lib/firebase-data";
 import { ArticleSchema, BreadcrumbSchema } from "@/components/seo/JsonLd";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export async function generateStaticParams() {
     const fbPosts = await getPublishedBlogs().catch(() => []);

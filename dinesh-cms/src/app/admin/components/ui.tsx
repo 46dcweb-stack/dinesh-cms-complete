@@ -150,7 +150,7 @@ export function StatusBadge({ status }: { status: string }) {
 }
 
 // ── Alert ──────────────────────────────────────────────────────────────────────
-export function Alert({ message, type = "error" }: { message: string; type?: "error" | "success" }) {
+export function Alert({ message, type = "error", className = "" }: { message: string; type?: "error" | "success"; className?: string }) {
   const styles = type === "error"
     ? "bg-red-400/10 border-red-400/20 text-red-400"
     : "bg-green-400/10 border-green-400/20 text-green-400";
@@ -167,6 +167,9 @@ export function ImageUpload({
   value, onChange, folder = "images",
 }: { value: string; onChange: (url: string) => void; folder?: string }) {
   const [uploading, setUploading] = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
+  const [mediaFiles, setMediaFiles] = useState<{url: string; name: string; fullPath: string}[]>([]);
+  const [loadingMedia, setLoadingMedia] = useState(false);
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -175,10 +178,29 @@ export function ImageUpload({
     try {
       const url = await mediaService.upload(file, folder);
       onChange(url);
-    } catch (err) {
-      console.error(err);
-    }
+    } catch (err) { console.error(err); }
     setUploading(false);
+  }
+
+  async function openPicker() {
+    setShowPicker(true);
+    setLoadingMedia(true);
+    try {
+      const { ref, listAll, getDownloadURL } = await import("firebase/storage");
+      const { storage } = await import("@/lib/firebase");
+      const folders = ["blog","gallery","press","about","ventures","manifesto","misc","hero","images"];
+      const all: {url: string; name: string; fullPath: string}[] = [];
+      await Promise.all(folders.map(async (f) => {
+        try {
+          const list = await listAll(ref(storage, f));
+          await Promise.all(list.items.map(async (item) => {
+            try { const url = await getDownloadURL(item); all.push({ url, name: item.name, fullPath: item.fullPath }); } catch {}
+          }));
+        } catch {}
+      }));
+      setMediaFiles(all);
+    } catch(e) { console.error(e); }
+    setLoadingMedia(false);
   }
 
   return (
@@ -186,30 +208,58 @@ export function ImageUpload({
       {value && (
         <div className="relative rounded-lg overflow-hidden border border-white/10">
           <img src={value} alt="preview" className="w-full h-40 object-cover" />
-          <button
-            type="button"
-            onClick={() => onChange("")}
-            className="absolute top-2 right-2 bg-black/50 hover:bg-black/80 rounded-full p-1 transition-colors"
-          >
+          <button type="button" onClick={() => onChange("")}
+            className="absolute top-2 right-2 bg-black/50 hover:bg-black/80 rounded-full p-1 transition-colors">
             <X size={12} className="text-white" />
           </button>
         </div>
       )}
-      <label className="flex items-center gap-2 cursor-pointer bg-white/5 hover:bg-white/10 border border-white/10 border-dashed rounded-lg px-4 py-3 text-sm text-white/40 hover:text-white/70 transition-colors">
-        <Upload size={14} />
-        {uploading ? "Uploading..." : value ? "Replace Image" : "Upload Image"}
-        <input type="file" accept="image/*" onChange={handleFile} className="hidden" disabled={uploading} />
-      </label>
-      <Input
-        placeholder="or paste image URL..."
-        value={value}
-        onChange={e => onChange(e.target.value)}
-      />
+      <div className="flex gap-2">
+        <label className="flex-1 flex items-center gap-2 cursor-pointer bg-white/5 hover:bg-white/10 border border-white/10 border-dashed rounded-lg px-4 py-3 text-sm text-white/40 hover:text-white/70 transition-colors">
+          <Upload size={14} />
+          {uploading ? "Uploading..." : value ? "Replace" : "Upload"}
+          <input type="file" accept="image/*" onChange={handleFile} className="hidden" disabled={uploading} />
+        </label>
+        <button type="button" onClick={openPicker}
+          className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg px-4 py-3 text-sm text-white/40 hover:text-white/70 transition-colors whitespace-nowrap">
+          📁 Library
+        </button>
+      </div>
+      <Input placeholder="or paste image URL..." value={value} onChange={e => onChange(e.target.value)} />
+
+      {/* Media Picker Modal */}
+      {showPicker && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={() => setShowPicker(false)}>
+          <div className="bg-[#111] border border-white/10 rounded-2xl w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
+              <span className="text-white font-medium text-sm">Media Library — Pick an Image</span>
+              <button onClick={() => setShowPicker(false)} className="text-white/40 hover:text-white transition-colors"><X size={16} /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              {loadingMedia ? (
+                <div className="flex items-center justify-center h-40 text-white/30 text-sm">Loading media...</div>
+              ) : mediaFiles.length === 0 ? (
+                <div className="flex items-center justify-center h-40 text-white/30 text-sm">No images in library yet. Upload via Media Library.</div>
+              ) : (
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                  {mediaFiles.map((file) => (
+                    <button key={file.fullPath} type="button"
+                      onClick={() => { onChange(file.url); setShowPicker(false); }}
+                      className="aspect-square rounded-lg overflow-hidden border border-white/10 hover:border-brand-primary transition-colors group">
+                      <img src={file.url} alt={file.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// ── Card ───────────────────────────────────────────────────────────────────────
+
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
     <div className={`bg-white/5 border border-white/10 rounded-xl p-6 ${className}`}>

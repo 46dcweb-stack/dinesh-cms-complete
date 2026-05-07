@@ -2,46 +2,59 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Send, CheckCircle2 } from "lucide-react";
-import { subscriberService } from "@/lib/firebase-services";
-
+import { Send, CheckCircle2, AlertCircle } from "lucide-react";
 
 export default function Newsletter() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [consent, setConsent] = useState(false);
     const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+    const [errorMsg, setErrorMsg] = useState("");
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!consent) return;
+        if (!consent) {
+            setErrorMsg("Please agree to receive emails before subscribing.");
+            return;
+        }
         setStatus("loading");
+        setErrorMsg("");
 
         try {
-            const source = typeof window !== "undefined"
-                ? (window.location.pathname.includes("blog") ? "blog"
-                    : window.location.pathname.includes("subscribe") ? "subscribe-page"
-                    : "homepage")
+            const source =
+                window.location.pathname.includes("blog") ? "blog"
+                : window.location.pathname.includes("subscribe") ? "subscribe-page"
                 : "homepage";
-            await subscriberService.subscribe(email, name || undefined, source as any);
+
+            const res = await fetch("/api/subscribe", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, name: name || undefined, source, consent }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                setStatus("error");
+                setErrorMsg(data.error || "Something went wrong. Please try again.");
+                return;
+            }
+
             setStatus("success");
             setName("");
             setEmail("");
             setConsent(false);
-        } catch (error) {
+        } catch {
             setStatus("error");
+            setErrorMsg("Network error. Please check your connection and try again.");
         }
     };
 
     return (
         <section className="py-24 px-6 overflow-hidden relative">
-            {/* Ambient Static Blobs */}
-            <div
-                className="absolute top-1/2 left-0 w-96 h-96 bg-[radial-gradient(ellipse_at_center,rgba(255,160,0,0.05)_0%,transparent_70%)] rounded-full -z-10 pointer-events-none"
-            />
-            <div
-                className="absolute bottom-0 right-0 w-96 h-96 bg-[radial-gradient(ellipse_at_center,rgba(255,160,0,0.05)_0%,transparent_70%)] rounded-full -z-10 pointer-events-none"
-            />
+            {/* Ambient blobs */}
+            <div className="absolute top-1/2 left-0 w-96 h-96 bg-[radial-gradient(ellipse_at_center,rgba(255,160,0,0.05)_0%,transparent_70%)] rounded-full -z-10 pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-[radial-gradient(ellipse_at_center,rgba(255,160,0,0.05)_0%,transparent_70%)] rounded-full -z-10 pointer-events-none" />
 
             <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -59,67 +72,104 @@ export default function Newsletter() {
                     </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="relative z-10 max-w-lg mx-auto">
-                    <div className="flex flex-col gap-4">
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <input
-                                type="text"
-                                placeholder="First Name"
-                                required
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="flex-grow bg-white/5 border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-brand-primary/50 focus:ring-1 focus:ring-brand-primary/20 transition-all"
-                            />
-                            <input
-                                type="email"
-                                placeholder="Your email address"
-                                required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="flex-grow bg-white/5 border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-brand-primary/50 focus:ring-1 focus:ring-brand-primary/20 transition-all"
-                            />
-                        </div>
-                        
-                        <div className="flex items-start gap-3 mt-2 mb-2 text-left">
-                            <input
-                                type="checkbox"
-                                id="consent"
-                                required
-                                checked={consent}
-                                onChange={(e) => setConsent(e.target.checked)}
-                                className="mt-1 w-4 h-4 rounded border-white/20 bg-white/5 text-brand-primary focus:ring-brand-primary focus:ring-2 cursor-pointer transition-colors flex-shrink-0 appearance-none checked:bg-brand-primary checked:border-brand-primary relative before:content-[''] before:absolute before:inset-0 before:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwb2x5bGluZSBwb2ludHM9IjIwIDYgOSAxNyA0IDEyIj48L3BvbHlsaW5lPjwvc3ZnPg==')] before:bg-center before:bg-no-repeat before:bg-[length:12px_12px] checked:before:block before:hidden"
-                            />
-                            <label htmlFor="consent" className="text-xs text-text-muted cursor-pointer leading-relaxed">
-                                I agree to receive email updates, insights, and announcements from Dinesh Koyyalamudi. I understand I can unsubscribe at any time.
-                            </label>
-                        </div>
+                {status === "success" ? (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="relative z-10 text-center py-8"
+                    >
+                        <CheckCircle2 size={48} className="text-brand-primary mx-auto mb-4" />
+                        <h3 className="text-2xl font-display text-white mb-2">You're in!</h3>
+                        <p className="text-text-secondary">
+                            Check your inbox — a welcome note is on its way.
+                        </p>
+                        <p className="text-xs text-white/30 mt-3">
+                            You'll only receive emails you agreed to. Unsubscribe any time.
+                        </p>
+                    </motion.div>
+                ) : (
+                    <form onSubmit={handleSubmit} className="relative z-10 max-w-lg mx-auto">
+                        <div className="flex flex-col gap-4">
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                <input
+                                    type="text"
+                                    placeholder="First Name"
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
+                                    className="flex-grow bg-white/5 border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-brand-primary/50 focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-white/30"
+                                />
+                                <input
+                                    type="email"
+                                    placeholder="Your email address"
+                                    required
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    className="flex-grow bg-white/5 border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-brand-primary/50 focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-white/30"
+                                />
+                            </div>
 
-                        <button
-                            type="submit"
-                            disabled={status === "loading" || status === "success"}
-                            className="btn-premium liquid-fill flex items-center justify-center w-full sm:w-auto sm:mx-auto min-w-[200px]"
-                        >
-                            {status === "loading" ? (
-                                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                            ) : status === "success" ? (
-                                <CheckCircle2 size={20} />
-                            ) : (
-                                "Join the Conversation"
+                            {/* GDPR consent checkbox — required */}
+                            <div className="flex items-start gap-3 mt-1">
+                                <div className="relative flex-shrink-0 mt-0.5">
+                                    <input
+                                        type="checkbox"
+                                        id="newsletter-consent"
+                                        checked={consent}
+                                        onChange={e => {
+                                            setConsent(e.target.checked);
+                                            if (e.target.checked) setErrorMsg("");
+                                        }}
+                                        className="sr-only peer"
+                                    />
+                                    <label
+                                        htmlFor="newsletter-consent"
+                                        className="w-4 h-4 border border-white/30 rounded bg-white/5 flex items-center justify-center cursor-pointer peer-checked:bg-brand-primary peer-checked:border-brand-primary transition-colors block"
+                                    >
+                                        {consent && (
+                                            <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                                                <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                        )}
+                                    </label>
+                                </div>
+                                <label htmlFor="newsletter-consent" className="text-xs text-text-muted cursor-pointer leading-relaxed">
+                                    I agree to receive email updates, insights, and announcements from Dinesh Koyyalamudi.
+                                    I understand I can unsubscribe at any time. My data will be handled in accordance with
+                                    the <a href="/privacy" className="underline hover:text-white transition-colors">Privacy Policy</a>.
+                                </label>
+                            </div>
+
+                            {/* Error message */}
+                            {errorMsg && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -4 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="flex items-center gap-2 text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3"
+                                >
+                                    <AlertCircle size={14} />
+                                    {errorMsg}
+                                </motion.div>
                             )}
-                        </button>
-                    </div>
-                    {status === "success" && (
-                        <motion.p
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="text-brand-primary text-sm font-medium text-center mt-6"
-                        >
-                            Looking forward to connecting!
-                        </motion.p>
-                    )}
-                </form>
+
+                            <button
+                                type="submit"
+                                disabled={status === "loading" || !consent}
+                                className="btn-premium liquid-fill flex items-center justify-center w-full sm:w-auto sm:mx-auto min-w-[200px] disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+                            >
+                                {status === "loading" ? (
+                                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                ) : (
+                                    "Join the Conversation"
+                                )}
+                            </button>
+
+                            <p className="text-xs text-white/20 text-center">
+                                No spam. Only content you agreed to. Unsubscribe any time.
+                            </p>
+                        </div>
+                    </form>
+                )}
             </motion.div>
         </section>
     );
 }
-
