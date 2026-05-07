@@ -8,8 +8,21 @@ function getAdminDb() {
   if (getApps().length === 0) {
     const key = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
     if (key) {
-      const cleaned = key.trim().replace(/\\n/g, "\n");
-      const sa = JSON.parse(cleaned);
+      const cleaned = key
+        .trim()
+        .replace(/\\n/g, "\n")
+        .replace(/\r/g, "");
+
+      let sa: object;
+      try {
+        sa = JSON.parse(cleaned);
+      } catch {
+        const fixedKey = cleaned.replace(
+          /"private_key"\s*:\s*"([\s\S]*?)(?<!\\)"/,
+          (_, pk) => `"private_key":"${pk.replace(/\n/g, "\\n").replace(/\r/g, "")}"`
+        );
+        sa = JSON.parse(fixedKey);
+      }
       initializeApp({ credential: cert(sa) });
     } else {
       const filePath = join(process.cwd(), "service-account.json");
@@ -39,6 +52,7 @@ export async function POST(req: NextRequest) {
     const BREVO_API_KEY = (process.env.BREVO_API_KEY || "").trim();
     const BREVO_LIST_ID = parseInt(process.env.BREVO_LIST_ID || "1");
     const BREVO_WELCOME_TEMPLATE_ID = parseInt(process.env.BREVO_WELCOME_TEMPLATE_ID || "0");
+
     let brevoSuccess = false;
 
     if (BREVO_API_KEY) {
@@ -59,7 +73,9 @@ export async function POST(req: NextRequest) {
           const err = await contactRes.json();
           console.error("[Brevo] Add contact failed:", err);
         }
-      } catch (e) { console.error("[Brevo] Network error:", e); }
+      } catch (e) {
+        console.error("[Brevo] Network error:", e);
+      }
 
       if (brevoSuccess && BREVO_WELCOME_TEMPLATE_ID > 0) {
         try {
@@ -75,7 +91,9 @@ export async function POST(req: NextRequest) {
               },
             }),
           });
-        } catch (e) { console.error("[Brevo] Welcome email failed:", e); }
+        } catch (e) {
+          console.error("[Brevo] Welcome email failed:", e);
+        }
       }
     }
 
@@ -101,10 +119,11 @@ export async function POST(req: NextRequest) {
           createdAt: FieldValue.serverTimestamp(),
         });
       }
-    } catch (e) { console.error("[Firestore] Save subscriber failed:", e); }
+    } catch (e) {
+      console.error("[Firestore] Save subscriber failed:", e);
+    }
 
     return NextResponse.json({ success: true, brevoConnected: !!BREVO_API_KEY });
-
   } catch (e: unknown) {
     console.error("[subscribe API] Error:", e);
     return NextResponse.json({ error: "Subscription failed" }, { status: 500 });
