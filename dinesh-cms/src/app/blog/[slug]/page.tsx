@@ -6,6 +6,7 @@ import BlogContentWrapper from "@/components/blog/BlogContentWrapper";
 import { blogPosts } from "@/lib/data";
 import { getBlogBySlug, getPublishedBlogs } from "@/lib/firebase-data";
 import { ArticleSchema, BreadcrumbSchema } from "@/components/seo/JsonLd";
+import type { BlogPost } from "@/lib/types";
 
 export const revalidate = 60;
 
@@ -20,7 +21,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const fbPost = await getBlogBySlug(slug).catch(() => null);
+    const fbPost = await getBlogBySlug(slug).catch(() => null) as BlogPost | null;
     const post = fbPost ?? blogPosts.find((p) => p.slug === slug);
     if (!post) return {};
     return {
@@ -35,7 +36,7 @@ export default async function BlogPostPage({
     params: Promise<{ slug: string }>;
 }) {
     const { slug } = await params;
-    const fbPost = await getBlogBySlug(slug).catch(() => null);
+    const fbPost = await getBlogBySlug(slug).catch(() => null) as BlogPost | null;
     const post = fbPost ?? (blogPosts.find((p) => p.slug === slug) as any);
 
     if (!post) notFound();
