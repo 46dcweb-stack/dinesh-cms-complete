@@ -20,7 +20,7 @@ export default async function ManifestoPage() {
   const blocks     = sections.length > 0 ? sections : (manifestoData as any).blocks;
 
   return (
-    <div className="pt-20 lg:pt-12 pb-48 bg-brand-dark min-h-screen">
+    <div className="pt-28 lg:pt-28 pb-48 bg-brand-dark min-h-screen">
       <div className="max-w-7xl mx-auto px-6">
         <ManifestoHeader title={title} subtitle={subtitle} eyebrow={eyebrow} introLabel={introLabel} introStats={introStats} versionTag={versionTag} />
         <ManifestoContent blocks={blocks as any} />

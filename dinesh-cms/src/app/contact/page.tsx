@@ -10,7 +10,7 @@ export default function ContactPage() {
     const { title, subtitle, description } = contactPageData;
 
     return (
-        <div className="pt-20 lg:pt-12 pb-24 px-6">
+        <div className="pt-28 lg:pt-28 pb-24 px-6">
             <div className="max-w-7xl mx-auto">
                 <ContactForm title={title} subtitle={subtitle} description={description} />
             </div>

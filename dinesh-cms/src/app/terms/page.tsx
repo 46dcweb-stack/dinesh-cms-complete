@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function TermsOfUsePage() {
   return (
-    <div className="pt-20 lg:pt-12 pb-24 font-body">
+    <div className="pt-28 lg:pt-28 pb-24 font-body">
       <div className="px-6">
         <div className="max-w-3xl mx-auto">
           {/* Header */}

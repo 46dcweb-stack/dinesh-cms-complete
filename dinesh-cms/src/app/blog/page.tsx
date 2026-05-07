@@ -23,7 +23,7 @@ export default async function BlogListingPage() {
 
   return (
     <div className="pb-24">
-      <div className="pt-20 lg:pt-12 px-6">
+      <div className="pt-28 lg:pt-28 px-6">
         <div className="max-w-7xl mx-auto">
           <BlogClientWrapper initialPosts={posts as any} initialFeaturedPost={featuredPost as any} />
         </div>

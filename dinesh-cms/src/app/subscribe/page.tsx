@@ -10,7 +10,7 @@ export default function SubscribePage() {
     const { title, subtitle, description } = subscribePageData;
 
     return (
-        <div className="pt-20 lg:pt-12 pb-24 bg-brand-dark min-h-screen">
+        <div className="pt-28 lg:pt-28 pb-24 bg-brand-dark min-h-screen">
             <div className="px-6">
                 <div className="max-w-7xl mx-auto">
                     {/* Header */}

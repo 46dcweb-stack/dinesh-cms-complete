@@ -36,7 +36,7 @@ export default async function AboutPage() {
                                 ? (raw as any).milestones : aboutData.milestones;
 
     return (
-        <div className="pt-20 lg:pt-12 pb-24">
+        <div className="pt-28 lg:pt-28 pb-24">
             <div className="px-6">
                 <div className="max-w-7xl mx-auto">
                     <div className="max-w-3xl mb-24">

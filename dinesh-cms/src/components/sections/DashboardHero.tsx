@@ -19,7 +19,7 @@ import CinematicImage from "@/components/ui/CinematicImage";
 
 export default function DashboardHero() {
     return (
-        <section className="pt-20 lg:pt-12 pb-12 px-6 spotlight-hero">
+        <section className="pt-28 lg:pt-28 pb-12 px-6 spotlight-hero">
             <div className="max-w-[1400px] mx-auto relative z-10">
                 {/* Background Glow */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[500px] bg-[radial-gradient(ellipse_at_center,rgba(255,90,0,0.05)_0%,transparent_70%)] rounded-full pointer-events-none -z-10" />
