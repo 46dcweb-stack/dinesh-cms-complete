@@ -4,7 +4,7 @@ import "./globals.css";
 import CurveLoader from "@/components/ui/CurveLoader";
 import LenisProvider from "@/components/providers/LenisProvider";
 import SiteChrome from "@/components/providers/SiteChrome";
-import { PersonSchema, OrganizationSchema, WebsiteSchema } from "@/components/SEO/JsonLd";
+import { PersonSchema, OrganizationSchema, WebsiteSchema } from "@/components/seo/JsonLd";
 import { getSiteSettings } from "@/lib/firebase-data";
 
 const BASE_URL = "https://dineshkoyyalamudi.com";
