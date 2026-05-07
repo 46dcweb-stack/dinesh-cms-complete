@@ -231,7 +231,7 @@ export default function MediaLibrary() {
                 >
                   <div className="aspect-square bg-white/5 flex items-center justify-center overflow-hidden">
                     {isImage(file) ? (
-                      // eslint-disable-next-line @next/next/no-img-element
+                      
                       <img
                         src={file.url}
                         alt={file.name}
@@ -281,7 +281,7 @@ export default function MediaLibrary() {
             </div>
             <div className="aspect-video bg-white/5 rounded-xl mb-4 flex items-center justify-center overflow-hidden">
               {isImage(selected) ? (
-                // eslint-disable-next-line @next/next/no-img-element
+             
                 <img src={selected.url} alt={selected.name} className="max-w-full max-h-full object-contain" />
               ) : (
                 <FileText size={40} className="text-white/20" />
