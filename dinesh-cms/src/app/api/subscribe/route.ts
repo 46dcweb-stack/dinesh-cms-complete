@@ -1,26 +1,19 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/subscribe
-// 1. Validates consent (required — GDPR)
-// 2. Adds contact to Brevo list
-// 3. Sends welcome email via Brevo transactional API
-// 4. Saves subscriber to Firestore
-// ─────────────────────────────────────────────────────────────────────────────
 import { NextRequest, NextResponse } from "next/server";
 import { initializeApp, getApps, cert } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 
-// ── Firebase Admin init (for server-side Firestore write) ────────────────────
 function getAdminDb() {
   if (getApps().length === 0) {
     const key = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
     if (key) {
-      const sa = JSON.parse(key.replace(/\\n/g, "\n"));
+      // Robustly parse the service account key — handles all encoding variants
+      const cleaned = key
+        .trim()
+        .replace(/\\n/g, "\n");      // convert literal \n to real newlines in private_key
+      const sa = JSON.parse(cleaned);
       initializeApp({ credential: cert(sa) });
     } else {
-      // Try service-account.json in dev
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { readFileSync, existsSync } = require("fs");
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const path = require("path");
       const filePath = path.join(process.cwd(), "service-account.json");
       if (existsSync(filePath)) {
@@ -39,7 +32,6 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { email, name, source, consent } = body;
 
-    // ── Consent required — do nothing if not given ───────────────────────────
     if (!consent) {
       return NextResponse.json({ error: "Consent required" }, { status: 400 });
     }
@@ -47,13 +39,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Valid email required" }, { status: 400 });
     }
 
-    const BREVO_API_KEY = process.env.BREVO_API_KEY;
-    const BREVO_LIST_ID = parseInt(process.env.BREVO_LIST_ID || "1");
+    const BREVO_API_KEY         = (process.env.BREVO_API_KEY || "").trim();
+    const BREVO_LIST_ID         = parseInt(process.env.BREVO_LIST_ID || "1");
     const BREVO_WELCOME_TEMPLATE_ID = parseInt(process.env.BREVO_WELCOME_TEMPLATE_ID || "0");
 
     let brevoSuccess = false;
 
-    // ── Step 1: Add to Brevo contact list ────────────────────────────────────
     if (BREVO_API_KEY) {
       try {
         const contactRes = await fetch("https://api.brevo.com/v3/contacts", {
@@ -64,16 +55,12 @@ export async function POST(req: NextRequest) {
           },
           body: JSON.stringify({
             email,
-            attributes: {
-              FIRSTNAME: name || "",
-              SOURCE: source || "website",
-            },
+            attributes: { FIRSTNAME: name || "", SOURCE: source || "website" },
             listIds: [BREVO_LIST_ID],
-            updateEnabled: true, // update if already exists
+            updateEnabled: true,
           }),
         });
 
-        // 201 = created, 204 = updated (already existed)
         if (contactRes.status === 201 || contactRes.status === 204) {
           brevoSuccess = true;
         } else {
@@ -81,10 +68,9 @@ export async function POST(req: NextRequest) {
           console.error("[Brevo] Add contact failed:", err);
         }
       } catch (e) {
-        console.error("[Brevo] Network error adding contact:", e);
+        console.error("[Brevo] Network error:", e);
       }
 
-      // ── Step 2: Send welcome email via template ───────────────────────────
       if (brevoSuccess && BREVO_WELCOME_TEMPLATE_ID > 0) {
         try {
           await fetch("https://api.brevo.com/v3/smtp/email", {
@@ -104,29 +90,23 @@ export async function POST(req: NextRequest) {
           });
         } catch (e) {
           console.error("[Brevo] Welcome email failed (non-fatal):", e);
-          // Don't fail the whole subscribe if email fails
         }
       }
     }
 
-    // ── Step 3: Save to Firestore (only if consent given — already checked) ─
     try {
       const db = getAdminDb();
-      
-      // Check if already subscribed
       const existing = await db.collection("subscribers")
         .where("email", "==", email)
         .limit(1)
         .get();
 
       if (!existing.empty) {
-        // Reactivate if unsubscribed
         await db.collection("subscribers").doc(existing.docs[0].id).update({
           status: "active",
           updatedAt: FieldValue.serverTimestamp(),
         });
       } else {
-        // New subscriber
         await db.collection("subscribers").add({
           email,
           name: name || "",
@@ -140,7 +120,6 @@ export async function POST(req: NextRequest) {
       }
     } catch (e) {
       console.error("[Firestore] Save subscriber failed:", e);
-      // Still return success if Brevo worked
     }
 
     return NextResponse.json({
