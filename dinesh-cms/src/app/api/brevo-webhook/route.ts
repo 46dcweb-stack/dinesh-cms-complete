@@ -32,58 +32,75 @@ function getAdminDb() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    console.log("[Brevo Webhook]", JSON.stringify(body));
+    console.log("[Brevo Webhook] Event:", body.event, "Email:", body.email);
 
-    const email = body.email || body.EMAIL;
     const event = body.event;
 
-    if (!email) return NextResponse.json({ ok: true });
+    // Handle array or single email
+    const emails: string[] = Array.isArray(body.email)
+      ? body.email
+      : body.email ? [body.email] : [];
+
+    if (emails.length === 0) return NextResponse.json({ ok: true });
 
     const db = getAdminDb();
 
-    if (event === "contact.subscribed" || event === "subscribe") {
-      // Contact confirmed double opt-in
-      const snap = await db.collection("subscribers")
-        .where("email", "==", email).limit(1).get();
+    // All possible confirmed event names from Brevo
+    const isConfirmed = [
+      "contact_subscribed",
+      "contact.subscribed",
+      "subscribe",
+      "list_addition",
+      "added_to_list",
+      "contact_added_to_list",
+      "link_clicked",      // automation tracks link click as confirmation
+      "email_link_clicked",
+    ].includes(event);
 
-      if (!snap.empty) {
-        await db.collection("subscribers").doc(snap.docs[0].id).update({
-          status: "confirmed",
-          confirmedAt: FieldValue.serverTimestamp(),
-          updatedAt: FieldValue.serverTimestamp(),
-        });
-        console.log("[Webhook] Confirmed:", email);
-      } else {
-        // Add if doesn't exist
-        await db.collection("subscribers").add({
-          email, status: "confirmed",
-          source: "brevo-webhook",
-          confirmedAt: FieldValue.serverTimestamp(),
-          createdAt: FieldValue.serverTimestamp(),
-        });
+    // All possible unsubscribed event names
+    const isUnsubscribed = [
+      "contact_unsubscribed",
+      "contact.unsubscribed",
+      "unsubscribe",
+      "list_removal",
+      "hard_bounce",
+      "complaint",
+    ].includes(event);
+
+    for (const email of emails) {
+      if (isConfirmed) {
+        const snap = await db.collection("subscribers")
+          .where("email", "==", email).limit(1).get();
+        if (!snap.empty) {
+          await db.collection("subscribers").doc(snap.docs[0].id).update({
+            status: "confirmed",
+            confirmedAt: FieldValue.serverTimestamp(),
+            updatedAt: FieldValue.serverTimestamp(),
+          });
+          console.log("[Webhook] ✅ Confirmed:", email);
+        }
       }
-    }
 
-    if (event === "contact.unsubscribed" || event === "unsubscribe") {
-      const snap = await db.collection("subscribers")
-        .where("email", "==", email).limit(1).get();
-      if (!snap.empty) {
-        await db.collection("subscribers").doc(snap.docs[0].id).update({
-          status: "unsubscribed",
-          updatedAt: FieldValue.serverTimestamp(),
-        });
-        console.log("[Webhook] Unsubscribed:", email);
+      if (isUnsubscribed) {
+        const snap = await db.collection("subscribers")
+          .where("email", "==", email).limit(1).get();
+        if (!snap.empty) {
+          await db.collection("subscribers").doc(snap.docs[0].id).update({
+            status: "unsubscribed",
+            updatedAt: FieldValue.serverTimestamp(),
+          });
+          console.log("[Webhook] ❌ Unsubscribed:", email);
+        }
       }
     }
 
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[Brevo Webhook] Error:", e);
-    return NextResponse.json({ ok: true }); // Always return 200 to Brevo
+    return NextResponse.json({ ok: true });
   }
 }
 
-// Brevo sends GET to verify webhook URL
 export async function GET() {
   return NextResponse.json({ ok: true });
 }
