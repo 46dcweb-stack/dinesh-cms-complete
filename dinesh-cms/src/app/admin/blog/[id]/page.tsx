@@ -148,11 +148,11 @@ export default function BlogEditor() {
                     rows={3}
                   />
                 </Field>
-                <Field label="Content (HTML)" hint="Full rich text content — supports HTML tags">
+                <Field label="Content" hint="Write in plain text. Use blank lines to separate paragraphs.">
                   <Textarea
                     value={form.content}
                     onChange={e => set("content", e.target.value)}
-                    placeholder="<p>Your article content here...</p>"
+                    placeholder="Write your article content here..."
                     rows={20}
                     className="font-mono text-xs"
                   />

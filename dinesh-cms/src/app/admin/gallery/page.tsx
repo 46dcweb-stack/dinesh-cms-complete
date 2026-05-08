@@ -106,6 +106,29 @@ export default function GalleryAdmin() {
         }
       />
 
+      {/* Page Text Settings */}
+      <Card className="mb-6">
+        <SectionTitle>Page Text</SectionTitle>
+        <div className="space-y-4">
+          <Field label="Eyebrow Label" hint="Small text above the title (e.g. Visual Protocol)">
+            <Input
+              value={pageText.eyebrow}
+              onChange={e => setPageText(p => ({ ...p, eyebrow: e.target.value }))}
+              placeholder="Visual Protocol"
+            />
+          </Field>
+          <Field label="Page Description">
+            <Textarea
+              value={pageText.description}
+              onChange={e => setPageText(p => ({ ...p, description: e.target.value }))}
+              rows={3}
+              placeholder="A curated collection of visual artifacts..."
+            />
+          </Field>
+          <SaveButton loading={savingPage} saved={savedPage} onClick={savePageText} />
+        </div>
+      </Card>
+
       {showForm && (
         <Card className="mb-8">
           <SectionTitle>{editing ? "Edit Image" : "Add Image"}</SectionTitle>
