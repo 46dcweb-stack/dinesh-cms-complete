@@ -229,6 +229,31 @@ export default function AboutAdmin() {
           </div>
         </Card>
 
+        {/* SEO */}
+        <Card>
+          <SectionTitle>SEO — About Page</SectionTitle>
+          <div className="space-y-4">
+            <Field label="SEO Title" hint="Shown in Google search results for /about page">
+              <Input
+                value={(form as any).seoMetaTitle || ""}
+                onChange={e => setField("seoMetaTitle" as any, e.target.value)}
+                placeholder="About Dinesh Koyyalamudi — Founder & Strategic Visionary"
+              />
+            </Field>
+            <Field label="SEO Description" hint="~155 characters. Falls back to Short Bio if empty.">
+              <Textarea
+                value={(form as any).seoMetaDescription || ""}
+                onChange={e => setField("seoMetaDescription" as any, e.target.value)}
+                rows={3}
+                placeholder="The story, values, and founder journey of Dinesh Koyyalamudi..."
+              />
+            </Field>
+          </div>
+          <p className="text-xs text-white/30 mt-3">
+            Leave empty to use Short Bio as SEO description automatically.
+          </p>
+        </Card>
+
         <SaveButton loading={saving} saved={saved} onClick={handleSave} />
       </div>
     </div>

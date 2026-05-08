@@ -19,14 +19,29 @@ export async function generateStaticParams() {
     return all.filter((v, i, a) => a.findIndex(t => t.slug === v.slug) === i);
 }
 
+// WITH THIS:
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     const fbPost = await getBlogBySlug(slug).catch(() => null) as BlogPost | null;
-    const post = fbPost ?? blogPosts.find((p) => p.slug === slug);
+    const post = (fbPost ?? blogPosts.find((p) => p.slug === slug)) as any;
     if (!post) return {};
+    const title       = post.seoMetaTitle       || post.title;
+    const description = post.seoMetaDescription || post.excerpt || "";
+    const ogImage     = post.featuredImage       || "/og-image.jpg";
     return {
-        title: post.title,
-        description: post.excerpt,
+        title,
+        description,
+        alternates: { canonical: post.canonicalUrl || `https://dineshkoyyalamudi.com/blog/${slug}` },
+        openGraph: {
+            type: "article" as const,
+            title,
+            description,
+            publishedTime: post.publishDate,
+            authors: [post.author || "Dinesh Koyyalamudi"],
+            tags: post.tags || [],
+            images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
+        },
+        twitter: { card: "summary_large_image" as const, title, description, images: [ogImage] },
     };
 }
 

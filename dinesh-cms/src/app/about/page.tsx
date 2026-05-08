@@ -6,11 +6,20 @@ import { aboutData } from "@/lib/data";
 
 export const revalidate = 60;
 
-export const metadata = {
-    title: "About",
-    description: "The story, values, and journey of Dinesh Koyyalamudi.",
-};
 
+// ADD THIS INSTEAD:
+export async function generateMetadata() {
+    const fbAbout = await getAboutPage().catch(() => null) as any;
+    const title       = fbAbout?.seoMetaTitle       || "About Dinesh Koyyalamudi — Founder & Strategic Visionary";
+    const description = fbAbout?.seoMetaDescription || fbAbout?.shortBio || "The story, values, and journey of Dinesh Koyyalamudi — Founder of FourSix46.";
+    const ogImage     = fbAbout?.profileImage       || "/og-image.jpg";
+    return {
+        title,
+        description,
+        openGraph: { title, description, url: "https://dineshkoyyalamudi.com/about", images: [{ url: ogImage, width: 1200, height: 630, alt: title }] },
+        twitter: { card: "summary_large_image" as const, title, description, images: [ogImage] },
+    };
+}
 export default async function AboutPage() {
     const [fbAbout, fbTeam] = await Promise.all([
         getAboutPage(),
