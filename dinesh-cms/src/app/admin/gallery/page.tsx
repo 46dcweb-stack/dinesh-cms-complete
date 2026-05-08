@@ -1,16 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
-import { galleryService } from "@/lib/firebase-services";
+import { galleryService, settingsService } from "@/lib/firebase-services";
 import type { GalleryImage } from "@/lib/types";
 import { Plus, Trash2, Pencil } from "lucide-react";
 import {
-  AdminPageHeader, Field, Input, Select, Toggle,
+  AdminPageHeader, Field, Input, Textarea, Select, Toggle,
   SaveButton, ImageUpload, Alert, Card, SectionTitle, StatusBadge,
 } from "../components/ui";
 
 const EMPTY: Omit<GalleryImage, "id"> = {
-  src: "", title: "", category: "Speaking", span: "col-span-1",
-  altText: "", sortOrder: 0, featured: false, status: "active",
+  src: "", title: "", category: "Speaking", span: "col-span-1", altText: "",
+  sortOrder: 0, featured: false, status: "active",
 };
 
 const CATEGORIES = ["Speaking", "Ventures", "Events", "Personal", "Media", "Awards", "Travel"];
@@ -25,8 +25,25 @@ export default function GalleryAdmin() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  const [pageText, setPageText] = useState({ eyebrow: "Visual Protocol", description: "A curated collection of visual artifacts representing our approach to architecture, technology, and the global infrastructures we are building." });
+  const [savingPage, setSavingPage] = useState(false);
+  const [savedPage, setSavedPage] = useState(false);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); loadPageText(); }, []);
+
+  async function loadPageText() {
+    const settings = await settingsService.get() as any;
+    if (settings?.galleryPage) setPageText(settings.galleryPage);
+  }
+
+  async function savePageText() {
+    setSavingPage(true);
+    const current = await settingsService.get() as any || {};
+    await settingsService.save({ ...current, galleryPage: pageText });
+    setSavedPage(true);
+    setTimeout(() => setSavedPage(false), 3000);
+    setSavingPage(false);
+  }
 
   async function load() {
     setLoading(true);
