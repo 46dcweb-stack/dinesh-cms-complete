@@ -39,15 +39,11 @@ export async function POST(req: NextRequest) {
 
     const BREVO_API_KEY = (process.env.BREVO_API_KEY || "").trim();
     const BREVO_LIST_ID = parseInt(process.env.BREVO_LIST_ID || "3");
-    const BREVO_DOI_TEMPLATE_ID = parseInt(process.env.BREVO_WELCOME_TEMPLATE_ID || "2");
-    const REDIRECT_URL = process.env.NEXT_PUBLIC_SITE_URL
-      ? `${process.env.NEXT_PUBLIC_SITE_URL}/subscribe?confirmed=true`
-      : "https://dinesh-cms-complete.vercel.app/subscribe?confirmed=true";
 
     if (BREVO_API_KEY) {
       try {
-        // Use createDoiContact — sends branded confirmation email automatically
-        const doiRes = await fetch("https://api.brevo.com/v3/contacts/doubleOptinConfirmation", {
+        // Add contact to list — Brevo automation will send confirmation email automatically
+        const res = await fetch("https://api.brevo.com/v3/contacts", {
           method: "POST",
           headers: { "Content-Type": "application/json", "api-key": BREVO_API_KEY },
           body: JSON.stringify({
@@ -56,35 +52,19 @@ export async function POST(req: NextRequest) {
               FIRSTNAME: name || "",
               SOURCE: source || "website",
             },
-            includeListIds: [BREVO_LIST_ID],
-            templateId: BREVO_DOI_TEMPLATE_ID,
-            redirectionUrl: REDIRECT_URL,
+            listIds: [BREVO_LIST_ID],
+            updateEnabled: true,
           }),
         });
 
-        const doiText = await doiRes.text();
-        console.log("[Brevo] DOI status:", doiRes.status, doiText);
-
-        if (doiRes.status !== 201 && doiRes.status !== 204) {
-          console.error("[Brevo] DOI failed, falling back to direct add");
-          // Fallback: direct add without DOI
-          await fetch("https://api.brevo.com/v3/contacts", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "api-key": BREVO_API_KEY },
-            body: JSON.stringify({
-              email,
-              attributes: { FIRSTNAME: name || "" },
-              listIds: [BREVO_LIST_ID],
-              updateEnabled: true,
-            }),
-          });
-        }
+        const resText = await res.text();
+        console.log("[Brevo] Add contact status:", res.status, resText);
       } catch (e) {
         console.error("[Brevo] Error:", e);
       }
     }
 
-    // Save to Firebase with "pending" status (becomes "confirmed" after webhook)
+    // Save to Firebase as "pending" — webhook will update to "confirmed"
     try {
       const db = getAdminDb();
       const existing = await db.collection("subscribers")
@@ -100,7 +80,7 @@ export async function POST(req: NextRequest) {
           email,
           name: name || "",
           source: source || "homepage",
-          status: "pending",           // pending until they click confirm
+          status: "pending",
           consentTimestamp: FieldValue.serverTimestamp(),
           consentGiven: true,
           integrationFlag: BREVO_API_KEY ? "brevo" : "none",
@@ -111,7 +91,10 @@ export async function POST(req: NextRequest) {
       console.error("[Firestore] Error:", e);
     }
 
-    return NextResponse.json({ success: true, message: "Check your email to confirm subscription" });
+    return NextResponse.json({
+      success: true,
+      message: "Check your email to confirm subscription",
+    });
 
   } catch (e: unknown) {
     console.error("[subscribe API] Error:", e);
