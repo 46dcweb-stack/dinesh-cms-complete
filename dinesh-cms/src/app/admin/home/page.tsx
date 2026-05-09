@@ -201,47 +201,7 @@ export default function HomeAdmin() {
             <Toggle checked={form.showNewsletter} onChange={v => set("showNewsletter", v)} label="Show Newsletter" />
           </div>
         </Card>
-        {/* Blog Section Headings */}
-<Card>
-  <SectionTitle>Blog Section Headings</SectionTitle>
-  <div className="space-y-4">
-    <Field label="Eyebrow (Thought Pulse)">
-      <Input value={form.blogSectionEyebrow || ""} onChange={e => set("blogSectionEyebrow", e.target.value)} placeholder="Thought Pulse" />
-    </Field>
-    <Field label="Title (What's On My Mind)">
-      <Input value={form.blogSectionTitle || ""} onChange={e => set("blogSectionTitle", e.target.value)} placeholder="What's On My Mind" />
-    </Field>
-  </div>
-</Card>
-
-{/* Manifesto Teaser */}
-<Card>
-  <SectionTitle>Manifesto Teaser Section</SectionTitle>
-  <div className="space-y-4">
-    <Field label="Eyebrow">
-      <Input value={form.manifestoTeaserEyebrow || ""} onChange={e => set("manifestoTeaserEyebrow", e.target.value)} placeholder="The Core Conviction" />
-    </Field>
-    <Field label="Quote">
-      <Textarea value={form.manifestoTeaserQuote || ""} onChange={e => set("manifestoTeaserQuote", e.target.value)} rows={3} placeholder="I believe the best companies are built..." />
-    </Field>
-  </div>
-</Card>
-
-{/* FAQ Section Headings */}
-<Card>
-  <SectionTitle>FAQ Section Headings</SectionTitle>
-  <div className="space-y-4">
-    <Field label="Eyebrow">
-      <Input value={form.faqSectionEyebrow || ""} onChange={e => set("faqSectionEyebrow", e.target.value)} placeholder="Knowledge Base" />
-    </Field>
-    <Field label="Title">
-      <Input value={form.faqSectionTitle || ""} onChange={e => set("faqSectionTitle", e.target.value)} placeholder="Frequently Asked Questions" />
-    </Field>
-    <Field label="Description">
-      <Textarea value={form.faqSectionDescription || ""} onChange={e => set("faqSectionDescription", e.target.value)} rows={2} placeholder="Quick insights into..." />
-    </Field>
-  </div>
-</Card>
+        
 
         {/* Home Page SEO */}
         <Card>

@@ -16,6 +16,7 @@ export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
   const [settings, homeData] = await Promise.all([getSiteSettings(), getHomePage()]) as any[];
+  // Home-page-specific SEO takes priority over global settings
   const title       = fbStr(homeData?.seoTitle,       fbStr(settings?.seoDefaultTitle,       "Dinesh Koyyalamudi | Strategic Visionary & Venture Builder"));
   const description = fbStr(homeData?.seoDescription, fbStr(settings?.seoDefaultDescription, "Official platform of Dinesh Koyyalamudi — Founder building resilient systems and visionary companies."));
   const ogImage     = fbVal(homeData?.seoOgImage,     fbVal(settings?.seoOgImage,            "/og-image.jpg"));
@@ -34,9 +35,11 @@ export default async function Home() {
   const static_home = homePageData as any;
   const home        = (fbHome ?? {}) as any;
 
+  // ── Field-level fallbacks for every home section ─────────────────────────
   const homeData = {
-    ...static_home,
-    ...home,
+    ...static_home,       // start with ALL static defaults
+    ...home,              // overlay Firebase values
+    // Then ensure nested objects also fall back field by field
     personalIntro: {
       quote:    fbStr(home.personalIntro?.quote,    static_home.personalIntro?.quote),
       body:     fbStr(home.personalIntro?.body,     static_home.personalIntro?.body),
@@ -54,9 +57,9 @@ export default async function Home() {
     heroSubtitle: fbStr(home.heroSubtitle, static_home.heroSubtitle),
   };
 
-  const blogs    = fbArr(fbBlogs, blogPosts as any[]);
-  const press    = fbArr(fbPress, []);
-  const ventures = fbVentures.length > 0 ? fbVentures : (static_home.ventures ?? []);
+  const blogs    = fbArr(fbBlogs,    blogPosts as any[]);
+  const press    = fbArr(fbPress,    []);
+  const ventures = fbArr(fbVentures, static_home.ventures ?? []) as Venture[];
 
   const faqItems = fbFaq.length > 0
     ? fbFaq.map((item: any) => ({ q: item.question, a: item.answer }))
@@ -76,30 +79,12 @@ export default async function Home() {
       <HomeHero data={homeData} />
       <PersonalIntro data={homeData.personalIntro} />
       <EthosSection data={homeData.ethos} />
-      {show.ventures && <AdvancedVentures data={ventures as any[]} />}
-      {show.blog && (
-        <HorizontalNewsroom
-          posts={blogs.slice(0, 6) as any}
-          eyebrow={homeData.blogSectionEyebrow}
-          title={homeData.blogSectionTitle}
-        />
-      )}
-      {show.press && <PressLogos items={press as any[]} />}
-      {show.manifestoTeaser && (
-        <ManifestoTeaser
-          eyebrow={homeData.manifestoTeaserEyebrow}
-          quote={homeData.manifestoTeaserQuote}
-        />
-      )}
-      {show.faq && (
-        <FAQSection
-          items={faqItems.slice(0, 4)}
-          eyebrow={homeData.faqSectionEyebrow}
-          title={homeData.faqSectionTitle}
-          description={homeData.faqSectionDescription}
-        />
-      )}
-      {show.newsletter && <Newsletter />}
+      {show.ventures        && <AdvancedVentures data={ventures} />}
+      {show.blog            && <HorizontalNewsroom posts={blogs.slice(0, 6) as any} />}
+      {show.press           && <PressLogos items={press as any[]} />}
+      {show.manifestoTeaser && <ManifestoTeaser />}
+      {show.faq             && <FAQSection items={faqItems.slice(0, 4)} />}
+      {show.newsletter      && <Newsletter />}
     </div>
   );
 }

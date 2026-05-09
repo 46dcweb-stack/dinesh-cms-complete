@@ -119,6 +119,7 @@ export interface AboutPage {
 
 // ── HOME PAGE ─────────────────────────────────────────────────────────────────
 export interface HomePage {
+  
   id?: string;
   heroTitle: string;
   heroName: string;
@@ -290,3 +291,4 @@ export interface TeamMember {
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 }
+
