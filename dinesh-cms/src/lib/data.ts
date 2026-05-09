@@ -472,7 +472,7 @@ export const pressPageData = {
 
 export const galleryPageData = {
   visualProtocol: "Visual Protocol",
-  title: "Cinematic Ventures.",
+  title: "Gallery",
   description:
     "A curated collection of visual artifacts representing our approach to architecture, technology, and the global infrastructures we are building.",
 };
