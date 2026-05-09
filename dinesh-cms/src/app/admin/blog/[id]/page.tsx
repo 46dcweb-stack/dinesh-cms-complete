@@ -48,9 +48,10 @@ export default function BlogEditor() {
   }, [id, isNew]);
 
   function set(key: keyof typeof form, val: any) {
-    setForm(f => ({ ...f, [key]: val }));
     if (key === "title" && isNew) {
       setForm(f => ({ ...f, title: val, slug: slugify(val) }));
+    } else {
+      setForm(f => ({ ...f, [key]: val }));
     }
     setSaved(false);
   }
@@ -78,6 +79,10 @@ export default function BlogEditor() {
     setSaving(false);
   }
 
+  function handleSaveClick() {
+    handleSubmit({ preventDefault: () => {} } as FormEvent);
+  }
+
   async function handleDelete() {
     await blogService.delete(id);
     router.replace("/admin/blog");
@@ -100,9 +105,7 @@ export default function BlogEditor() {
         subtitle={isNew ? "Create a new thought leadership article" : `Editing: ${form.title}`}
         action={
           <div className="flex items-center gap-3">
-            {!isNew && (
-              <DeleteButton onClick={handleDelete} />
-            )}
+            {!isNew && <DeleteButton onClick={handleDelete} />}
             <select
               value={form.status}
               onChange={e => set("status", e.target.value)}
@@ -112,7 +115,7 @@ export default function BlogEditor() {
               <option value="published">Published</option>
               <option value="archived">Archived</option>
             </select>
-            <SaveButton loading={saving} saved={saved} onClick={() => handleSubmit({ preventDefault: () => {} } as any)} />
+            <SaveButton loading={saving} saved={saved} onClick={handleSaveClick} />
           </div>
         }
       />
@@ -121,6 +124,7 @@ export default function BlogEditor() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             <Card>
@@ -152,11 +156,7 @@ export default function BlogEditor() {
                   <Textarea
                     value={form.content}
                     onChange={e => set("content", e.target.value)}
-                    placeholder={"Write in plain text...
-
-Blank lines become new paragraphs.
-
-OR paste HTML: <h2>Heading</h2><p>Paragraph</p><ul><li>Item</li></ul>"}
+                    placeholder={"Write in plain text...\n\nBlank lines become new paragraphs.\n\nOR paste HTML:\n<h2>Heading</h2>\n<p>Paragraph</p>\n<ul><li>Item</li></ul>"}
                     rows={20}
                     className="font-mono text-xs"
                   />
@@ -167,10 +167,10 @@ OR paste HTML: <h2>Heading</h2><p>Paragraph</p><ul><li>Item</li></ul>"}
             <Card>
               <SectionTitle>SEO</SectionTitle>
               <div className="space-y-4">
-                <Field label="SEO Meta Title">
+                <Field label="SEO Meta Title" hint="Overrides page title in Google for this post">
                   <Input value={form.seoMetaTitle || ""} onChange={e => set("seoMetaTitle", e.target.value)} placeholder="Overrides page title for SEO" />
                 </Field>
-                <Field label="SEO Meta Description">
+                <Field label="SEO Meta Description" hint="155 characters max — shown in Google results">
                   <Textarea value={form.seoMetaDescription || ""} onChange={e => set("seoMetaDescription", e.target.value)} rows={2} placeholder="155 characters max" />
                 </Field>
                 <Field label="Canonical URL" hint="Optional — for republished content">
@@ -233,6 +233,7 @@ OR paste HTML: <h2>Heading</h2><p>Paragraph</p><ul><li>Item</li></ul>"}
 
             <SaveButton loading={saving} saved={saved} />
           </div>
+
         </div>
       </form>
     </div>
