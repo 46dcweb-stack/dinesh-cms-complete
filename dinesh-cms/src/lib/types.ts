@@ -82,6 +82,9 @@ export interface ManifestoMeta {
   introLabel: string;
   versionTag: string;
   introStats: { value: string; label: string }[];
+  seoMetaTitle?: string;
+  seoMetaDescription?: string;
+  seoOgImage?: string;
   updatedAt?: Timestamp;
 }
 
@@ -256,12 +259,16 @@ export interface AuditLog {
 
 // ── PRESS PAGE META ────────────────────────────────────────────────────────────
 export interface PressPageMeta {
+  id?: string;
   title: string;
   subtitle: string;
   description: string;
   heroBackground: string;
   mediaKitLabel: string;
   mediaKitUrl: string;
+  seoMetaTitle?: string;
+  seoMetaDescription?: string;
+  seoOgImage?: string;
   updatedAt?: Timestamp;
 }
 

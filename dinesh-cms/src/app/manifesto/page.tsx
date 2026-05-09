@@ -8,13 +8,27 @@ export const revalidate = 60;
 
 export async function generateMetadata() {
   const fbManifesto = await getManifesto();
-  const meta = fbManifesto.meta as any;
-  const title       = meta?.seoTitle       || "Manifesto | Dinesh Koyyalamudi";
-  const description = meta?.seoDescription || "The core conviction and blueprint of Dinesh Koyyalamudi.";
-  const ogImage     = meta?.seoOgImage     || "/og-image.jpg";
+  const meta = fbManifesto.meta as any ?? null;
+  
+  const title = meta?.seoMetaTitle || meta?.title || "My Manifesto — A Blueprint for Resilient Building";
+  const description = meta?.seoMetaDescription || meta?.subtitle || "The architecture of intent, infrastructure for the future.";
+  const ogImage = meta?.seoOgImage || "/og-image.jpg";
+  
   return {
-    title, description,
-    openGraph: { title, description, images: [{ url: ogImage }] },
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: "https://dineshkoyyalamudi.com/manifesto",
+      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title,
+      description,
+      images: [ogImage],
+    },
   };
 }
 

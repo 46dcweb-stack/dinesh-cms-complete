@@ -55,3 +55,6 @@ export async function getSiteSettings() {
 export async function getTeamMembers() {
   try { const db = getAdminDb(); const s = await db.collection("teamMembers").where("status","==","active").orderBy("sortOrder","asc").get(); return s.docs.map(d => serialize({ id: d.id, ...d.data() })); } catch (e) { console.error("[getTeamMembers]", e); return []; }
 }
+export async function getPressPageMeta() {
+  try { const db = getAdminDb(); const s = await db.collection("pressPageMeta").doc("main").get(); return s.exists ? serialize(s.data()) : null; } catch (e) { console.error("[getPressPageMeta]", e); return null; }
+}

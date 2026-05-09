@@ -153,6 +153,38 @@ export default function ManifestoAdmin() {
         </div>
       </Card>
 
+      {/* SEO Section */}
+      <Card className="mb-8">
+        <SectionTitle>SEO — Manifesto Page</SectionTitle>
+        <div className="space-y-4">
+          <Field label="SEO Title" hint="Shown in Google search results for /manifesto page">
+            <Input
+              value={(meta as any).seoMetaTitle || ""}
+              onChange={e => setMeta(m => ({ ...m, seoMetaTitle: e.target.value } as any))}
+              placeholder="My Manifesto — A Blueprint for Resilient Building"
+            />
+          </Field>
+          <Field label="SEO Description" hint="~155 characters. Falls back to Subtitle if empty.">
+            <Textarea
+              value={(meta as any).seoMetaDescription || ""}
+              onChange={e => setMeta(m => ({ ...m, seoMetaDescription: e.target.value } as any))}
+              rows={3}
+              placeholder="The architecture of intent, infrastructure for the future..."
+            />
+          </Field>
+          <Field label="OG Image URL" hint="Open Graph image for social sharing (1200x630px recommended)">
+            <ImageUpload
+              value={(meta as any).seoOgImage || ""}
+              onChange={v => setMeta(m => ({ ...m, seoOgImage: v } as any))}
+              folder="seo"
+            />
+          </Field>
+        </div>
+        <p className="text-xs text-white/30 mt-3">
+          Leave empty to use default SEO values. OG image is used for social media previews.
+        </p>
+      </Card>
+
       {/* Sections */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-mono uppercase tracking-widest text-white/40">

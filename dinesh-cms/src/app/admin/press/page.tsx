@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { pressService, pressPageService } from "@/lib/firebase-services";
-import type { PressMention } from "@/lib/types";
+import type { PressMention, PressPageMeta } from "@/lib/types";
 import { Plus, Pencil, Trash2, Star } from "lucide-react";
 import {
   AdminPageHeader, Field, Input, Textarea, Select, Toggle,
@@ -28,11 +28,34 @@ export default function PressAdmin() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
 
+  // Press Page Meta state
+  const [pageMeta, setPageMeta] = useState<Omit<PressPageMeta, "id">>({
+    title: "Press",
+    subtitle: "Media Coverage",
+    description: "Media mentions, features, and press coverage",
+    heroBackground: "",
+    mediaKitLabel: "Download Media Kit",
+    mediaKitUrl: "",
+    seoMetaTitle: "",
+    seoMetaDescription: "",
+    seoOgImage: "",
+  });
+  const [savingMeta, setSavingMeta] = useState(false);
+  const [metaSaved, setMetaSaved] = useState(false);
+
   useEffect(() => { load(); }, []);
 
   async function load() {
     setLoading(true);
-    setItems(await pressService.getAll());
+    const [pressItems, meta] = await Promise.all([
+      pressService.getAll(),
+      pressPageService.get(),
+    ]);
+    setItems(pressItems);
+    if (meta) {
+      const { id: _, ...rest } = meta;
+      setPageMeta(rest);
+    }
     setLoading(false);
   }
 
@@ -79,6 +102,19 @@ export default function PressAdmin() {
     load();
   }
 
+  async function handleSavePageMeta() {
+    setSavingMeta(true);
+    setError("");
+    try {
+      await pressPageService.save(pageMeta as PressPageMeta);
+      setMetaSaved(true);
+      setTimeout(() => setMetaSaved(false), 3000);
+    } catch (err: any) {
+      setError(err.message);
+    }
+    setSavingMeta(false);
+  }
+
   return (
     <div className="p-8">
       <AdminPageHeader
@@ -92,6 +128,102 @@ export default function PressAdmin() {
           </button>
         }
       />
+
+      {/* Press Page Meta & SEO */}
+      <Card className="mb-8">
+        <SectionTitle>Press Page Settings & SEO</SectionTitle>
+        {error && <Alert message={error} className="mb-4" />}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Field label="Page Title">
+            <Input
+              value={pageMeta.title}
+              onChange={e => setPageMeta(m => ({ ...m, title: e.target.value }))}
+              placeholder="Press"
+            />
+          </Field>
+          <Field label="Subtitle">
+            <Input
+              value={pageMeta.subtitle}
+              onChange={e => setPageMeta(m => ({ ...m, subtitle: e.target.value }))}
+              placeholder="Media Coverage"
+            />
+          </Field>
+          <div className="md:col-span-2">
+            <Field label="Description">
+              <Textarea
+                value={pageMeta.description}
+                onChange={e => setPageMeta(m => ({ ...m, description: e.target.value }))}
+                rows={2}
+                placeholder="Media mentions, features, and press coverage..."
+              />
+            </Field>
+          </div>
+          <Field label="Media Kit Label">
+            <Input
+              value={pageMeta.mediaKitLabel}
+              onChange={e => setPageMeta(m => ({ ...m, mediaKitLabel: e.target.value }))}
+              placeholder="Download Media Kit"
+            />
+          </Field>
+          <Field label="Media Kit URL">
+            <Input
+              value={pageMeta.mediaKitUrl}
+              onChange={e => setPageMeta(m => ({ ...m, mediaKitUrl: e.target.value }))}
+              placeholder="https://..."
+            />
+          </Field>
+        </div>
+
+        <div className="mt-6 pt-6 border-t border-white/10">
+          <h3 className="text-xs font-mono uppercase tracking-widest text-white/60 mb-4">SEO Settings</h3>
+          <div className="space-y-4">
+            <Field label="SEO Title" hint="Shown in Google search results for /press page">
+              <Input
+                value={pageMeta.seoMetaTitle || ""}
+                onChange={e => setPageMeta(m => ({ ...m, seoMetaTitle: e.target.value }))}
+                placeholder="Press & Media | Dinesh Koyyalamudi"
+              />
+            </Field>
+            <Field label="SEO Description" hint="~155 characters. Falls back to Description if empty.">
+              <Textarea
+                value={pageMeta.seoMetaDescription || ""}
+                onChange={e => setPageMeta(m => ({ ...m, seoMetaDescription: e.target.value }))}
+                rows={3}
+                placeholder="Media mentions, features, and press coverage..."
+              />
+            </Field>
+            <Field label="OG Image URL" hint="Open Graph image for social sharing (1200x630px recommended)">
+              <ImageUpload
+                value={pageMeta.seoOgImage || ""}
+                onChange={v => setPageMeta(m => ({ ...m, seoOgImage: v }))}
+                folder="seo"
+              />
+            </Field>
+          </div>
+          <p className="text-xs text-white/30 mt-3">
+            Leave empty to use default SEO values. OG image is used for social media previews.
+          </p>
+        </div>
+
+        <div className="mt-6">
+          <SaveButton
+            loading={savingMeta}
+            saved={metaSaved}
+            onClick={handleSavePageMeta}
+            label="Save Page Settings"
+          />
+        </div>
+      </Card>
+
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-sm font-mono uppercase tracking-widest text-white/40">Press Items</h2>
+        <button
+          onClick={openNew}
+          className="flex items-center gap-2 bg-[#E22D2D] hover:bg-[#c91f1f] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
+        >
+          <Plus size={14} /> Add Press Item
+        </button>
+      </div>
 
       {showForm && (
         <Card className="mb-8">
@@ -137,12 +269,8 @@ export default function PressAdmin() {
             <Field label="Cover / Thumbnail Image">
               <ImageUpload value={form.thumbnail || ""} onChange={v => set("thumbnail", v)} folder="press" />
             </Field>
-            <Field label="Downloadable Asset" hint="Upload press kit PDF, screenshots, or images">
-              <ImageUpload
-                value={(form as any).downloadableAsset || ""}
-                onChange={v => set("downloadableAsset" as any, v)}
-                folder="press"
-              />
+            <Field label="Downloadable Asset URL" hint="Press kit, PDF, screenshots">
+              <Input value={form.downloadableAsset || ""} onChange={e => set("downloadableAsset", e.target.value)} placeholder="https://..." />
             </Field>
             <Field label="Status">
               <Select value={form.status} onChange={e => set("status", e.target.value)}>

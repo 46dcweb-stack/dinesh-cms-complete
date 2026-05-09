@@ -1,34 +1,40 @@
 import PressClientWrapper from "@/components/press/PressClientWrapper";
 import PressHeader from "@/components/press/PressHeader";
 import ContactForm from "@/components/sections/ContactForm";
-import { getPublishedPress, getSiteSettings } from "@/lib/firebase-data";
+import { getPublishedPress, getPressPageMeta } from "@/lib/firebase-data";
 import { pressMentions, pressPageData } from "@/lib/data";
 
 export const revalidate = 60;
 
 export async function generateMetadata() {
-  const s = await getSiteSettings() as any;
-  const title       = s?.pressSeoTitle       || "Press & Media | Dinesh Koyyalamudi";
-  const description = s?.pressSeoDescription || "Media mentions, features, and press coverage of Dinesh Koyyalamudi.";
-  const ogImage     = s?.pressSeoOgImage     || "/og-image.jpg";
+  const fbMeta = await getPressPageMeta().catch(() => null) as any;
+  
+  const title = fbMeta?.seoMetaTitle || "Press & Media | Dinesh Koyyalamudi";
+  const description = fbMeta?.seoMetaDescription || fbMeta?.description || "Media mentions, features, and press coverage of Dinesh Koyyalamudi and FourSix46.";
+  const ogImage = fbMeta?.seoOgImage || "/og-image.jpg";
+  
   return {
-    title, description,
-    openGraph: { title, description, images: [{ url: ogImage }], type: "website" as const },
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: "https://dineshkoyyalamudi.com/press",
+      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title,
+      description,
+      images: [ogImage],
+    },
   };
 }
 
 export default async function PressPage() {
-  const [fbMentions, settings] = await Promise.all([
-    getPublishedPress(),
-    getSiteSettings(),
-  ]);
-
-  const mentions   = fbMentions.length > 0 ? fbMentions : (pressMentions as any[]);
-  const s          = settings as any;
-
-  // Media kit from Firebase Site Settings — falls back to static data
-  const mediaKitUrl   = s?.mediaKitUrl   || (pressPageData as any).mediaKitUrl   || "";
-  const mediaKitLabel = s?.mediaKitLabel || (pressPageData as any).mediaKitLabel || "Download Media Kit";
+  const fbMentions = await getPublishedPress();
+  const mentions = fbMentions.length > 0 ? fbMentions : (pressMentions as any[]);
 
   return (
     <div className="pb-24">
@@ -44,20 +50,9 @@ export default async function PressPage() {
           <p className="text-text-secondary mb-10 max-w-xl mx-auto text-lg">
             Access hi-res photos, official bios, and brand assets for speaking engagements and press coverage.
           </p>
-          {mediaKitUrl ? (
-            <a
-              href={mediaKitUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-premium px-12"
-            >
-              {mediaKitLabel}
-            </a>
-          ) : (
-            <span className="opacity-40 btn-premium px-12 cursor-default">
-              {mediaKitLabel}
-            </span>
-          )}
+          <a href={(pressPageData as any).mediaKitUrl} target="_blank" rel="noopener noreferrer" className="btn-premium px-12">
+            {(pressPageData as any).mediaKitLabel}
+          </a>
         </div>
       </div>
 
