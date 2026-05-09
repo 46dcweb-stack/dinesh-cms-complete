@@ -23,13 +23,35 @@ function stripUndefined<T extends Record<string, any>>(obj: T): Partial<T> {
 }
 
 // ── AUDIT LOGGING ─────────────────────────────────────────────────────────────
+// Fetch a document snapshot before update — stored in audit log for revert
+async function fetchSnapshot(col: string, id: string): Promise<Record<string, any> | undefined> {
+  try {
+    const snap = await getDoc(doc(db, col, id));
+    if (!snap.exists()) return undefined;
+    // Remove Timestamp objects — replace with ISO strings so they can be restored
+    const data = snap.data();
+    const clean: Record<string, any> = {};
+    for (const [k, v] of Object.entries(data)) {
+      if (v && typeof v === "object" && typeof (v as any).toDate === "function") {
+        clean[k] = (v as any).toDate().toISOString();
+      } else if (v && typeof v === "object" && "seconds" in v && "nanoseconds" in v) {
+        clean[k] = new Date((v as any).seconds * 1000).toISOString();
+      } else {
+        clean[k] = v;
+      }
+    }
+    return clean;
+  } catch { return undefined; }
+}
+
 async function writeAudit(
   col: string, docId: string,
-  action: AuditLog["action"], summary: string, fieldChanged?: string
+  action: AuditLog["action"], summary: string,
+  fieldChanged?: string,
+  previousData?: Record<string, any>
 ) {
   const user = auth.currentUser;
   if (!user) return;
-  // Firestore rejects undefined values — build object conditionally
   const logEntry: Record<string, any> = {
     userEmail: user.email ?? "",
     userId: user.uid,
@@ -39,9 +61,8 @@ async function writeAudit(
     summary,
     createdAt: serverTimestamp(),
   };
-  if (fieldChanged !== undefined && fieldChanged !== "") {
-    logEntry.fieldChanged = fieldChanged;
-  }
+  if (fieldChanged !== undefined && fieldChanged !== "") logEntry.fieldChanged = fieldChanged;
+  if (previousData !== undefined) logEntry.previousData = previousData;
   await addDoc(collection(db, "auditLogs"), logEntry);
 }
 
@@ -208,8 +229,9 @@ export const faqService = {
   },
 
   async update(id: string, data: Partial<FaqItem>): Promise<void> {
+    const prev = await fetchSnapshot("faqItems", id);
     await updateDoc(doc(db, "faqItems", id), { ...data, updatedAt: serverTimestamp() });
-    await writeAudit("faqItems", id, "update", `Updated FAQ ID: ${id}`);
+    await writeAudit("faqItems", id, "update", `Updated FAQ ID: ${id}`, undefined, prev);
   },
 
   async delete(id: string): Promise<void> {
@@ -227,8 +249,9 @@ export const aboutService = {
   },
 
   async save(data: Omit<AboutPage, "id">): Promise<void> {
+    const prev = await fetchSnapshot("aboutPage", "main");
     await setDoc(doc(db, "aboutPage", "main"), { ...data, updatedAt: serverTimestamp() });
-    await writeAudit("aboutPage", "main", "update", "Updated About page");
+    await writeAudit("aboutPage", "main", "update", "Updated About page", undefined, prev);
   },
 };
 
@@ -241,8 +264,9 @@ export const homeService = {
   },
 
   async save(data: Omit<HomePage, "id">): Promise<void> {
+    const prev = await fetchSnapshot("homePage", "main");
     await setDoc(doc(db, "homePage", "main"), { ...data, updatedAt: serverTimestamp() });
-    await writeAudit("homePage", "main", "update", "Updated Home page");
+    await writeAudit("homePage", "main", "update", "Updated Home page", undefined, prev);
   },
 };
 
@@ -370,44 +394,39 @@ export const contactService = {
 
 // ── AUDIT LOGS ────────────────────────────────────────────────────────────────
 export const auditService = {
-  async getRecent(limitN = 50): Promise<AuditLog[]> {
-    const q = query(
-      collection(db, "auditLogs"),
-      orderBy("createdAt", "desc"),
-      limit(limitN)
-    );
-
+  async getRecent(limitN = 100): Promise<AuditLog[]> {
+    const q = query(collection(db, "auditLogs"), orderBy("createdAt", "desc"), limit(limitN));
     const snap = await getDocs(q);
-
-    return snap.docs.map(
-      d => ({ id: d.id, ...d.data() } as AuditLog)
-    );
+    return snap.docs.map(d => ({ id: d.id, ...d.data() } as AuditLog));
   },
 
-  async revert(log: any): Promise<void> {
-    if (!log.previousData) {
-      throw new Error("No previous state available");
+  // Revert: restores the document to the state captured before the logged update
+  async revert(log: AuditLog & { previousData?: Record<string, any> }): Promise<void> {
+    if (!log.previousData || Object.keys(log.previousData).length === 0) {
+      throw new Error("No snapshot available for this entry. Only actions made after revert support was added can be reverted.");
     }
+    const user = auth.currentUser;
+    if (!user) throw new Error("Not authenticated");
 
-    const targetRef = doc(db, log.collection, log.docId);
+    // Write the previous snapshot back to Firestore
+    await setDoc(
+      doc(db, log.collection, log.docId),
+      { ...log.previousData, updatedAt: serverTimestamp() },
+      { merge: true }
+    );
 
-    // restore previous document state
-    await setDoc(targetRef, {
-      ...log.previousData,
-      updatedAt: serverTimestamp(),
-    });
-
-    // create revert audit log
-    await addDoc(collection(db, "auditLogs"), {
-      action: "revert",
+    // Log the revert itself
+    const revertEntry: Record<string, any> = {
+      userEmail: user.email ?? "",
+      userId: user.uid,
       collection: log.collection,
       docId: log.docId,
-      summary: `Reverted ${log.collection}/${log.docId}`,
-      previousData: null,
+      action: "update",
+      summary: `↩ Reverted: "${log.summary}"`,
+      fieldChanged: "revert",
       createdAt: serverTimestamp(),
-      userEmail: auth.currentUser?.email || "",
-      userId: auth.currentUser?.uid || "",
-    });
+    };
+    await addDoc(collection(db, "auditLogs"), revertEntry);
   },
 };
 
