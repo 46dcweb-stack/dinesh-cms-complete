@@ -15,7 +15,14 @@ interface Post {
     publishDate?: any;
 }
 
-export default function HorizontalNewsroom({ posts }: { posts: Post[] }) {
+interface HorizontalNewsroomProps {
+    posts: Post[];
+    eyebrow?: string;
+    heading?: string;
+    headingItalic?: string;
+}
+
+export default function HorizontalNewsroom({ posts, eyebrow, heading, headingItalic }: HorizontalNewsroomProps) {
     const targetRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: targetRef,
@@ -28,9 +35,9 @@ export default function HorizontalNewsroom({ posts }: { posts: Post[] }) {
         <section ref={targetRef} className="relative h-[300vh] bg-brand-dark/20">
             <div className="sticky top-0 h-screen flex items-center overflow-hidden">
                 <div className="absolute top-10 md:top-20 left-0 w-full md:w-auto md:left-20 max-w-2xl px-6 text-center md:text-left z-20">
-                    <span className="text-brand-primary font-medium tracking-[0.2em] text-[10px] md:text-xs uppercase block mb-4 font-mono">Thought Pulse</span>
+                    <span className="text-brand-primary font-medium tracking-[0.2em] text-[10px] md:text-xs uppercase block mb-4 font-mono">{eyebrow || "Thought Pulse"}</span>
                     <h2 className="text-3xl md:text-6xl font-display text-white leading-tight">
-                        What's On My <span className="text-gradient italic">Mind</span>
+                        {heading || "What's On My"} <span className="text-gradient italic">{headingItalic || "Mind"}</span>
                     </h2>
                 </div>
 

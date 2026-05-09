@@ -197,6 +197,12 @@ export default function HomeHero({ data }: HomeHeroProps) {
   const secondaryCtaUrl = data?.secondaryCtaUrl || "";
   const featuredQuoteText = data?.featuredQuoteText || "";
   const featuredQuoteSource = data?.featuredQuoteSource || "";
+  const stat1Value = data?.stat1Value || "600+";
+  const stat1Label = data?.stat1Label || "Projects Done";
+  const stat2Value = data?.stat2Value || "50+";
+  const stat2Label = data?.stat2Label || "Brand Partnerships";
+  const stat3Value = data?.stat3Value || "12+";
+  const stat3Label = data?.stat3Label || "Years Experience";
   const featuredBlog = data?.featuredBlog;
   const featuredPress = data?.featuredPress;
 
@@ -359,26 +365,26 @@ export default function HomeHero({ data }: HomeHeroProps) {
             <div className="grid grid-cols-3 gap-8 border-t border-white/5 pt-10">
               <div>
                 <h3 className="text-3xl md:text-4xl font-bold text-white mb-1">
-                  600+
+                  {stat1Value}
                 </h3>
                 <p className="text-zinc-500 text-sm uppercase tracking-wide font-medium">
-                  Projects Done
+                  {stat1Label}
                 </p>
               </div>
               <div>
                 <h3 className="text-3xl md:text-4xl font-bold text-white mb-1">
-                  50+
+                  {stat2Value}
                 </h3>
                 <p className="text-zinc-500 text-sm uppercase tracking-wide font-medium">
-                  Brand Partnerships
+                  {stat2Label}
                 </p>
               </div>
               <div>
                 <h3 className="text-3xl md:text-4xl font-bold text-white mb-1">
-                  12+
+                  {stat3Value}
                 </h3>
                 <p className="text-zinc-500 text-sm uppercase tracking-wide font-medium">
-                  Years Experience
+                  {stat3Label}
                 </p>
               </div>
             </div>

@@ -25,6 +25,20 @@ const DEFAULT: Omit<HomePage, "id"> = {
   venturesEyebrow: "Portfolio Showcase",
   venturesHeading: "Building the",
   venturesHeadingItalic: "Invisible",
+  stat1Value: "600+", stat1Label: "Projects Done",
+  stat2Value: "50+", stat2Label: "Brand Partnerships",
+  stat3Value: "12+", stat3Label: "Years Experience",
+  manifestoTeaserEyebrow: "The Core Conviction",
+  manifestoTeaserQuote: "I believe the best companies are built not just on ideas, but on conviction.",
+  manifestoTeaserCtaLabel: "Read My Manifesto",
+  manifestoTeaserCtaUrl: "/manifesto",
+  faqSectionEyebrow: "Knowledge Base",
+  faqSectionHeading: "Frequently Asked",
+  faqSectionHeadingItalic: "Questions.",
+  faqSectionSubtext: "Quick insights into the architecture, vision, and operations of our venture studio.",
+  blogSectionEyebrow: "Thought Pulse",
+  blogSectionHeading: "What's On My",
+  blogSectionHeadingItalic: "Mind",
   showVentures: true, showBlog: true, showPress: true,
   showManifestoTeaser: true, showFaq: true, showNewsletter: true,
   seoTitle: "", seoDescription: "", seoOgImage: "",
@@ -170,6 +184,92 @@ export default function HomeAdmin() {
             <button onClick={() => set("ethos", { ...form.ethos, principles: [...form.ethos.principles, { id: `0${form.ethos.principles.length + 1}`, label: "", title: "", description: "", color: "#E22D2D" }] })}
               className="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors"
             ><Plus size={14} /> Add Principle</button>
+          </div>
+        </Card>
+
+        {/* Hero Stats */}
+        <Card>
+          <SectionTitle>Hero Stats</SectionTitle>
+          <p className="text-xs text-white/40 mb-4">The three numbers displayed below the hero (e.g. 600+ Projects Done).</p>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Stat 1 — Value">
+              <Input value={(form as any).stat1Value || ""} onChange={e => set("stat1Value" as any, e.target.value)} placeholder="600+" />
+            </Field>
+            <Field label="Stat 1 — Label">
+              <Input value={(form as any).stat1Label || ""} onChange={e => set("stat1Label" as any, e.target.value)} placeholder="Projects Done" />
+            </Field>
+            <Field label="Stat 2 — Value">
+              <Input value={(form as any).stat2Value || ""} onChange={e => set("stat2Value" as any, e.target.value)} placeholder="50+" />
+            </Field>
+            <Field label="Stat 2 — Label">
+              <Input value={(form as any).stat2Label || ""} onChange={e => set("stat2Label" as any, e.target.value)} placeholder="Brand Partnerships" />
+            </Field>
+            <Field label="Stat 3 — Value">
+              <Input value={(form as any).stat3Value || ""} onChange={e => set("stat3Value" as any, e.target.value)} placeholder="12+" />
+            </Field>
+            <Field label="Stat 3 — Label">
+              <Input value={(form as any).stat3Label || ""} onChange={e => set("stat3Label" as any, e.target.value)} placeholder="Years Experience" />
+            </Field>
+          </div>
+        </Card>
+
+        {/* Manifesto Teaser */}
+        <Card>
+          <SectionTitle>Manifesto Teaser Section</SectionTitle>
+          <div className="space-y-3">
+            <Field label="Eyebrow Label" hint="Small uppercase label e.g. The Core Conviction">
+              <Input value={(form as any).manifestoTeaserEyebrow || ""} onChange={e => set("manifestoTeaserEyebrow" as any, e.target.value)} placeholder="The Core Conviction" />
+            </Field>
+            <Field label="Quote / Headline" hint="The large italic quote displayed in the card">
+              <Textarea value={(form as any).manifestoTeaserQuote || ""} onChange={e => set("manifestoTeaserQuote" as any, e.target.value)} rows={3} placeholder="I believe the best companies are built not just on ideas, but on conviction." />
+            </Field>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="CTA Button Label">
+                <Input value={(form as any).manifestoTeaserCtaLabel || ""} onChange={e => set("manifestoTeaserCtaLabel" as any, e.target.value)} placeholder="Read My Manifesto" />
+              </Field>
+              <Field label="CTA Button URL">
+                <Input value={(form as any).manifestoTeaserCtaUrl || ""} onChange={e => set("manifestoTeaserCtaUrl" as any, e.target.value)} placeholder="/manifesto" />
+              </Field>
+            </div>
+          </div>
+        </Card>
+
+        {/* FAQ Section (homepage preview) */}
+        <Card>
+          <SectionTitle>FAQ Section (Homepage Preview)</SectionTitle>
+          <div className="space-y-3">
+            <Field label="Eyebrow Label" hint="Small uppercase label e.g. Knowledge Base">
+              <Input value={(form as any).faqSectionEyebrow || ""} onChange={e => set("faqSectionEyebrow" as any, e.target.value)} placeholder="Knowledge Base" />
+            </Field>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Heading" hint="Main heading text e.g. Frequently Asked">
+                <Input value={(form as any).faqSectionHeading || ""} onChange={e => set("faqSectionHeading" as any, e.target.value)} placeholder="Frequently Asked" />
+              </Field>
+              <Field label="Heading Italic Part" hint="Styled part e.g. Questions.">
+                <Input value={(form as any).faqSectionHeadingItalic || ""} onChange={e => set("faqSectionHeadingItalic" as any, e.target.value)} placeholder="Questions." />
+              </Field>
+            </div>
+            <Field label="Subtext" hint="Description shown below heading">
+              <Textarea value={(form as any).faqSectionSubtext || ""} onChange={e => set("faqSectionSubtext" as any, e.target.value)} rows={2} placeholder="Quick insights into the architecture, vision, and operations of our venture studio." />
+            </Field>
+          </div>
+        </Card>
+
+        {/* Blog / Newsroom Section */}
+        <Card>
+          <SectionTitle>Blog Section (Thought Pulse / Newsroom)</SectionTitle>
+          <div className="space-y-3">
+            <Field label="Eyebrow Label" hint="Small uppercase label e.g. Thought Pulse">
+              <Input value={(form as any).blogSectionEyebrow || ""} onChange={e => set("blogSectionEyebrow" as any, e.target.value)} placeholder="Thought Pulse" />
+            </Field>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Heading" hint="Main heading text e.g. What's On My">
+                <Input value={(form as any).blogSectionHeading || ""} onChange={e => set("blogSectionHeading" as any, e.target.value)} placeholder="What's On My" />
+              </Field>
+              <Field label="Heading Italic Part" hint="Styled italic part e.g. Mind">
+                <Input value={(form as any).blogSectionHeadingItalic || ""} onChange={e => set("blogSectionHeadingItalic" as any, e.target.value)} placeholder="Mind" />
+              </Field>
+            </div>
           </div>
         </Card>
 

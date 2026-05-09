@@ -152,6 +152,27 @@ export interface HomePage {
   venturesEyebrow?: string;
   venturesHeading?: string;
   venturesHeadingItalic?: string;
+  // Hero Stats
+  stat1Value?: string;
+  stat1Label?: string;
+  stat2Value?: string;
+  stat2Label?: string;
+  stat3Value?: string;
+  stat3Label?: string;
+  // Manifesto Teaser
+  manifestoTeaserEyebrow?: string;
+  manifestoTeaserQuote?: string;
+  manifestoTeaserCtaLabel?: string;
+  manifestoTeaserCtaUrl?: string;
+  // FAQ Section (homepage preview)
+  faqSectionEyebrow?: string;
+  faqSectionHeading?: string;
+  faqSectionHeadingItalic?: string;
+  faqSectionSubtext?: string;
+  // Blog Section (Horizontal Newsroom)
+  blogSectionEyebrow?: string;
+  blogSectionHeading?: string;
+  blogSectionHeadingItalic?: string;
   showVentures: boolean;
   showBlog: boolean;
   showPress: boolean;

@@ -82,10 +82,10 @@ export default async function Home() {
       <PersonalIntro data={homeData.personalIntro} />
       <EthosSection data={homeData.ethos} />
       {show.ventures        && <AdvancedVentures data={ventures} />}
-      {show.blog            && <HorizontalNewsroom posts={blogs.slice(0, 6) as any} />}
+      {show.blog            && <HorizontalNewsroom posts={blogs.slice(0, 6) as any} eyebrow={homeData.blogSectionEyebrow} heading={homeData.blogSectionHeading} headingItalic={homeData.blogSectionHeadingItalic} />}
       {show.press           && <PressLogos items={press as any[]} />}
-      {show.manifestoTeaser && <ManifestoTeaser />}
-      {show.faq             && <FAQSection items={faqItems.slice(0, 4)} />}
+      {show.manifestoTeaser && <ManifestoTeaser data={homeData} />}
+      {show.faq             && <FAQSection items={faqItems.slice(0, 4)} eyebrow={homeData.faqSectionEyebrow} heading={homeData.faqSectionHeading} headingItalic={homeData.faqSectionHeadingItalic} subtext={homeData.faqSectionSubtext} />}
       {show.newsletter      && <Newsletter />}
     </div>
   );

@@ -26,14 +26,23 @@ const faqs = [
 
 interface FAQSectionProps {
     items?: { q: string; a: string }[];
+    eyebrow?: string;
+    heading?: string;
+    headingItalic?: string;
+    subtext?: string;
 }
 
-export default function FAQSection({ items }: FAQSectionProps) {
+export default function FAQSection({ items, eyebrow, heading, headingItalic, subtext }: FAQSectionProps) {
     const [openIndex, setOpenIndex] = useState<number | null>(0);
     const displayFaqs = (items && items.length ? items : faqs.map((item) => ({
         q: item.question,
         a: item.answer
     })));
+
+    const resolvedEyebrow = eyebrow || "Knowledge Base";
+    const resolvedHeading = heading || "Frequently Asked";
+    const resolvedItalic = headingItalic || "Questions.";
+    const resolvedSubtext = subtext || "Quick insights into the architecture, vision, and operations of our venture studio.";
 
     return (
         <section className="py-24 md:py-32 bg-brand-dark/20 border-t border-white/5 relative">
@@ -41,12 +50,12 @@ export default function FAQSection({ items }: FAQSectionProps) {
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-12 lg:gap-24">
                     {/* Left Column: Title */}
                     <div>
-                        <span className="text-brand-primary font-medium tracking-[0.3em] text-[10px] uppercase block mb-6 font-mono">Knowledge Base</span>
+                        <span className="text-brand-primary font-medium tracking-[0.3em] text-[10px] uppercase block mb-6 font-mono">{resolvedEyebrow}</span>
                         <h2 className="text-4xl md:text-6xl font-display leading-tight text-white mb-8">
-                            Frequently Asked <span className="text-gradient italic">Questions.</span>
+                            {resolvedHeading} <span className="text-gradient italic">{resolvedItalic}</span>
                         </h2>
                         <p className="text-text-secondary text-lg max-w-sm mb-10">
-                            Quick insights into the architecture, vision, and operations of our venture studio.
+                            {resolvedSubtext}
                         </p>
                         <Link
                             href="/faq"

@@ -4,9 +4,19 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRef } from "react";
+import type { HomePage } from "@/lib/types";
 
-export default function ManifestoTeaser() {
+interface ManifestoTeaserProps {
+    data?: Partial<HomePage>;
+}
+
+export default function ManifestoTeaser({ data }: ManifestoTeaserProps) {
     const sectionRef = useRef<HTMLElement>(null);
+
+    const eyebrow = data?.manifestoTeaserEyebrow || "The Core Conviction";
+    const quote = data?.manifestoTeaserQuote || "I believe the best companies are built not just on ideas, but on conviction.";
+    const ctaLabel = data?.manifestoTeaserCtaLabel || "Read My Manifesto";
+    const ctaUrl = data?.manifestoTeaserCtaUrl || "/manifesto";
 
     return (
         <section ref={sectionRef} className="py-32 px-6 relative overflow-hidden bg-brand-dark">
@@ -34,14 +44,16 @@ export default function ManifestoTeaser() {
                         transition={{ duration: 0.8 }}
                         className="max-w-4xl relative z-10"
                     >
-                        <span className="text-brand-primary font-mono text-xs tracking-[0.4em] uppercase block mb-8">The Core Conviction</span>
+                        <span className="text-brand-primary font-mono text-xs tracking-[0.4em] uppercase block mb-8">
+                            {eyebrow}
+                        </span>
 
                         <h2 className="text-4xl md:text-6xl lg:text-7xl font-display leading-[1.1] mb-12 tracking-tight text-white italic text-highlight-sweep">
-                            "I believe the best companies are built not just on ideas, but on conviction."
+                            "{quote}"
                         </h2>
 
-                        <Link href="/manifesto" className="btn-premium group inline-flex liquid-fill">
-                            Read My Manifesto <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
+                        <Link href={ctaUrl} className="btn-premium group inline-flex liquid-fill">
+                            {ctaLabel} <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
                         </Link>
                     </motion.div>
                 </div>
