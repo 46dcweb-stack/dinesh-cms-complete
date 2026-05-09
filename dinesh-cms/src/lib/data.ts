@@ -21,6 +21,13 @@ export const homePageData = {
     body: "If you're building something meaningful, you're in the right place. I believe in the power of intention, the logic of systems, and the fire of purpose.",
     linkText: "Learn More About Me",
     linkUrl: "/about",
+    blogSectionEyebrow: "Thought Pulse",
+  blogSectionTitle: "What's On My Mind",
+  manifestoTeaserEyebrow: "The Core Conviction",
+  manifestoTeaserQuote: "I believe the best companies are built not just on ideas, but on conviction.",
+  faqSectionEyebrow: "Knowledge Base",
+  faqSectionTitle: "Frequently Asked Questions",
+  faqSectionDescription: "Quick insights into the architecture, vision, and operations of our venture studio.",
   },
   ethos: {
     phrase:
