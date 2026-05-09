@@ -148,6 +148,9 @@ export interface HomePage {
       color: string;
     }[];
   };
+  venturesEyebrow?: string;
+  venturesHeading?: string;
+  venturesHeadingItalic?: string;
   showVentures: boolean;
   showBlog: boolean;
   showPress: boolean;
