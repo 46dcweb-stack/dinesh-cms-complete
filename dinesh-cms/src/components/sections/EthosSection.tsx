@@ -81,7 +81,7 @@ export default function EthosSection({ data }: { data?: HomePage["ethos"] }) {
       >
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-10 lg:gap-24 items-start">
           {/* Left Column */}
-          <div className="relative">
+          <div className="relative pt-16 md:pt-32">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}

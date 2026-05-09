@@ -22,6 +22,9 @@ const DEFAULT: Omit<HomePage, "id"> = {
       { id: "01", label: "PRINCIPLE 01", title: "", description: "", color: "#E22D2D" },
     ],
   },
+  venturesEyebrow: "Portfolio Showcase",
+  venturesHeading: "Building the",
+  venturesHeadingItalic: "Invisible",
   showVentures: true, showBlog: true, showPress: true,
   showManifestoTeaser: true, showFaq: true, showNewsletter: true,
   seoTitle: "", seoDescription: "", seoOgImage: "",
@@ -166,6 +169,22 @@ export default function HomeAdmin() {
             <button onClick={() => set("ethos", { ...form.ethos, principles: [...form.ethos.principles, { id: `0${form.ethos.principles.length + 1}`, label: "", title: "", description: "", color: "#E22D2D" }] })}
               className="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors"
             ><Plus size={14} /> Add Principle</button>
+          </div>
+        </Card>
+
+        {/* Ventures Section Text */}
+        <Card>
+          <SectionTitle>Ventures Section</SectionTitle>
+          <div className="space-y-3">
+            <Field label="Eyebrow Label" hint="Small text above heading e.g. Portfolio Showcase">
+              <Input value={(form as any).venturesEyebrow || ""} onChange={e => set("venturesEyebrow" as any, e.target.value)} placeholder="Portfolio Showcase" />
+            </Field>
+            <Field label="Heading" hint="Main heading e.g. Building the">
+              <Input value={(form as any).venturesHeading || ""} onChange={e => set("venturesHeading" as any, e.target.value)} placeholder="Building the" />
+            </Field>
+            <Field label="Heading Italic Part" hint="Styled part e.g. Invisible">
+              <Input value={(form as any).venturesHeadingItalic || ""} onChange={e => set("venturesHeadingItalic" as any, e.target.value)} placeholder="Invisible" />
+            </Field>
           </div>
         </Card>
 

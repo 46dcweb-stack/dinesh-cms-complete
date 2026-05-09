@@ -79,7 +79,14 @@ export default async function Home() {
       <HomeHero data={homeData} />
       <PersonalIntro data={homeData.personalIntro} />
       <EthosSection data={homeData.ethos} />
-      {show.ventures        && <AdvancedVentures data={ventures as any[]} />}
+      {show.ventures && (
+        <AdvancedVentures
+          data={ventures as any[]}
+          eyebrow={homeData.venturesEyebrow || "Portfolio Showcase"}
+          heading={homeData.venturesHeading || "Building the"}
+          headingItalic={homeData.venturesHeadingItalic || "Invisible"}
+        />
+      )}
       {show.blog            && <HorizontalNewsroom posts={blogs.slice(0, 6) as any} />}
       {show.press           && <PressLogos items={press as any[]} />}
       {show.manifestoTeaser && <ManifestoTeaser />}
