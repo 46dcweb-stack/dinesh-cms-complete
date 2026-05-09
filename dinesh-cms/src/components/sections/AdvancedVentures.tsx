@@ -78,6 +78,12 @@ export default function AdvancedVentures({
             </AnimatePresence>
 
             <div className="relative z-20">
+              <AnimatePresence mode="wait">
+                <motion.div key={activeIndex} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="flex items-center gap-4">
+                  <div className="w-12 h-[1px]" style={{ backgroundColor: ventures[activeIndex]?.color }} />
+                  <span className="text-white/40 font-mono text-[9px] uppercase tracking-[0.5em]">Venture {activeIndex + 1}</span>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
         </div>
@@ -102,6 +108,11 @@ function VentureCard({ venture, index, onInView }: { venture: VentureDisplay; in
       <div className="block md:hidden aspect-video relative overflow-hidden rounded-2xl mb-8 border border-white/5">
         <Image src={venture?.image || "/gallery/venture-3.png"} alt={venture?.name || "Venture"} fill className="object-cover" unoptimized />
         <div className="absolute inset-0 bg-linear-to-t from-brand-dark/80 to-transparent" />
+      </div>
+      <div className="flex items-center gap-4 mb-6 md:mb-8">
+        <span className="text-brand-primary font-mono text-xs md:text-sm leading-none">0{index + 1}</span>
+        <div className="h-[1px] w-6 md:w-8 bg-brand-primary/30 group-hover:w-16 transition-all duration-500" />
+        <span className="text-text-muted font-mono text-[9px] md:text-[10px] uppercase tracking-widest">{venture.role}</span>
       </div>
       <h3 className="text-4xl md:text-6xl font-display mb-8 text-white group-hover:text-brand-primary transition-colors cursor-pointer">{venture.name}</h3>
       <p className="text-text-secondary text-lg md:text-xl leading-relaxed mb-12 max-w-lg">{venture.description}</p>
