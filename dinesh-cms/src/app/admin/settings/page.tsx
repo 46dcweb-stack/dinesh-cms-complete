@@ -5,7 +5,7 @@ import type { SiteSettings } from "@/lib/types";
 import { Plus, Trash2 } from "lucide-react";
 import {
   AdminPageHeader, Field, Input, Textarea, SaveButton,
-  Alert, Card, SectionTitle,
+  Alert, Card, SectionTitle, ImageUpload,
 } from "../components/ui";
 
 const DEFAULT: Omit<SiteSettings, "id"> = {
