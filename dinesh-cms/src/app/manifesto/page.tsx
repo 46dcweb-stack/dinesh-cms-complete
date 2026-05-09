@@ -10,22 +10,24 @@ export async function generateMetadata() {
   const fbManifesto = await getManifesto();
   const meta = fbManifesto.meta as any ?? null;
   
-  const title = meta?.seoMetaTitle || meta?.title || "My Manifesto — A Blueprint for Resilient Building";
+  // If custom SEO title exists, use it as-is (absolute). Otherwise use default.
+  const hasCustomTitle = meta?.seoMetaTitle && meta.seoMetaTitle.trim() !== "";
+  const title = meta?.seoMetaTitle || meta?.title || "My Manifesto";
   const description = meta?.seoMetaDescription || meta?.subtitle || "The architecture of intent, infrastructure for the future.";
   const ogImage = meta?.seoOgImage || "/og-image.jpg";
   
   return {
-    title,
+    title: hasCustomTitle ? { absolute: title } : title,
     description,
     openGraph: {
-      title,
+      title: hasCustomTitle ? title : `${title} | Dinesh Koyyalamudi`,
       description,
       url: "https://dineshkoyyalamudi.com/manifesto",
       images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image" as const,
-      title,
+      title: hasCustomTitle ? title : `${title} | Dinesh Koyyalamudi`,
       description,
       images: [ogImage],
     },

@@ -4,8 +4,8 @@ import { manifestoService } from "@/lib/firebase-services";
 import type { ManifestoMeta, ManifestoSection } from "@/lib/types";
 import { Plus, Trash2, ChevronUp, ChevronDown, Pencil, GripVertical } from "lucide-react";
 import {
-  AdminPageHeader, Field, Input, Textarea, Select, SaveButton,ImageUpload,
-  Alert, Card, SectionTitle, Toggle,
+  AdminPageHeader, Field, Input, Textarea, Select, SaveButton,
+  Alert, Card, SectionTitle, Toggle, ImageUpload,
 } from "../components/ui";
 
 const EMPTY_META: Omit<ManifestoMeta, "id"> = {
@@ -183,6 +183,9 @@ export default function ManifestoAdmin() {
         <p className="text-xs text-white/30 mt-3">
           Leave empty to use default SEO values. OG image is used for social media previews.
         </p>
+        <div className="mt-6">
+          <SaveButton loading={savingMeta} saved={metaSaved} onClick={saveMeta} label="Save SEO Settings" />
+        </div>
       </Card>
 
       {/* Sections */}

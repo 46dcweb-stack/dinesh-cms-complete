@@ -9,15 +9,17 @@ export const revalidate = 60;
 export async function generateMetadata() {
   const fbMeta = await getPressPageMeta().catch(() => null) as any;
   
-  const title = fbMeta?.seoMetaTitle || "Press & Media | Dinesh Koyyalamudi";
+  // If custom SEO title exists, use it as-is (absolute). Otherwise use default.
+  const hasCustomTitle = fbMeta?.seoMetaTitle && fbMeta.seoMetaTitle.trim() !== "";
+  const title = fbMeta?.seoMetaTitle || "Press & Media";
   const description = fbMeta?.seoMetaDescription || fbMeta?.description || "Media mentions, features, and press coverage of Dinesh Koyyalamudi and FourSix46.";
   const ogImage = fbMeta?.seoOgImage || "/og-image.jpg";
   
   return {
-    title,
+    title: hasCustomTitle ? { absolute: title } : title,
     description,
     openGraph: {
-      title,
+      title: hasCustomTitle ? title : `${title} | Dinesh Koyyalamudi`,
       description,
       url: "https://dineshkoyyalamudi.com/press",
       images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
@@ -25,7 +27,7 @@ export async function generateMetadata() {
     },
     twitter: {
       card: "summary_large_image" as const,
-      title,
+      title: hasCustomTitle ? title : `${title} | Dinesh Koyyalamudi`,
       description,
       images: [ogImage],
     },
