@@ -29,7 +29,7 @@ export default function GalleryAdmin() {
   const [savingPage, setSavingPage] = useState(false);
   const [savedPage, setSavedPage] = useState(false);
 
-  useEffect(() => { load(); loadPageText(); }, []);
+  useEffect(() => { load(); loadPageText(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function loadPageText() {
     try {

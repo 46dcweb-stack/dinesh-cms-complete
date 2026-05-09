@@ -4,7 +4,7 @@ import { settingsService } from "@/lib/firebase-services";
 import type { SiteSettings } from "@/lib/types";
 import { Plus, Trash2 } from "lucide-react";
 import {
-  AdminPageHeader, Field, Input, Textarea, SaveButton,
+  AdminPageHeader, Field, Input, Textarea, SaveButton, ImageUpload,
   Alert, Card, SectionTitle,
 } from "../components/ui";
 
