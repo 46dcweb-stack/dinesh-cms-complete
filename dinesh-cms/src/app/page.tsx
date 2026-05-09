@@ -11,7 +11,6 @@ import { getHomePage, getPublishedBlogs, getPublishedFaq, getVentures, getPublis
 import { homePageData, blogPosts, faqGroups } from "@/lib/data";
 import { fbStr, fbArr, fbVal } from "@/lib/fallback";
 import type { Metadata } from "next";
-
 export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -59,7 +58,10 @@ export default async function Home() {
 
   const blogs    = fbArr(fbBlogs,    blogPosts as any[]);
   const press    = fbArr(fbPress,    []);
-  const ventures = fbArr(fbVentures, static_home.ventures ?? []) as Venture[];
+
+
+// After (no type issues
+  const ventures = (fbVentures.length > 0 ? fbVentures : (static_home.ventures ?? []));
 
   const faqItems = fbFaq.length > 0
     ? fbFaq.map((item: any) => ({ q: item.question, a: item.answer }))
