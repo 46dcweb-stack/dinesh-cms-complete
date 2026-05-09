@@ -1,14 +1,12 @@
 import PressClientWrapper from "@/components/press/PressClientWrapper";
 import PressHeader from "@/components/press/PressHeader";
 import ContactForm from "@/components/sections/ContactForm";
-import { getPublishedPress } from "@/lib/firebase-data";
+import { getPublishedPress, getSiteSettings } from "@/lib/firebase-data";
 import { pressMentions, pressPageData } from "@/lib/data";
-import type { Metadata } from "next";
 
 export const revalidate = 60;
 
 export async function generateMetadata() {
-  const { getSiteSettings } = await import("@/lib/firebase-data");
   const s = await getSiteSettings() as any;
   const title       = s?.pressSeoTitle       || "Press & Media | Dinesh Koyyalamudi";
   const description = s?.pressSeoDescription || "Media mentions, features, and press coverage of Dinesh Koyyalamudi.";
@@ -20,8 +18,17 @@ export async function generateMetadata() {
 }
 
 export default async function PressPage() {
-  const fbMentions = await getPublishedPress();
-  const mentions = fbMentions.length > 0 ? fbMentions : (pressMentions as any[]);
+  const [fbMentions, settings] = await Promise.all([
+    getPublishedPress(),
+    getSiteSettings(),
+  ]);
+
+  const mentions   = fbMentions.length > 0 ? fbMentions : (pressMentions as any[]);
+  const s          = settings as any;
+
+  // Media kit from Firebase Site Settings — falls back to static data
+  const mediaKitUrl   = s?.mediaKitUrl   || (pressPageData as any).mediaKitUrl   || "";
+  const mediaKitLabel = s?.mediaKitLabel || (pressPageData as any).mediaKitLabel || "Download Media Kit";
 
   return (
     <div className="pb-24">
@@ -37,9 +44,20 @@ export default async function PressPage() {
           <p className="text-text-secondary mb-10 max-w-xl mx-auto text-lg">
             Access hi-res photos, official bios, and brand assets for speaking engagements and press coverage.
           </p>
-          <a href={(pressPageData as any).mediaKitUrl} target="_blank" rel="noopener noreferrer" className="btn-premium px-12">
-            {(pressPageData as any).mediaKitLabel}
-          </a>
+          {mediaKitUrl ? (
+            <a
+              href={mediaKitUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-premium px-12"
+            >
+              {mediaKitLabel}
+            </a>
+          ) : (
+            <span className="opacity-40 btn-premium px-12 cursor-default">
+              {mediaKitLabel}
+            </span>
+          )}
         </div>
       </div>
 
