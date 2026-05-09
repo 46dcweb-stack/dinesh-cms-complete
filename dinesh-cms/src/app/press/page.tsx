@@ -7,15 +7,17 @@ import type { Metadata } from "next";
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
-  title: "Press",
-  description: "Media mentions, features, and press coverage of Dinesh Koyyalamudi and FourSix46.",
-  openGraph: {
-    title: "Press & Media | Dinesh Koyyalamudi",
-    description: "Media mentions, features, and press coverage of Dinesh Koyyalamudi.",
-    type: "website",
-  },
-};
+export async function generateMetadata() {
+  const { getSiteSettings } = await import("@/lib/firebase-data");
+  const s = await getSiteSettings() as any;
+  const title       = s?.pressSeoTitle       || "Press & Media | Dinesh Koyyalamudi";
+  const description = s?.pressSeoDescription || "Media mentions, features, and press coverage of Dinesh Koyyalamudi.";
+  const ogImage     = s?.pressSeoOgImage     || "/og-image.jpg";
+  return {
+    title, description,
+    openGraph: { title, description, images: [{ url: ogImage }], type: "website" as const },
+  };
+}
 
 export default async function PressPage() {
   const fbMentions = await getPublishedPress();

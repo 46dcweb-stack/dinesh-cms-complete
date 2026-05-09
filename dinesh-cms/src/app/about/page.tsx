@@ -31,6 +31,7 @@ export default async function AboutPage() {
     const teamMembers: any[] = Array.isArray(fbTeam) ? fbTeam : [];
 
     // Safe fallbacks — if Firebase field is empty/missing, use static data
+    const downloadableBio   = (raw as any).downloadableBio  || null;
     const shortBio          = (raw as any).shortBio          ?? aboutData.shortBio;
     const longBio           = (raw as any).longBio           ?? aboutData.longBio;
     const profileImage      = (raw as any).profileImage      || aboutData.profileImage;
@@ -83,6 +84,17 @@ export default async function AboutPage() {
                             )}
                             {shortBio && <p>{shortBio}</p>}
                             {longBio && <p>{longBio}</p>}
+                            {downloadableBio && (
+                              <a
+                                href={downloadableBio}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 mt-4 px-6 py-3 border border-brand-primary/30 text-brand-primary text-sm font-mono uppercase tracking-wider rounded-full hover:bg-brand-primary/10 transition-colors"
+                              >
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                Download Bio PDF
+                              </a>
+                            )}
 
                             {proofPoints.length > 0 && (
                                 <div className="grid grid-cols-2 gap-12 pt-10 border-t border-white/5">

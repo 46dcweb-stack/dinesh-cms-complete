@@ -35,7 +35,7 @@ export default function SubscribersAdmin() {
       ["Email", "Name", "Source", "Status", "Subscribed At"],
       ...filtered.map(s => [
         s.email, s.name || "", s.source, s.status,
-        s.createdAt ? (s.createdAt as any).toDate().toISOString() : "",
+        s.createdAt ? new Date((s.createdAt as any).seconds * 1000).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) : "",
       ]),
     ];
     const csv = rows.map(r => r.map(c => `"${c}"`).join(",")).join("\n");
@@ -90,6 +90,7 @@ export default function SubscribersAdmin() {
                 <th className="text-left px-4 py-3.5 text-xs font-mono uppercase tracking-wider text-white/40">Source</th>
                 <th className="text-left px-4 py-3.5 text-xs font-mono uppercase tracking-wider text-white/40">Status</th>
                 <th className="text-left px-4 py-3.5 text-xs font-mono uppercase tracking-wider text-white/40">Joined</th>
+                <th className="text-left px-4 py-3.5 text-xs font-mono uppercase tracking-wider text-white/40">Consent</th>
                 <th className="px-4 py-3.5"></th>
               </tr>
             </thead>
@@ -103,7 +104,20 @@ export default function SubscribersAdmin() {
                   </td>
                   <td className="px-4 py-3.5"><StatusBadge status={sub.status} /></td>
                   <td className="px-4 py-3.5 text-xs text-white/40">
-                    {sub.createdAt ? formatDistanceToNow((sub.createdAt as any).toDate(), { addSuffix: true }) : "—"}
+                    {sub.createdAt
+                      ? (() => {
+                          const d = new Date((sub.createdAt as any).seconds * 1000);
+                          return `${d.toLocaleDateString("en-IN")} ${d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}`;
+                        })()
+                      : "—"}
+                  </td>
+                  <td className="px-4 py-3.5 text-xs text-white/40">
+                    {sub.consentTimestamp
+                      ? (() => {
+                          const d = new Date((sub.consentTimestamp as any).seconds * 1000);
+                          return `${d.toLocaleDateString("en-IN")} ${d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}`;
+                        })()
+                      : sub.consentGiven ? "✓ Yes" : "—"}
                   </td>
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-1 justify-end">

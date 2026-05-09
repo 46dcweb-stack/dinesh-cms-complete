@@ -90,8 +90,12 @@ export default function AboutAdmin() {
             <ImageUpload value={form.profileImage} onChange={v => setField("profileImage", v)} folder="about" />
           </div>
           <div className="mt-4">
-            <Field label="Downloadable Bio PDF (URL or upload link)">
-              <Input value={form.downloadableBio || ""} onChange={e => setField("downloadableBio", e.target.value)} placeholder="https://..." />
+            <Field label="Downloadable Bio PDF" hint="Upload PDF bio — shown as download button on About page">
+              <ImageUpload
+                value={form.downloadableBio || ""}
+                onChange={v => setField("downloadableBio", v)}
+                folder="about"
+              />
             </Field>
           </div>
         </Card>

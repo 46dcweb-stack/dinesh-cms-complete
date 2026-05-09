@@ -32,16 +32,27 @@ export default function GalleryAdmin() {
   useEffect(() => { load(); loadPageText(); }, []);
 
   async function loadPageText() {
-    const settings = await settingsService.get() as any;
-    if (settings?.galleryPage) setPageText(settings.galleryPage);
+    try {
+      const { doc, getDoc } = await import("firebase/firestore");
+      const { db } = await import("@/lib/firebase");
+      const snap = await getDoc(doc(db, "siteSettings", "galleryPage"));
+      if (snap.exists()) {
+        const d = snap.data();
+        setPageText({ eyebrow: d.eyebrow || pageText.eyebrow, description: d.description || pageText.description });
+      }
+    } catch (e) { console.error("loadPageText:", e); }
   }
 
   async function savePageText() {
     setSavingPage(true);
-    const current = await settingsService.get() as any || {};
-    await settingsService.save({ ...current, galleryPage: pageText });
-    setSavedPage(true);
-    setTimeout(() => setSavedPage(false), 3000);
+    try {
+      const { doc, setDoc } = await import("firebase/firestore");
+      const { db } = await import("@/lib/firebase");
+      const { serverTimestamp } = await import("firebase/firestore");
+      await setDoc(doc(db, "siteSettings", "galleryPage"), { ...pageText, updatedAt: serverTimestamp() });
+      setSavedPage(true);
+      setTimeout(() => setSavedPage(false), 3000);
+    } catch (e) { console.error("savePageText:", e); }
     setSavingPage(false);
   }
 

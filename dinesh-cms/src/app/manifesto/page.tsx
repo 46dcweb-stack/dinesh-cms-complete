@@ -6,6 +6,18 @@ import { manifestoData } from "@/lib/data";
 
 export const revalidate = 60;
 
+export async function generateMetadata() {
+  const fbManifesto = await getManifesto();
+  const meta = fbManifesto.meta as any;
+  const title       = meta?.seoTitle       || "Manifesto | Dinesh Koyyalamudi";
+  const description = meta?.seoDescription || "The core conviction and blueprint of Dinesh Koyyalamudi.";
+  const ogImage     = meta?.seoOgImage     || "/og-image.jpg";
+  return {
+    title, description,
+    openGraph: { title, description, images: [{ url: ogImage }] },
+  };
+}
+
 export default async function ManifestoPage() {
   const fbManifesto = await getManifesto();
   const meta     = fbManifesto.meta as any ?? null;

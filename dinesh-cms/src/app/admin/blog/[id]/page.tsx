@@ -148,11 +148,15 @@ export default function BlogEditor() {
                     rows={3}
                   />
                 </Field>
-                <Field label="Content" hint="Write in plain text. Use blank lines to separate paragraphs.">
+                <Field label="Content" hint="Plain text (blank lines = paragraphs) OR paste HTML for rich formatting">
                   <Textarea
                     value={form.content}
                     onChange={e => set("content", e.target.value)}
-                    placeholder="Write your article content here..."
+                    placeholder={"Write in plain text...
+
+Blank lines become new paragraphs.
+
+OR paste HTML: <h2>Heading</h2><p>Paragraph</p><ul><li>Item</li></ul>"}
                     rows={20}
                     className="font-mono text-xs"
                   />

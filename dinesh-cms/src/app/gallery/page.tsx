@@ -10,12 +10,21 @@ export const metadata = {
 };
 
 export default async function GalleryPage() {
-  const [fbGallery, settings] = await Promise.all([getGallery(), getSiteSettings()]);
+  const fbGallery = await getGallery();
   const images = fbArr(fbGallery, galleryImages as any[]);
-  const settingsAny = settings as any;
+
+  // Read gallery page text from dedicated siteSettings/galleryPage doc
+  let galleryPageText = { eyebrow: "", description: "" };
+  try {
+    const { getAdminDb } = await import("@/lib/firebase-admin");
+    const db = getAdminDb();
+    const snap = await db.collection("siteSettings").doc("galleryPage").get();
+    if (snap.exists) galleryPageText = snap.data() as any;
+  } catch {}
+
   const pd = {
-    visualProtocol: fbStr(settingsAny?.galleryPage?.eyebrow, (galleryPageData as any).visualProtocol),
-    description:    fbStr(settingsAny?.galleryPage?.description, (galleryPageData as any).description),
+    visualProtocol: fbStr(galleryPageText.eyebrow, (galleryPageData as any).visualProtocol),
+    description:    fbStr(galleryPageText.description, (galleryPageData as any).description),
   };
 
   return (

@@ -90,8 +90,12 @@ export default function SettingsAdmin() {
             <Field label="Google Analytics ID">
               <Input value={form.googleAnalyticsId || ""} onChange={e => set("googleAnalyticsId", e.target.value)} placeholder="G-XXXXXXXXXX" />
             </Field>
-            <Field label="Media Kit URL">
-              <Input value={form.mediaKitUrl || ""} onChange={e => set("mediaKitUrl", e.target.value)} placeholder="https://..." />
+            <Field label="Media Kit File" hint="Upload your press kit PDF or zip — shown as download on Press page">
+              <ImageUpload
+                value={(form as any).mediaKitUrl || ""}
+                onChange={v => set("mediaKitUrl" as any, v)}
+                folder="press"
+              />
             </Field>
           </div>
         </Card>

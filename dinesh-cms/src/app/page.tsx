@@ -12,7 +12,7 @@ import { homePageData, blogPosts, faqGroups } from "@/lib/data";
 import { fbStr, fbArr, fbVal } from "@/lib/fallback";
 import type { Metadata } from "next";
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 export async function generateMetadata(): Promise<Metadata> {
   const [settings, homeData] = await Promise.all([getSiteSettings(), getHomePage()]) as any[];

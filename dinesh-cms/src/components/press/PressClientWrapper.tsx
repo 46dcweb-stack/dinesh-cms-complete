@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Download } from "lucide-react";
 import { format } from "date-fns";
 import Image from "next/image";
 
@@ -58,8 +58,22 @@ export default function PressClientWrapper({ mentions }: PressClientWrapperProps
                             </blockquote>
                         )}
                     </div>
-                    <div className="w-14 h-14 rounded-full border border-white/5 bg-white/5 flex items-center justify-center text-text-muted group-hover:border-brand-primary group-hover:text-brand-primary group-hover:scale-110 transition-all duration-500 shadow-[0_0_20px_rgba(0,0,0,0.3)]">
+                    <div className="flex flex-col items-center gap-3">
+                      {item.downloadableAsset && (
+                        <a
+                          href={item.downloadableAsset}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={e => e.stopPropagation()}
+                          className="flex items-center gap-2 px-4 py-2 text-xs font-mono uppercase tracking-wider text-brand-primary border border-brand-primary/30 rounded-full hover:bg-brand-primary/10 transition-colors whitespace-nowrap"
+                        >
+                          <Download size={12} />
+                          Download Asset
+                        </a>
+                      )}
+                      <div className="w-14 h-14 rounded-full border border-white/5 bg-white/5 flex items-center justify-center text-text-muted group-hover:border-brand-primary group-hover:text-brand-primary group-hover:scale-110 transition-all duration-500 shadow-[0_0_20px_rgba(0,0,0,0.3)]">
                         <ExternalLink size={24} />
+                      </div>
                     </div>
                 </motion.a>
             ))}
