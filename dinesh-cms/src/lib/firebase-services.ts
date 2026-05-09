@@ -371,9 +371,43 @@ export const contactService = {
 // ── AUDIT LOGS ────────────────────────────────────────────────────────────────
 export const auditService = {
   async getRecent(limitN = 50): Promise<AuditLog[]> {
-    const q = query(collection(db, "auditLogs"), orderBy("createdAt", "desc"), limit(limitN));
+    const q = query(
+      collection(db, "auditLogs"),
+      orderBy("createdAt", "desc"),
+      limit(limitN)
+    );
+
     const snap = await getDocs(q);
-    return snap.docs.map(d => ({ id: d.id, ...d.data() } as AuditLog));
+
+    return snap.docs.map(
+      d => ({ id: d.id, ...d.data() } as AuditLog)
+    );
+  },
+
+  async revert(log: any): Promise<void> {
+    if (!log.previousData) {
+      throw new Error("No previous state available");
+    }
+
+    const targetRef = doc(db, log.collection, log.docId);
+
+    // restore previous document state
+    await setDoc(targetRef, {
+      ...log.previousData,
+      updatedAt: serverTimestamp(),
+    });
+
+    // create revert audit log
+    await addDoc(collection(db, "auditLogs"), {
+      action: "revert",
+      collection: log.collection,
+      docId: log.docId,
+      summary: `Reverted ${log.collection}/${log.docId}`,
+      previousData: null,
+      createdAt: serverTimestamp(),
+      userEmail: auth.currentUser?.email || "",
+      userId: auth.currentUser?.uid || "",
+    });
   },
 };
 
