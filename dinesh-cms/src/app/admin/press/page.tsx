@@ -39,6 +39,8 @@ export default function PressAdmin() {
     contactTitle: "Press Enquiries?",
     contactSubtitle: "Media Contact",
     contactDescription: "For interview requests, press releases, and media collaborations, reach out directly.",
+    mediaAssetsTitle: "Need Media Assets?",
+    mediaAssetsDescription: "Access hi-res photos, official bios, and brand assets for speaking engagements and press coverage.",
     seoMetaTitle: "",
     seoMetaDescription: "",
     seoOgImage: "",
@@ -181,6 +183,27 @@ export default function PressAdmin() {
                 value={pageMeta.heroBackground || ""}
                 onChange={v => setPageMeta(m => ({ ...m, heroBackground: v }))}
                 folder="press"
+              />
+            </Field>
+          </div>
+        </div>
+
+        <div className="mt-6 pt-6 border-t border-white/10">
+          <h3 className="text-xs font-mono uppercase tracking-widest text-white/60 mb-4">Media Assets CTA</h3>
+          <div className="space-y-3">
+            <Field label="CTA Heading" hint='e.g. "Need Media Assets?"'>
+              <Input
+                value={(pageMeta as any).mediaAssetsTitle || ""}
+                onChange={e => setPageMeta(m => ({ ...m, mediaAssetsTitle: e.target.value }))}
+                placeholder="Need Media Assets?"
+              />
+            </Field>
+            <Field label="CTA Description">
+              <Textarea
+                value={(pageMeta as any).mediaAssetsDescription || ""}
+                onChange={e => setPageMeta(m => ({ ...m, mediaAssetsDescription: e.target.value }))}
+                rows={2}
+                placeholder="Access hi-res photos, official bios, and brand assets for speaking engagements and press coverage."
               />
             </Field>
           </div>

@@ -302,6 +302,8 @@ export interface PressPageMeta {
    contactTitle?: string;
   contactSubtitle?: string;
   contactDescription?: string;
+  mediaAssetsTitle: string;
+  mediaAssetsDescription: string;
 }
 
 // ── LEADERSHIP / TEAM MEMBERS ─────────────────────────────────────────────────

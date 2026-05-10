@@ -62,9 +62,11 @@ export default async function PressPage() {
         {/* Media Kit CTA */}
         <div className="mt-24 p-12 glass-card text-center relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/5 rounded-full blur-[80px] -z-10" />
-          <h2 className="text-3xl md:text-4xl font-display mb-6">Need Media Assets?</h2>
+          <h2 className="text-3xl md:text-4xl font-display mb-6">
+            {(fbMeta as any)?.mediaAssetsTitle || "Need Media Assets?"}
+          </h2>
           <p className="text-text-secondary mb-10 max-w-xl mx-auto text-lg">
-            Access hi-res photos, official bios, and brand assets for speaking engagements and press coverage.
+            {(fbMeta as any)?.mediaAssetsDescription || "Access hi-res photos, official bios, and brand assets for speaking engagements and press coverage."}
           </p>
           <a href={headerData.mediaKitUrl} target="_blank" rel="noopener noreferrer" className="btn-premium px-12">
             {headerData.mediaKitLabel}
