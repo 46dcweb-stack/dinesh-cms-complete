@@ -9,9 +9,6 @@ import {
 } from "../components/ui";
 
 const DEFAULT: Omit<AboutPage, "id"> = {
-  heroEyebrow: "Behind the Vision",
-  heroHeading: "A Journey of Purpose, Scale, and",
-  heroHeadingItalic: "Impact.",
   shortBio: "", longBio: "", profileImage: "", featuredQuote: "",
   downloadableBio: "", currentFocusTitle: "Current Focus", currentFocusBody: "",
   proofPoints: [
@@ -70,31 +67,15 @@ export default function AboutAdmin() {
 )}
 
       <div className="space-y-6">
-        {/* Page Hero Heading */}
-        <Card>
-          <SectionTitle>Page Hero Heading</SectionTitle>
-          <div className="space-y-3">
-            <Field label="Eyebrow Label" hint='Small uppercase label above the heading e.g. "Behind the Vision"'>
-              <Input value={(form as any).heroEyebrow || ""} onChange={e => setField("heroEyebrow" as any, e.target.value)} placeholder="Behind the Vision" />
-            </Field>
-            <Field label="Heading" hint='Main heading text e.g. "A Journey of Purpose, Scale, and"'>
-              <Input value={(form as any).heroHeading || ""} onChange={e => setField("heroHeading" as any, e.target.value)} placeholder="A Journey of Purpose, Scale, and" />
-            </Field>
-            <Field label="Heading Italic Part" hint='Styled italic ending e.g. "Impact."'>
-              <Input value={(form as any).heroHeadingItalic || ""} onChange={e => setField("heroHeadingItalic" as any, e.target.value)} placeholder="Impact." />
-            </Field>
-          </div>
-        </Card>
-
         {/* Bio */}
         <Card>
           <SectionTitle>Biography</SectionTitle>
           <div className="space-y-4">
-            <Field label="Short Bio (summary — shown in listings)" hint="Plain text or HTML supported">
+            <Field label="Short Bio (summary — shown in listings)">
               <Textarea value={form.shortBio} onChange={e => setField("shortBio", e.target.value)} rows={3} />
             </Field>
-            <Field label="Long Bio (full story — shown on About page)" hint="Plain text or paste HTML for rich formatting e.g. <h2>Heading</h2><p>Paragraph</p>">
-              <Textarea value={form.longBio} onChange={e => setField("longBio", e.target.value)} rows={12} />
+            <Field label="Long Bio (full story — shown on About page)">
+              <Textarea value={form.longBio} onChange={e => setField("longBio", e.target.value)} rows={8} />
             </Field>
             <Field label="Featured Quote">
               <Input value={form.featuredQuote} onChange={e => setField("featuredQuote", e.target.value)} placeholder="Your signature quote" />
@@ -114,6 +95,7 @@ export default function AboutAdmin() {
                 value={form.downloadableBio || ""}
                 onChange={v => setField("downloadableBio", v)}
                 folder="about"
+                allowPdf={true}
               />
             </Field>
           </div>
