@@ -2,11 +2,19 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { db } from "@/lib/firebase";
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { blogService } from "@/lib/firebase-services";
 import type { BlogPost } from "@/lib/types";
 import { formatDistanceToNow } from "date-fns";
 import { Plus, Search, Eye, Pencil, Trash2, Globe, FileText } from "lucide-react";
-import { AdminPageHeader, StatusBadge } from "../components/ui";
+import { AdminPageHeader, StatusBadge, Card, SectionTitle, Field, Input, Textarea, SaveButton, Alert } from "../components/ui";
+
+const HERO_DEFAULTS = {
+  title: "DINESH JOURNAL",
+  subtitle: "Thought Leadership & Insights",
+  description: "Exploring the intersection of venture capital, logistics, and the philosophies that drive global impact.",
+};
 
 export default function BlogAdmin() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -16,7 +24,41 @@ export default function BlogAdmin() {
   const [statusFilter, setStatusFilter] = useState("all");
   const router = useRouter();
 
-  useEffect(() => { load(); }, []);
+  // Blog page hero settings
+  const [hero, setHero] = useState(HERO_DEFAULTS);
+  const [heroSaving, setHeroSaving] = useState(false);
+  const [heroSaved, setHeroSaved] = useState(false);
+  const [heroError, setHeroError] = useState("");
+
+  useEffect(() => {
+    load();
+    loadHero();
+  }, []);
+
+  async function loadHero() {
+    try {
+      const snap = await getDoc(doc(db, "siteSettings", "blogPage"));
+      if (snap.exists()) {
+        const d = snap.data() as any;
+        setHero({
+          title:       d.title       || HERO_DEFAULTS.title,
+          subtitle:    d.subtitle    || HERO_DEFAULTS.subtitle,
+          description: d.description || HERO_DEFAULTS.description,
+        });
+      }
+    } catch (e) { console.error(e); }
+  }
+
+  async function saveHero() {
+    setHeroSaving(true);
+    setHeroError("");
+    try {
+      await setDoc(doc(db, "siteSettings", "blogPage"), { ...hero, updatedAt: serverTimestamp() });
+      setHeroSaved(true);
+      setTimeout(() => setHeroSaved(false), 3000);
+    } catch (err: any) { setHeroError(err.message); }
+    setHeroSaving(false);
+  }
 
   async function load() {
     setLoading(true);
@@ -61,6 +103,40 @@ export default function BlogAdmin() {
           </Link>
         }
       />
+
+      {/* Blog Page Hero Settings */}
+      <Card className="mb-6">
+        <SectionTitle>Blog Page Hero</SectionTitle>
+        <p className="text-xs text-white/40 mb-4">Controls the headline, subtitle, and description shown at the top of the /blog page.</p>
+        {heroError && <Alert message={heroError} className="mb-4" />}
+        <div className="space-y-3">
+          <Field label="Page Title" hint='Large hero title e.g. "DINESH JOURNAL" — last word becomes the accent colour'>
+            <Input
+              value={hero.title}
+              onChange={e => setHero(h => ({ ...h, title: e.target.value }))}
+              placeholder="DINESH JOURNAL"
+            />
+          </Field>
+          <Field label="Subtitle / Eyebrow" hint='Small label above the title e.g. "Thought Leadership & Insights"'>
+            <Input
+              value={hero.subtitle}
+              onChange={e => setHero(h => ({ ...h, subtitle: e.target.value }))}
+              placeholder="Thought Leadership & Insights"
+            />
+          </Field>
+          <Field label="Description" hint="One or two sentences shown below the title">
+            <Textarea
+              value={hero.description}
+              onChange={e => setHero(h => ({ ...h, description: e.target.value }))}
+              rows={2}
+              placeholder="Exploring the intersection of venture capital, logistics, and the philosophies that drive global impact."
+            />
+          </Field>
+        </div>
+        <div className="mt-4">
+          <SaveButton loading={heroSaving} saved={heroSaved} onClick={saveHero} />
+        </div>
+      </Card>
 
       {/* Filters */}
       <div className="flex items-center gap-3 mb-6">

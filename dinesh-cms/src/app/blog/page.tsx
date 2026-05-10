@@ -21,11 +21,35 @@ export default async function BlogListingPage() {
   const posts = fbPosts.length > 0 ? fbPosts : (blogPosts as any[]);
   const featuredPost = posts.find((p: any) => p.featuredPost) || posts[0] || null;
 
+  // Fetch blog page hero settings from Firestore
+  let heroData = {
+    title: "DINESH JOURNAL",
+    subtitle: "Thought Leadership & Insights",
+    description: "Exploring the intersection of venture capital, logistics, and the philosophies that drive global impact.",
+  };
+  try {
+    const { getAdminDb } = await import("@/lib/firebase-admin");
+    const db = getAdminDb();
+    const snap = await db.collection("siteSettings").doc("blogPage").get();
+    if (snap.exists) {
+      const d = snap.data() as any;
+      heroData = {
+        title:       d.title       || heroData.title,
+        subtitle:    d.subtitle    || heroData.subtitle,
+        description: d.description || heroData.description,
+      };
+    }
+  } catch {}
+
   return (
     <div className="pb-24">
       <div className="pt-28 lg:pt-28 px-6">
         <div className="max-w-7xl mx-auto">
-          <BlogClientWrapper initialPosts={posts as any} initialFeaturedPost={featuredPost as any} />
+          <BlogClientWrapper
+            initialPosts={posts as any}
+            initialFeaturedPost={featuredPost as any}
+            heroData={heroData}
+          />
         </div>
       </div>
 
