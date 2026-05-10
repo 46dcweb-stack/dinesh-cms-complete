@@ -164,12 +164,15 @@ export function Alert({ message, type = "error", className = "" }: { message: st
 
 // ── Image Upload ───────────────────────────────────────────────────────────────
 export function ImageUpload({
-  value, onChange, folder = "images",
-}: { value: string; onChange: (url: string) => void; folder?: string }) {
+  value, onChange, folder = "images", allowPdf = false,
+}: { value: string; onChange: (url: string) => void; folder?: string; allowPdf?: boolean }) {
   const [uploading, setUploading] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [mediaFiles, setMediaFiles] = useState<{url: string; name: string; fullPath: string}[]>([]);
   const [loadingMedia, setLoadingMedia] = useState(false);
+
+  const isPdf = value && (value.includes('.pdf') || value.includes('application%2Fpdf') || value.includes('%2Fpdf'));
+  const acceptAttr = allowPdf ? "image/*,application/pdf,.pdf" : "image/*";
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -207,7 +210,20 @@ export function ImageUpload({
     <div className="space-y-2">
       {value && (
         <div className="relative rounded-lg overflow-hidden border border-white/10">
-          <img src={value} alt="preview" className="w-full h-40 object-cover" />
+          {isPdf ? (
+            <div className="w-full h-14 flex items-center gap-3 bg-white/5 px-4">
+              <span className="text-2xl">📄</span>
+              <span className="text-sm text-white/70 truncate flex-1">
+                {decodeURIComponent(value.split('/').pop()?.split('?')[0] || 'media-kit.pdf')}
+              </span>
+              <a href={value} target="_blank" rel="noopener noreferrer"
+                className="text-xs text-brand-primary hover:underline whitespace-nowrap">
+                Preview ↗
+              </a>
+            </div>
+          ) : (
+            <img src={value} alt="preview" className="w-full h-40 object-cover" />
+          )}
           <button type="button" onClick={() => onChange("")}
             className="absolute top-2 right-2 bg-black/50 hover:bg-black/80 rounded-full p-1 transition-colors">
             <X size={12} className="text-white" />
@@ -217,15 +233,17 @@ export function ImageUpload({
       <div className="flex gap-2">
         <label className="flex-1 flex items-center gap-2 cursor-pointer bg-white/5 hover:bg-white/10 border border-white/10 border-dashed rounded-lg px-4 py-3 text-sm text-white/40 hover:text-white/70 transition-colors">
           <Upload size={14} />
-          {uploading ? "Uploading..." : value ? "Replace" : "Upload"}
-          <input type="file" accept="image/*" onChange={handleFile} className="hidden" disabled={uploading} />
+          {uploading ? "Uploading..." : value ? "Replace" : allowPdf ? "Upload Image or PDF" : "Upload"}
+          <input type="file" accept={acceptAttr} onChange={handleFile} className="hidden" disabled={uploading} />
         </label>
-        <button type="button" onClick={openPicker}
-          className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg px-4 py-3 text-sm text-white/40 hover:text-white/70 transition-colors whitespace-nowrap">
-          📁 Library
-        </button>
+        {!allowPdf && (
+          <button type="button" onClick={openPicker}
+            className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg px-4 py-3 text-sm text-white/40 hover:text-white/70 transition-colors whitespace-nowrap">
+            📁 Library
+          </button>
+        )}
       </div>
-      <Input placeholder="or paste image URL..." value={value} onChange={e => onChange(e.target.value)} />
+      <Input placeholder={allowPdf ? "or paste image/PDF URL..." : "or paste image URL..."} value={value} onChange={e => onChange(e.target.value)} />
 
       {/* Media Picker Modal */}
       {showPicker && (

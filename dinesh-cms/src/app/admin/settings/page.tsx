@@ -4,7 +4,7 @@ import { settingsService } from "@/lib/firebase-services";
 import type { SiteSettings } from "@/lib/types";
 import { Plus, Trash2 } from "lucide-react";
 import {
-  AdminPageHeader, Field, Input, Textarea, SaveButton, ImageUpload,
+  AdminPageHeader, Field, Input, Textarea, SaveButton,ImageUpload,
   Alert, Card, SectionTitle,
 } from "../components/ui";
 
@@ -95,6 +95,7 @@ export default function SettingsAdmin() {
                 value={(form as any).mediaKitUrl || ""}
                 onChange={v => set("mediaKitUrl" as any, v)}
                 folder="press"
+                allowPdf={true}
               />
             </Field>
           </div>

@@ -1,20 +1,17 @@
 import PressClientWrapper from "@/components/press/PressClientWrapper";
 import PressHeader from "@/components/press/PressHeader";
 import ContactForm from "@/components/sections/ContactForm";
-import { getPublishedPress, getPressPageMeta } from "@/lib/firebase-data";
+import { getPublishedPress, getSiteSettings, getPressPageMeta } from "@/lib/firebase-data";
 import { pressMentions, pressPageData } from "@/lib/data";
 
 export const revalidate = 60;
 
 export async function generateMetadata() {
   const fbMeta = await getPressPageMeta().catch(() => null) as any;
-  
-  // If custom SEO title exists, use it as-is (absolute). Otherwise use default.
   const hasCustomTitle = fbMeta?.seoMetaTitle && fbMeta.seoMetaTitle.trim() !== "";
-  const title = fbMeta?.seoMetaTitle || "Press & Media";
+  const title       = fbMeta?.seoMetaTitle       || "Press & Media";
   const description = fbMeta?.seoMetaDescription || fbMeta?.description || "Media mentions, features, and press coverage of Dinesh Koyyalamudi and FourSix46.";
-  const ogImage = fbMeta?.seoOgImage || "/og-image.jpg";
-  
+  const ogImage     = fbMeta?.seoOgImage         || "/og-image.jpg";
   return {
     title: hasCustomTitle ? { absolute: title } : title,
     description,
@@ -35,22 +32,44 @@ export async function generateMetadata() {
 }
 
 export default async function PressPage() {
-  const [fbMentions, fbMeta] = await Promise.all([
+  const [fbMentions, settings, fbMeta] = await Promise.all([
     getPublishedPress(),
+    getSiteSettings(),
     getPressPageMeta().catch(() => null),
   ]);
-  const mentions = fbMentions.length > 0 ? fbMentions : (pressMentions as any[]);
 
-  // Merge Firebase meta over static fallbacks
+  const mentions = fbMentions.length > 0 ? fbMentions : (pressMentions as any[]);
+  const s        = settings as any;
+  const m        = fbMeta   as any;
+
+  // Header data — fbMeta fields take priority over static fallbacks
   const headerData = {
-    title:       (fbMeta as any)?.title           || pressPageData.title,
-    subtitle:    (fbMeta as any)?.subtitle         || pressPageData.subtitle,
-    description: (fbMeta as any)?.description      || pressPageData.description,
-    heroBackground:      (fbMeta as any)?.heroBackground || pressPageData.heroBackground,
-    heroBackgroundImage: (fbMeta as any)?.heroBackground || pressPageData.heroBackground,
-    mediaKitLabel: (fbMeta as any)?.mediaKitLabel  || pressPageData.mediaKitLabel,
-    mediaKitUrl:   (fbMeta as any)?.mediaKitUrl    || pressPageData.mediaKitUrl,
+    title:              m?.title           || pressPageData.title,
+    subtitle:           m?.subtitle        || pressPageData.subtitle,
+    description:        m?.description     || pressPageData.description,
+    heroBackground:     m?.heroBackground  || pressPageData.heroBackground,
+    heroBackgroundImage:m?.heroBackground  || pressPageData.heroBackground,
+    mediaKitLabel:      m?.mediaKitLabel   || pressPageData.mediaKitLabel,
+    mediaKitUrl:        m?.mediaKitUrl     || pressPageData.mediaKitUrl,
   };
+
+  // Media kit — site settings mediaKitUrl wins (it's the upload field)
+  const rawMediaKitUrl   = s?.mediaKitUrl   || m?.mediaKitUrl   || (pressPageData as any).mediaKitUrl   || "";
+  const mediaKitLabel    = m?.mediaKitLabel || s?.mediaKitLabel || (pressPageData as any).mediaKitLabel || "Download Media Kit";
+
+  // Build a proxied download URL so the browser downloads instead of navigating
+  const mediaKitDownloadUrl = rawMediaKitUrl
+    ? `/api/download-media-kit?url=${encodeURIComponent(rawMediaKitUrl)}`
+    : "";
+
+  // Media Assets CTA text
+  const mediaAssetsTitle       = m?.mediaAssetsTitle       || "Need Media Assets?";
+  const mediaAssetsDescription = m?.mediaAssetsDescription || "Access hi-res photos, official bios, and brand assets for speaking engagements and press coverage.";
+
+  // Contact section text
+  const contactTitle       = m?.contactTitle       || "Press Enquiries?";
+  const contactSubtitle    = m?.contactSubtitle    || "Media Contact";
+  const contactDescription = m?.contactDescription || "For interview requests, press releases, and media collaborations, reach out directly.";
 
   return (
     <div className="pb-24">
@@ -62,24 +81,32 @@ export default async function PressPage() {
         {/* Media Kit CTA */}
         <div className="mt-24 p-12 glass-card text-center relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/5 rounded-full blur-[80px] -z-10" />
-          <h2 className="text-3xl md:text-4xl font-display mb-6">
-            {(fbMeta as any)?.mediaAssetsTitle || "Need Media Assets?"}
-          </h2>
+          <h2 className="text-3xl md:text-4xl font-display mb-6">{mediaAssetsTitle}</h2>
           <p className="text-text-secondary mb-10 max-w-xl mx-auto text-lg">
-            {(fbMeta as any)?.mediaAssetsDescription || "Access hi-res photos, official bios, and brand assets for speaking engagements and press coverage."}
+            {mediaAssetsDescription}
           </p>
-          <a href={headerData.mediaKitUrl} target="_blank" rel="noopener noreferrer" className="btn-premium px-12">
-            {headerData.mediaKitLabel}
-          </a>
+          {mediaKitDownloadUrl ? (
+            <a
+              href={mediaKitDownloadUrl}
+              download
+              className="btn-premium px-12"
+            >
+              {mediaKitLabel}
+            </a>
+          ) : (
+            <span className="opacity-40 btn-premium px-12 cursor-default">
+              {mediaKitLabel}
+            </span>
+          )}
         </div>
       </div>
 
       {/* Contact Section */}
       <div className="mt-24 border-t border-white/5">
         <ContactForm
-          title={(fbMeta as any)?.contactTitle || "Press Enquiries?"}
-          subtitle={(fbMeta as any)?.contactSubtitle || "Media Contact"}
-          description={(fbMeta as any)?.contactDescription || "For interview requests, press releases, and media collaborations, reach out directly."}
+          title={contactTitle}
+          subtitle={contactSubtitle}
+          description={contactDescription}
         />
       </div>
     </div>
