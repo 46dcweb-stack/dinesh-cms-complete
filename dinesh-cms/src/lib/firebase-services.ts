@@ -418,11 +418,11 @@ export const auditService = {
     const user = auth.currentUser;
     if (!user) throw new Error("Not authenticated");
 
-    // Write the previous snapshot back to Firestore
+    // Full replace — no merge — so the document is exactly restored to the snapshot.
+    // merge:true would leave fields added after the snapshot still present, causing partial reverts.
     await setDoc(
       doc(db, log.collection, log.docId),
-      { ...log.previousData, updatedAt: serverTimestamp() },
-      { merge: true }
+      { ...log.previousData, updatedAt: serverTimestamp() }
     );
 
     // Log the revert itself
