@@ -77,8 +77,7 @@ export default function AdvancedVentures({
               </motion.div>
             </AnimatePresence>
 
-            <div className="relative z-20">
-            </div>
+            <div className="relative z-20" />
           </div>
         </div>
 
