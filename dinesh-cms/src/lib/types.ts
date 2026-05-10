@@ -249,6 +249,14 @@ export interface SiteSettings {
   navItems: { label: string; url: string; order: number }[];
   mediaKitUrl?: string;
   googleAnalyticsId?: string;
+  
+  contactTitle?: string;
+  contactSubtitle?: string;
+  contactDescription?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactOffice?: string;
+  contactHours?: string;
   updatedAt?: Timestamp;
 }
 

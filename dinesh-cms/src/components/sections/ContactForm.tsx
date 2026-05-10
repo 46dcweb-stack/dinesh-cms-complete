@@ -6,42 +6,33 @@ import { Mail, MessageSquare, ArrowRight, CheckCircle2, Phone, MapPin, Clock } f
 import { cn } from "@/lib/utils";
 import { contactService } from "@/lib/firebase-services";
 
-const contactInfo = [
-    {
-        id: "email",
-        label: "EMAIL US",
-        value: "dinesh@46dc.com",
-        href: "mailto:dinesh@46dc.com",
-        icon: <Mail size={20} />,
-    },
-    {
-        id: "phone",
-        label: "CALL US",
-        value: "+44 02045188119",
-        href: "tel:+4402045188119",
-        icon: <Phone size={20} />,
-    },
-    {
-        id: "office",
-        label: "HEAD OFFICE",
-        value: "London, England, United Kingdom",
-        icon: <MapPin size={20} />,
-    },
-    {
-        id: "hours",
-        label: "WORKING HOURS",
-        value: "Available 24/7",
-        icon: <Clock size={20} />,
-    }
-];
+interface ContactInfo {
+    id: string;
+    label: string;
+    value: string;
+    href?: string;
+    icon: React.ReactNode;
+}
 
 interface ContactFormProps {
     title: string;
     subtitle: string;
     description: string;
+    email?: string;
+    phone?: string;
+    office?: string;
+    hours?: string;
 }
 
-export default function ContactForm({ title, subtitle, description }: ContactFormProps) {
+export default function ContactForm({ 
+    title, 
+    subtitle, 
+    description,
+    email = "dinesh@46dc.com",
+    phone = "+44 02045188119",
+    office = "London, England, United Kingdom",
+    hours = "Available 24/7"
+}: ContactFormProps) {
     const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
     const [formData, setLocalFormData] = useState({
         name: "",
@@ -50,6 +41,36 @@ export default function ContactForm({ title, subtitle, description }: ContactFor
         message: "",
         type: "General"
     });
+
+    // Build contact info array from props
+    const contactInfo: ContactInfo[] = [
+        {
+            id: "email",
+            label: "EMAIL US",
+            value: email,
+            href: `mailto:${email}`,
+            icon: <Mail size={20} />,
+        },
+        {
+            id: "phone",
+            label: "CALL US",
+            value: phone,
+            href: `tel:${phone.replace(/\s/g, '')}`,
+            icon: <Phone size={20} />,
+        },
+        {
+            id: "office",
+            label: "HEAD OFFICE",
+            value: office,
+            icon: <MapPin size={20} />,
+        },
+        {
+            id: "hours",
+            label: "WORKING HOURS",
+            value: hours,
+            icon: <Clock size={20} />,
+        }
+    ];
 
     const inquiryTypes = ["General", "Speaking", "Media", "Collaboration"];
 
@@ -150,7 +171,7 @@ export default function ContactForm({ title, subtitle, description }: ContactFor
                         <CheckCircle2 size={64} className="text-brand-primary mb-6" />
                         <h2 className="text-3xl font-display mb-4">Message Sent</h2>
                         <p className="text-text-secondary max-w-sm mx-auto">
-                            Thank you for reaching out. I’ve received your inquiry and will
+                            Thank you for reaching out. I've received your inquiry and will
                             get back to you within 48 hours.
                         </p>
                         <button

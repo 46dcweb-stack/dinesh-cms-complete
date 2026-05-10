@@ -4,7 +4,7 @@ import { settingsService } from "@/lib/firebase-services";
 import type { SiteSettings } from "@/lib/types";
 import { Plus, Trash2 } from "lucide-react";
 import {
-  AdminPageHeader, Field, Input, Textarea, SaveButton,ImageUpload,
+  AdminPageHeader, Field, Input, Textarea, SaveButton, ImageUpload,
   Alert, Card, SectionTitle,
 } from "../components/ui";
 
@@ -27,6 +27,14 @@ const DEFAULT: Omit<SiteSettings, "id"> = {
   ],
   mediaKitUrl: "",
   googleAnalyticsId: "",
+  // Contact defaults
+  contactTitle: "Let's Start a Conversation.",
+  contactSubtitle: "Get in Touch",
+  contactDescription: "Whether you have a visionary project in mind or just want to exchange ideas, I'm always open to connecting with fellow thinkers.",
+  contactEmail: "dinesh@46dc.com",
+  contactPhone: "+44 02045188119",
+  contactOffice: "London, England, United Kingdom",
+  contactHours: "Available 24/7",
 };
 
 export default function SettingsAdmin() {
@@ -65,7 +73,7 @@ export default function SettingsAdmin() {
     <div className="p-8 max-w-3xl">
       <AdminPageHeader
         title="Site Settings"
-        subtitle="Global SEO, social links, navigation and footer"
+        subtitle="Global SEO, social links, navigation, contact info and footer"
         action={<SaveButton loading={saving} saved={saved} onClick={handleSave} />}
       />
       {error && <Alert message={error} className="mb-6" />}
@@ -98,6 +106,70 @@ export default function SettingsAdmin() {
                 allowPdf={true}
               />
             </Field>
+          </div>
+        </Card>
+
+        {/* Contact Page Settings */}
+        <Card>
+          <SectionTitle>Contact Page Settings</SectionTitle>
+          <div className="space-y-4">
+            <Field label="Page Title" hint="Main heading on contact page">
+              <Input
+                value={(form as any).contactTitle || ""}
+                onChange={e => set("contactTitle" as any, e.target.value)}
+                placeholder="Let's Start a Conversation."
+              />
+            </Field>
+            <Field label="Page Subtitle" hint="Eyebrow text above title">
+              <Input
+                value={(form as any).contactSubtitle || ""}
+                onChange={e => set("contactSubtitle" as any, e.target.value)}
+                placeholder="Get in Touch"
+              />
+            </Field>
+            <Field label="Page Description" hint="Description below title">
+              <Textarea
+                value={(form as any).contactDescription || ""}
+                onChange={e => set("contactDescription" as any, e.target.value)}
+                rows={3}
+                placeholder="Whether you have a visionary project in mind..."
+              />
+            </Field>
+
+            <div className="pt-4 border-t border-white/10">
+              <p className="text-xs text-white/40 mb-4 uppercase tracking-wider">Contact Information</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Field label="Email Address">
+                  <Input
+                    value={(form as any).contactEmail || ""}
+                    onChange={e => set("contactEmail" as any, e.target.value)}
+                    placeholder="dinesh@46dc.com"
+                    type="email"
+                  />
+                </Field>
+                <Field label="Phone Number">
+                  <Input
+                    value={(form as any).contactPhone || ""}
+                    onChange={e => set("contactPhone" as any, e.target.value)}
+                    placeholder="+44 02045188119"
+                  />
+                </Field>
+                <Field label="Office Location">
+                  <Input
+                    value={(form as any).contactOffice || ""}
+                    onChange={e => set("contactOffice" as any, e.target.value)}
+                    placeholder="London, England, United Kingdom"
+                  />
+                </Field>
+                <Field label="Working Hours">
+                  <Input
+                    value={(form as any).contactHours || ""}
+                    onChange={e => set("contactHours" as any, e.target.value)}
+                    placeholder="Available 24/7"
+                  />
+                </Field>
+              </div>
+            </div>
           </div>
         </Card>
 
