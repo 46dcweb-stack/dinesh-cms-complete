@@ -299,6 +299,9 @@ export interface PressPageMeta {
   seoMetaDescription?: string;
   seoOgImage?: string;
   updatedAt?: Timestamp;
+   contactTitle?: string;
+  contactSubtitle?: string;
+  contactDescription?: string;
 }
 
 // ── LEADERSHIP / TEAM MEMBERS ─────────────────────────────────────────────────

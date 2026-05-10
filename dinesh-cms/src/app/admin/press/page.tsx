@@ -30,12 +30,15 @@ export default function PressAdmin() {
 
   // Press Page Meta state
   const [pageMeta, setPageMeta] = useState<Omit<PressPageMeta, "id">>({
-    title: "Press",
-    subtitle: "Media Coverage",
-    description: "Media mentions, features, and press coverage",
-    heroBackground: "",
+    title: "Media & Mentions",
+    subtitle: "Validation & Visibility",
+    description: "Insights and features from leading publications on venture building, leadership, and the future of technology.",
+    heroBackground: "/images/press_hero.png",
     mediaKitLabel: "Download Media Kit",
     mediaKitUrl: "",
+    contactTitle: "Press Enquiries?",
+    contactSubtitle: "Media Contact",
+    contactDescription: "For interview requests, press releases, and media collaborations, reach out directly.",
     seoMetaTitle: "",
     seoMetaDescription: "",
     seoOgImage: "",
@@ -172,6 +175,45 @@ export default function PressAdmin() {
               placeholder="https://..."
             />
           </Field>
+          <div className="md:col-span-2">
+            <Field label="Hero Background Image" hint="Full-width image shown behind the press page header">
+              <ImageUpload
+                value={pageMeta.heroBackground || ""}
+                onChange={v => setPageMeta(m => ({ ...m, heroBackground: v }))}
+                folder="press"
+              />
+            </Field>
+          </div>
+        </div>
+
+        <div className="mt-6 pt-6 border-t border-white/10">
+          <h3 className="text-xs font-mono uppercase tracking-widest text-white/60 mb-4">Contact Section</h3>
+          <div className="space-y-3">
+            <Field label="Contact Title" hint='Heading shown in the contact CTA at the bottom e.g. "Press Enquiries?"'>
+              <Input
+                value={(pageMeta as any).contactTitle || ""}
+                onChange={e => setPageMeta(m => ({ ...m, contactTitle: e.target.value }))}
+                placeholder="Press Enquiries?"
+              />
+            </Field>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Contact Subtitle" hint='Small eyebrow label e.g. "Media Contact"'>
+                <Input
+                  value={(pageMeta as any).contactSubtitle || ""}
+                  onChange={e => setPageMeta(m => ({ ...m, contactSubtitle: e.target.value }))}
+                  placeholder="Media Contact"
+                />
+              </Field>
+            </div>
+            <Field label="Contact Description">
+              <Textarea
+                value={(pageMeta as any).contactDescription || ""}
+                onChange={e => setPageMeta(m => ({ ...m, contactDescription: e.target.value }))}
+                rows={2}
+                placeholder="For interview requests, press releases, and media collaborations, reach out directly."
+              />
+            </Field>
+          </div>
         </div>
 
         <div className="mt-6 pt-6 border-t border-white/10">
