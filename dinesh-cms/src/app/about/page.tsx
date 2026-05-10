@@ -53,6 +53,9 @@ export default async function AboutPage() {
 
     // Safe fallbacks — if Firebase field is empty/missing, use static data
     const downloadableBio   = (raw as any).downloadableBio  || null;
+    const heroEyebrow       = (raw as any).heroEyebrow       || "Behind the Vision";
+    const heroHeading       = (raw as any).heroHeading       || "A Journey of Purpose, Scale, and";
+    const heroHeadingItalic = (raw as any).heroHeadingItalic || "Impact.";
     const shortBio          = (raw as any).shortBio          ?? aboutData.shortBio;
     const longBio           = (raw as any).longBio           ?? aboutData.longBio;
     const profileImage      = (raw as any).profileImage      || aboutData.profileImage;
@@ -72,11 +75,11 @@ export default async function AboutPage() {
                 <div className="max-w-7xl mx-auto">
                     <div className="max-w-3xl mb-24">
                         <span className="text-brand-primary font-medium tracking-[0.3em] text-xs uppercase block mb-6 font-mono">
-                            Behind the Vision
+                            {heroEyebrow}
                         </span>
                         <h1 className="text-5xl md:text-8xl font-display leading-[1.1] tracking-tight">
-                            A Journey of Purpose, Scale, and{" "}
-                            <span className="text-gradient italic">Impact.</span>
+                            {heroHeading}{" "}
+                            <span className="text-gradient italic">{heroHeadingItalic}</span>
                         </h1>
                     </div>
 

@@ -9,6 +9,9 @@ import {
 } from "../components/ui";
 
 const DEFAULT: Omit<AboutPage, "id"> = {
+  heroEyebrow: "Behind the Vision",
+  heroHeading: "A Journey of Purpose, Scale, and",
+  heroHeadingItalic: "Impact.",
   shortBio: "", longBio: "", profileImage: "", featuredQuote: "",
   downloadableBio: "", currentFocusTitle: "Current Focus", currentFocusBody: "",
   proofPoints: [
@@ -67,6 +70,22 @@ export default function AboutAdmin() {
 )}
 
       <div className="space-y-6">
+        {/* Page Hero Heading */}
+        <Card>
+          <SectionTitle>Page Hero Heading</SectionTitle>
+          <div className="space-y-3">
+            <Field label="Eyebrow Label" hint='Small uppercase label above the heading e.g. "Behind the Vision"'>
+              <Input value={(form as any).heroEyebrow || ""} onChange={e => setField("heroEyebrow" as any, e.target.value)} placeholder="Behind the Vision" />
+            </Field>
+            <Field label="Heading" hint='Main heading text e.g. "A Journey of Purpose, Scale, and"'>
+              <Input value={(form as any).heroHeading || ""} onChange={e => setField("heroHeading" as any, e.target.value)} placeholder="A Journey of Purpose, Scale, and" />
+            </Field>
+            <Field label="Heading Italic Part" hint='Styled italic ending e.g. "Impact."'>
+              <Input value={(form as any).heroHeadingItalic || ""} onChange={e => setField("heroHeadingItalic" as any, e.target.value)} placeholder="Impact." />
+            </Field>
+          </div>
+        </Card>
+
         {/* Bio */}
         <Card>
           <SectionTitle>Biography</SectionTitle>

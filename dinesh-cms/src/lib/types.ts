@@ -104,6 +104,9 @@ export interface FaqItem {
 // ── ABOUT PAGE ───────────────────────────────────────────────────────────────
 export interface AboutPage {
   id?: string;
+  heroEyebrow?: string;
+  heroHeading?: string;
+  heroHeadingItalic?: string;
   shortBio: string;
   longBio: string;
   profileImage: string;
@@ -115,6 +118,7 @@ export interface AboutPage {
   values: { title: string; description: string }[];
   milestones: { year: string; title: string; description: string }[];
   updatedAt?: Timestamp;
+
 }
 
 // ── HOME PAGE ─────────────────────────────────────────────────────────────────
