@@ -25,7 +25,7 @@ export default function GalleryAdmin() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
-  const [pageText, setPageText] = useState({ eyebrow: "Visual Protocol", description: "A curated collection of visual artifacts representing our approach to architecture, technology, and the global infrastructures we are building." });
+  const [pageText, setPageText] = useState({ eyebrow: "Visual Protocol", heading: "Cinematic", headingItalic: "Ventures.", description: "A curated collection of visual artifacts representing our approach to architecture, technology, and the global infrastructures we are building." });
   const [savingPage, setSavingPage] = useState(false);
   const [savedPage, setSavedPage] = useState(false);
 
@@ -38,7 +38,7 @@ export default function GalleryAdmin() {
       const snap = await getDoc(doc(db, "siteSettings", "galleryPage"));
       if (snap.exists()) {
         const d = snap.data();
-        setPageText({ eyebrow: d.eyebrow || pageText.eyebrow, description: d.description || pageText.description });
+        setPageText({ eyebrow: d.eyebrow || pageText.eyebrow, heading: d.heading || pageText.heading, headingItalic: d.headingItalic || pageText.headingItalic, description: d.description || pageText.description });
       }
     } catch (e) { console.error("loadPageText:", e); }
   }
@@ -128,6 +128,22 @@ export default function GalleryAdmin() {
               placeholder="Visual Protocol"
             />
           </Field>
+          <div className="grid grid-cols-2 gap-4 mt-3">
+            <Field label="Heading" hint='Main heading word e.g. "Cinematic"'>
+              <Input
+                value={pageText.heading}
+                onChange={e => setPageText(p => ({ ...p, heading: e.target.value }))}
+                placeholder="Cinematic"
+              />
+            </Field>
+            <Field label="Heading Italic Part" hint='Styled italic ending e.g. "Ventures."'>
+              <Input
+                value={pageText.headingItalic}
+                onChange={e => setPageText(p => ({ ...p, headingItalic: e.target.value }))}
+                placeholder="Ventures."
+              />
+            </Field>
+          </div>
           <Field label="Page Description">
             <Textarea
               value={pageText.description}

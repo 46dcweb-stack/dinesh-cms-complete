@@ -1,5 +1,5 @@
 import GalleryGrid from "@/components/sections/GalleryGrid";
-import { getGallery, getSiteSettings } from "@/lib/firebase-data";
+import { getGallery } from "@/lib/firebase-data";
 import { galleryImages, galleryPageData } from "@/lib/data";
 import { fbArr, fbStr } from "@/lib/fallback";
 
@@ -14,7 +14,7 @@ export default async function GalleryPage() {
   const images = fbArr(fbGallery, galleryImages as any[]);
 
   // Read gallery page text from dedicated siteSettings/galleryPage doc
-  let galleryPageText = { eyebrow: "", description: "" };
+  let galleryPageText = { eyebrow: "", heading: "", headingItalic: "", description: "" };
   try {
     const { getAdminDb } = await import("@/lib/firebase-admin");
     const db = getAdminDb();
@@ -23,8 +23,10 @@ export default async function GalleryPage() {
   } catch {}
 
   const pd = {
-    visualProtocol: fbStr(galleryPageText.eyebrow, (galleryPageData as any).visualProtocol),
-    description:    fbStr(galleryPageText.description, (galleryPageData as any).description),
+    visualProtocol:  fbStr(galleryPageText.eyebrow,       (galleryPageData as any).visualProtocol),
+    heading:         fbStr(galleryPageText.heading,        "Cinematic"),
+    headingItalic:   fbStr(galleryPageText.headingItalic,  "Ventures."),
+    description:     fbStr(galleryPageText.description,    (galleryPageData as any).description),
   };
 
   return (
@@ -36,7 +38,7 @@ export default async function GalleryPage() {
               {pd.visualProtocol}
             </span>
             <h1 className="text-5xl md:text-8xl font-display leading-[1.1] tracking-tight">
-              Cinematic <span className="text-gradient italic">Ventures.</span>
+              {pd.heading} <span className="text-gradient italic">{pd.headingItalic}</span>
             </h1>
             <p className="mt-8 text-text-secondary text-lg max-w-xl leading-relaxed">{pd.description}</p>
           </div>
