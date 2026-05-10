@@ -169,7 +169,7 @@ export default function AuditAdmin() {
 
                     {/* Revert button */}
                     <td className="px-4 py-3 text-center">
-                      {log.action === "update" && log.fieldChanged !== "revert" ? (
+                      {(log.action === "update" || log.action === "publish" || log.action === "unpublish") && log.fieldChanged !== "revert" ? (
                         status === "success" ? (
                           <div className="flex items-center justify-center gap-1">
                             <Check size={14} className="text-green-400" />

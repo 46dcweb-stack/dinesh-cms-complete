@@ -104,9 +104,10 @@ export const blogService = {
   },
 
   async update(id: string, data: Partial<BlogPost>): Promise<void> {
+    const prev = await fetchSnapshot("blogPosts", id);
     await updateDoc(doc(db, "blogPosts", id), stripUndefined({ ...data, updatedAt: serverTimestamp() }));
     await writeAudit("blogPosts", id, "update", `Updated blog: "${data.title || id}"`,
-      Object.keys(data).join(", "));
+      Object.keys(data).join(", "), prev);
   },
 
   async delete(id: string): Promise<void> {
@@ -115,13 +116,15 @@ export const blogService = {
   },
 
   async publish(id: string): Promise<void> {
+    const prev = await fetchSnapshot("blogPosts", id);
     await updateDoc(doc(db, "blogPosts", id), { status: "published", updatedAt: serverTimestamp() });
-    await writeAudit("blogPosts", id, "publish", `Published blog ID: ${id}`);
+    await writeAudit("blogPosts", id, "publish", `Published blog ID: ${id}`, "status", prev);
   },
 
   async unpublish(id: string): Promise<void> {
+    const prev = await fetchSnapshot("blogPosts", id);
     await updateDoc(doc(db, "blogPosts", id), { status: "draft", updatedAt: serverTimestamp() });
-    await writeAudit("blogPosts", id, "unpublish", `Unpublished blog ID: ${id}`);
+    await writeAudit("blogPosts", id, "unpublish", `Unpublished blog ID: ${id}`, "status", prev);
   },
 };
 
@@ -150,8 +153,9 @@ export const pressService = {
   },
 
   async update(id: string, data: Partial<PressMention>): Promise<void> {
+    const prev = await fetchSnapshot("pressMentions", id);
     await updateDoc(doc(db, "pressMentions", id), stripUndefined({ ...data, updatedAt: serverTimestamp() }));
-    await writeAudit("pressMentions", id, "update", `Updated press: "${data.title || id}"`);
+    await writeAudit("pressMentions", id, "update", `Updated press: "${data.title || id}"`, undefined, prev);
   },
 
   async delete(id: string): Promise<void> {
@@ -169,8 +173,9 @@ export const manifestoService = {
   },
 
   async saveMeta(data: Omit<ManifestoMeta, "id">): Promise<void> {
+    const prev = await fetchSnapshot("manifestoMeta", "main");
     await setDoc(doc(db, "manifestoMeta", "main"), { ...data, updatedAt: serverTimestamp() });
-    await writeAudit("manifestoMeta", "main", "update", "Updated manifesto metadata");
+    await writeAudit("manifestoMeta", "main", "update", "Updated manifesto metadata", undefined, prev);
   },
 
   async getSections(): Promise<ManifestoSection[]> {
@@ -188,8 +193,9 @@ export const manifestoService = {
   },
 
   async updateSection(id: string, data: Partial<ManifestoSection>): Promise<void> {
+    const prev = await fetchSnapshot("manifestoSections", id);
     await updateDoc(doc(db, "manifestoSections", id), { ...data, updatedAt: serverTimestamp() });
-    await writeAudit("manifestoSections", id, "update", `Updated manifesto section ID: ${id}`);
+    await writeAudit("manifestoSections", id, "update", `Updated manifesto section ID: ${id}`, undefined, prev);
   },
 
   async deleteSection(id: string): Promise<void> {
@@ -285,8 +291,9 @@ export const ventureService = {
   },
 
   async update(id: string, data: Partial<Venture>): Promise<void> {
+    const prev = await fetchSnapshot("ventures", id);
     await updateDoc(doc(db, "ventures", id), stripUndefined({ ...data, updatedAt: serverTimestamp() }));
-    await writeAudit("ventures", id, "update", `Updated venture: "${data.name || id}"`);
+    await writeAudit("ventures", id, "update", `Updated venture: "${data.name || id}"`, undefined, prev);
   },
 
   async delete(id: string): Promise<void> {
@@ -346,7 +353,9 @@ export const galleryService = {
   },
 
   async update(id: string, data: Partial<GalleryImage>): Promise<void> {
+    const prev = await fetchSnapshot("galleryImages", id);
     await updateDoc(doc(db, "galleryImages", id), { ...data, updatedAt: serverTimestamp() });
+    await writeAudit("galleryImages", id, "update", `Updated gallery image ID: ${id}`, undefined, prev);
   },
 
   async delete(id: string): Promise<void> {
@@ -363,8 +372,9 @@ export const settingsService = {
   },
 
   async save(data: Omit<SiteSettings, "id">): Promise<void> {
+    const prev = await fetchSnapshot("siteSettings", "main");
     await setDoc(doc(db, "siteSettings", "main"), { ...data, updatedAt: serverTimestamp() });
-    await writeAudit("siteSettings", "main", "update", "Updated site settings");
+    await writeAudit("siteSettings", "main", "update", "Updated site settings", undefined, prev);
   },
 };
 
@@ -439,7 +449,9 @@ export const pressPageService = {
   },
 
   async save(data: PressPageMeta): Promise<void> {
+    const prev = await fetchSnapshot("pressPageMeta", "main");
     await setDoc(doc(db, "pressPageMeta", "main"), { ...data, updatedAt: serverTimestamp() });
+    await writeAudit("pressPageMeta", "main", "update", "Updated press page meta", undefined, prev);
   },
 };
 
@@ -488,10 +500,11 @@ export const teamService = {
   },
 
   async update(id: string, data: Partial<TeamMember>): Promise<void> {
+    const prev = await fetchSnapshot("teamMembers", id);
     await updateDoc(doc(db, "teamMembers", id),
       stripUndefined({ ...data, updatedAt: serverTimestamp() })
     );
-    await writeAudit("teamMembers", id, "update", `Updated team member: "${data.name || id}"`);
+    await writeAudit("teamMembers", id, "update", `Updated team member: "${data.name || id}"`, undefined, prev);
   },
 
   async delete(id: string): Promise<void> {
