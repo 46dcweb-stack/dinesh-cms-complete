@@ -6,6 +6,27 @@ import { aboutData } from "@/lib/data";
 
 export const revalidate = 60;
 
+// Renders HTML if content starts with <tag>, otherwise plain paragraphs
+function renderContent(text: string) {
+  if (!text) return null;
+  const isHtml = text.trimStart().startsWith("<");
+  if (isHtml) {
+    return (
+      <div
+        className="prose prose-invert prose-lg max-w-none prose-p:text-text-secondary prose-p:leading-relaxed prose-headings:text-white prose-a:text-brand-primary prose-strong:text-white prose-ul:text-text-secondary prose-li:text-text-secondary"
+        dangerouslySetInnerHTML={{ __html: text }}
+      />
+    );
+  }
+  return (
+    <>
+      {text.split("\n\n").map((para: string, i: number) => (
+        <p key={i} className="text-text-secondary leading-relaxed mb-4">{para}</p>
+      ))}
+    </>
+  );
+}
+
 
 // ADD THIS INSTEAD:
 export async function generateMetadata() {
@@ -82,8 +103,8 @@ export default async function AboutPage() {
                                     {featuredQuote}
                                 </h3>
                             )}
-                            {shortBio && <p>{shortBio}</p>}
-                            {longBio && <p>{longBio}</p>}
+                            {shortBio && renderContent(shortBio)}
+                            {longBio && renderContent(longBio)}
                             {downloadableBio && (
                               <a
                                 href={downloadableBio}

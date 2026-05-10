@@ -71,11 +71,11 @@ export default function AboutAdmin() {
         <Card>
           <SectionTitle>Biography</SectionTitle>
           <div className="space-y-4">
-            <Field label="Short Bio (summary — shown in listings)">
+            <Field label="Short Bio (summary — shown in listings)" hint="Plain text or HTML supported">
               <Textarea value={form.shortBio} onChange={e => setField("shortBio", e.target.value)} rows={3} />
             </Field>
-            <Field label="Long Bio (full story — shown on About page)">
-              <Textarea value={form.longBio} onChange={e => setField("longBio", e.target.value)} rows={8} />
+            <Field label="Long Bio (full story — shown on About page)" hint="Plain text or paste HTML for rich formatting e.g. <h2>Heading</h2><p>Paragraph</p>">
+              <Textarea value={form.longBio} onChange={e => setField("longBio", e.target.value)} rows={12} />
             </Field>
             <Field label="Featured Quote">
               <Input value={form.featuredQuote} onChange={e => setField("featuredQuote", e.target.value)} placeholder="Your signature quote" />
