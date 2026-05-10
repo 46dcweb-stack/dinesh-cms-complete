@@ -11,11 +11,11 @@ import { getHomePage, getPublishedBlogs, getPublishedFaq, getVentures, getPublis
 import { homePageData, blogPosts, faqGroups } from "@/lib/data";
 import { fbStr, fbArr, fbVal } from "@/lib/fallback";
 import type { Metadata } from "next";
-export const revalidate = 60;
+
+export const revalidate = 0;
 
 export async function generateMetadata(): Promise<Metadata> {
   const [settings, homeData] = await Promise.all([getSiteSettings(), getHomePage()]) as any[];
-  // Home-page-specific SEO takes priority over global settings
   const title       = fbStr(homeData?.seoTitle,       fbStr(settings?.seoDefaultTitle,       "Dinesh Koyyalamudi | Strategic Visionary & Venture Builder"));
   const description = fbStr(homeData?.seoDescription, fbStr(settings?.seoDefaultDescription, "Official platform of Dinesh Koyyalamudi — Founder building resilient systems and visionary companies."));
   const ogImage     = fbVal(homeData?.seoOgImage,     fbVal(settings?.seoOgImage,            "/og-image.jpg"));
@@ -34,11 +34,9 @@ export default async function Home() {
   const static_home = homePageData as any;
   const home        = (fbHome ?? {}) as any;
 
-  // ── Field-level fallbacks for every home section ─────────────────────────
   const homeData = {
-    ...static_home,       // start with ALL static defaults
-    ...home,              // overlay Firebase values
-    // Then ensure nested objects also fall back field by field
+    ...static_home,
+    ...home,
     personalIntro: {
       quote:    fbStr(home.personalIntro?.quote,    static_home.personalIntro?.quote),
       body:     fbStr(home.personalIntro?.body,     static_home.personalIntro?.body),
@@ -58,9 +56,6 @@ export default async function Home() {
 
   const blogs    = fbArr(fbBlogs,    blogPosts as any[]);
   const press    = fbArr(fbPress,    []);
-
-
-// After (no type issues
   const ventures = (fbVentures.length > 0 ? fbVentures : (static_home.ventures ?? []));
 
   const faqItems = fbFaq.length > 0
@@ -81,7 +76,14 @@ export default async function Home() {
       <HomeHero data={homeData} />
       <PersonalIntro data={homeData.personalIntro} />
       <EthosSection data={homeData.ethos} />
-      {show.ventures        && <AdvancedVentures data={ventures} />}
+      {show.ventures && (
+        <AdvancedVentures
+          data={ventures as any[]}
+          eyebrow={homeData.venturesEyebrow || "Portfolio Showcase"}
+          heading={homeData.venturesHeading || "Building the"}
+          headingItalic={homeData.venturesHeadingItalic || "Invisible"}
+        />
+      )}
       {show.blog            && <HorizontalNewsroom posts={blogs.slice(0, 6) as any} eyebrow={homeData.blogSectionEyebrow} heading={homeData.blogSectionHeading} headingItalic={homeData.blogSectionHeadingItalic} />}
       {show.press           && <PressLogos items={press as any[]} />}
       {show.manifestoTeaser && <ManifestoTeaser data={homeData} />}
