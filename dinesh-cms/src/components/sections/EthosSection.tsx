@@ -79,9 +79,9 @@ export default function EthosSection({ data }: { data?: HomePage["ethos"] }) {
           md:overflow-hidden
         "
       >
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-10 lg:gap-24 items-start">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-[1.4fr_0.6fr] gap-10 lg:gap-16 items-start">
           {/* Left Column */}
-          <div className="relative pt-16 md:pt-32">
+          <div className="relative">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -119,7 +119,7 @@ export default function EthosSection({ data }: { data?: HomePage["ethos"] }) {
 
           {/* Right Column */}
           <div className="grid grid-cols-1 gap-6 pt-8 md:pt-0">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
               {principles.map((p: NonNullable<HomePage['ethos']>['principles'][0], idx: number) => (
                 <PrincipleCard
                   key={p.id}
@@ -161,7 +161,7 @@ function PrincipleCard({
 
   return (
     <motion.div
-      className="glass-card p-8 border-l-2 relative group overflow-hidden transition-all duration-500 hover:bg-white/5 h-full"
+      className="glass-card p-5 border-l-2 relative group overflow-hidden transition-all duration-500 hover:bg-white/5 h-full"
       style={{
         borderLeftColor: principle.color,
         opacity,
@@ -179,15 +179,15 @@ function PrincipleCard({
 
       <div className="relative z-10 flex flex-col h-full">
         <span
-          className="font-mono text-[9px] font-bold tracking-[0.3em] uppercase block mb-4"
+          className="font-mono text-[8px] font-bold tracking-[0.3em] uppercase block mb-2"
           style={{ color: principle.color }}
         >
           {principle.label}
         </span>
-        <h4 className="text-xl md:text-2xl font-display text-white mb-3 tracking-tight">
+        <h4 className="text-base md:text-lg font-display text-white mb-2 tracking-tight">
           {principle.title}
         </h4>
-        <p className="text-text-muted text-sm leading-relaxed">
+        <p className="text-text-muted text-xs leading-relaxed">
           {principle.description}
         </p>
       </div>
