@@ -14,10 +14,13 @@ const DEFAULT: Omit<SiteSettings, "id"> = {
   seoDefaultDescription: "Founder of FourSix46. Building resilient systems across global markets.",
   seoOgImage: "",
   socialLinks: {
-    linkedin: "", twitter: "", instagram: "", youtube: "",
+    linkedin: "", twitter: "", instagram: "", youtube: "", facebook: "",
   },
   footerCopyright: "© 2025 Dinesh Koyyalamudi. All rights reserved.",
   footerTagline: "",
+  footerEmail: "",
+  footerLocation: "",
+  footerQuote: "",
   navItems: [
     { label: "About", url: "/about", order: 1 },
     { label: "Blog", url: "/blog", order: 2 },
@@ -35,10 +38,10 @@ const DEFAULT: Omit<SiteSettings, "id"> = {
   contactPhone: "+44 02045188119",
   contactOffice: "London, England, United Kingdom",
   contactHours: "Available 24/7",
-};
+} as any;
 
 export default function SettingsAdmin() {
-  const [form, setForm] = useState<Omit<SiteSettings, "id">>(DEFAULT);
+  const [form, setForm] = useState<any>(DEFAULT);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -46,13 +49,13 @@ export default function SettingsAdmin() {
 
   useEffect(() => {
     settingsService.get().then(data => {
-      if (data) { const { id: _, ...rest } = data; setForm(rest); }
+      if (data) { const { id: _, ...rest } = data; setForm({ ...DEFAULT, ...rest }); }
       setLoading(false);
     });
   }, []);
 
-  function set(key: keyof typeof form, val: any) {
-    setForm(f => ({ ...f, [key]: val }));
+  function set(key: string, val: any) {
+    setForm((f: any) => ({ ...f, [key]: val }));
     setSaved(false);
   }
 
@@ -64,7 +67,7 @@ export default function SettingsAdmin() {
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err: any) { setError(err.message); }
-    setSaving(false); 
+    setSaving(false);
   }
 
   if (loading) return <div className="p-8 text-white/40 text-sm">Loading...</div>;
@@ -100,8 +103,8 @@ export default function SettingsAdmin() {
             </Field>
             <Field label="Media Kit File" hint="Upload your press kit PDF or zip — shown as download on Press page">
               <ImageUpload
-                value={(form as any).mediaKitUrl || ""}
-                onChange={v => set("mediaKitUrl" as any, v)}
+                value={form.mediaKitUrl || ""}
+                onChange={v => set("mediaKitUrl", v)}
                 folder="press"
                 allowPdf={true}
               />
@@ -115,22 +118,22 @@ export default function SettingsAdmin() {
           <div className="space-y-4">
             <Field label="Page Title" hint="Main heading on contact page">
               <Input
-                value={(form as any).contactTitle || ""}
-                onChange={e => set("contactTitle" as any, e.target.value)}
+                value={form.contactTitle || ""}
+                onChange={e => set("contactTitle", e.target.value)}
                 placeholder="Let's Start a Conversation."
               />
             </Field>
             <Field label="Page Subtitle" hint="Eyebrow text above title">
               <Input
-                value={(form as any).contactSubtitle || ""}
-                onChange={e => set("contactSubtitle" as any, e.target.value)}
+                value={form.contactSubtitle || ""}
+                onChange={e => set("contactSubtitle", e.target.value)}
                 placeholder="Get in Touch"
               />
             </Field>
             <Field label="Page Description" hint="Description below title">
               <Textarea
-                value={(form as any).contactDescription || ""}
-                onChange={e => set("contactDescription" as any, e.target.value)}
+                value={form.contactDescription || ""}
+                onChange={e => set("contactDescription", e.target.value)}
                 rows={3}
                 placeholder="Whether you have a visionary project in mind..."
               />
@@ -141,30 +144,30 @@ export default function SettingsAdmin() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field label="Email Address">
                   <Input
-                    value={(form as any).contactEmail || ""}
-                    onChange={e => set("contactEmail" as any, e.target.value)}
+                    value={form.contactEmail || ""}
+                    onChange={e => set("contactEmail", e.target.value)}
                     placeholder="dinesh@46dc.com"
                     type="email"
                   />
                 </Field>
                 <Field label="Phone Number">
                   <Input
-                    value={(form as any).contactPhone || ""}
-                    onChange={e => set("contactPhone" as any, e.target.value)}
+                    value={form.contactPhone || ""}
+                    onChange={e => set("contactPhone", e.target.value)}
                     placeholder="+44 02045188119"
                   />
                 </Field>
                 <Field label="Office Location">
                   <Input
-                    value={(form as any).contactOffice || ""}
-                    onChange={e => set("contactOffice" as any, e.target.value)}
+                    value={form.contactOffice || ""}
+                    onChange={e => set("contactOffice", e.target.value)}
                     placeholder="London, England, United Kingdom"
                   />
                 </Field>
                 <Field label="Working Hours">
                   <Input
-                    value={(form as any).contactHours || ""}
-                    onChange={e => set("contactHours" as any, e.target.value)}
+                    value={form.contactHours || ""}
+                    onChange={e => set("contactHours", e.target.value)}
                     placeholder="Available 24/7"
                   />
                 </Field>
@@ -173,14 +176,15 @@ export default function SettingsAdmin() {
           </div>
         </Card>
 
-        {/* Social Links */}
+        {/* Social Media Links */}
         <Card>
           <SectionTitle>Social Media Links</SectionTitle>
+          <p className="text-xs text-white/40 mb-4">These appear as icons in the footer. Leave blank to hide.</p>
           <div className="grid grid-cols-2 gap-4">
-            {(["linkedin", "twitter", "instagram", "youtube"] as const).map(key => (
+            {(["linkedin", "twitter", "instagram", "youtube", "facebook"] as const).map(key => (
               <Field key={key} label={key.charAt(0).toUpperCase() + key.slice(1)}>
                 <Input
-                  value={form.socialLinks[key] || ""}
+                  value={form.socialLinks?.[key] || ""}
                   onChange={e => set("socialLinks", { ...form.socialLinks, [key]: e.target.value })}
                   placeholder={`https://${key}.com/...`}
                 />
@@ -196,8 +200,35 @@ export default function SettingsAdmin() {
             <Field label="Copyright Text">
               <Input value={form.footerCopyright} onChange={e => set("footerCopyright", e.target.value)} />
             </Field>
-            <Field label="Footer Tagline">
-              <Input value={form.footerTagline || ""} onChange={e => set("footerTagline", e.target.value)} />
+            <Field label="Footer Tagline" hint="Shown beside the copyright text">
+              <Input
+                value={form.footerTagline || ""}
+                onChange={e => set("footerTagline", e.target.value)}
+                placeholder="Built with intention. Shared with purpose."
+              />
+            </Field>
+            <Field label="Footer Email" hint="Contact email shown in the Frequency column">
+              <Input
+                value={form.footerEmail || ""}
+                onChange={e => set("footerEmail", e.target.value)}
+                placeholder="dinesh@foursix46.com"
+                type="email"
+              />
+            </Field>
+            <Field label="Footer Location" hint="Location shown in the Frequency column">
+              <Input
+                value={form.footerLocation || ""}
+                onChange={e => set("footerLocation", e.target.value)}
+                placeholder="Global Base"
+              />
+            </Field>
+            <Field label="Intention Quote" hint="Italic quote shown in the Intention column">
+              <Textarea
+                value={form.footerQuote || ""}
+                onChange={e => set("footerQuote", e.target.value)}
+                rows={2}
+                placeholder="The best companies are built not just on ideas, but on conviction."
+              />
             </Field>
           </div>
         </Card>
@@ -207,8 +238,9 @@ export default function SettingsAdmin() {
           <SectionTitle>Navigation Menu Items</SectionTitle>
           <div className="space-y-2">
             {form.navItems
-              .sort((a, b) => a.order - b.order)
-              .map((nav, i) => (
+              .slice()
+              .sort((a: any, b: any) => a.order - b.order)
+              .map((nav: any, i: number) => (
                 <div key={i} className="grid grid-cols-12 gap-2 items-end">
                   <div className="col-span-1">
                     <Field label="Order">
@@ -250,7 +282,7 @@ export default function SettingsAdmin() {
                   </div>
                   <div className="col-span-1 pb-0.5">
                     <button
-                      onClick={() => set("navItems", form.navItems.filter((_, j) => j !== i))}
+                      onClick={() => set("navItems", form.navItems.filter((_: any, j: number) => j !== i))}
                       className="w-full p-2.5 text-white/30 hover:text-red-400 transition-colors flex justify-center"
                     >
                       <Trash2 size={14} />

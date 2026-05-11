@@ -244,11 +244,13 @@ export interface SiteSettings {
     instagram?: string;
     youtube?: string;
   };
+  footerEmail?: string;
   footerCopyright: string;
   footerTagline?: string;
   navItems: { label: string; url: string; order: number }[];
   mediaKitUrl?: string;
   googleAnalyticsId?: string;
+  footerLocation?: string;
   
   contactTitle?: string;
   contactSubtitle?: string;
