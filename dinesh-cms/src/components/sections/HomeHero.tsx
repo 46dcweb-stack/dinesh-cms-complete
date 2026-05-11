@@ -272,7 +272,7 @@ export default function HomeHero({ data }: HomeHeroProps) {
                 transition={{ duration: 0.55 }}
                 className="font-display font-bold leading-[0.9] tracking-tighter"
               >
-                <span className="block text-2xl md:text-3xl lg:text-4xl text-brand-primary font-medium tracking-normal mb-3">
+                <span className="block text-lg md:text-xl lg:text-2xl text-brand-primary font-medium tracking-normal mb-3">
                   {heroTitle.toUpperCase()}
                 </span>
                 <span className="block text-6xl md:text-7xl lg:text-8xl text-white">

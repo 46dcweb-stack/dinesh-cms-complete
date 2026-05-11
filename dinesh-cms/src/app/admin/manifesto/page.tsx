@@ -4,8 +4,8 @@ import { manifestoService } from "@/lib/firebase-services";
 import type { ManifestoMeta, ManifestoSection } from "@/lib/types";
 import { Plus, Trash2, ChevronUp, ChevronDown, Pencil, GripVertical } from "lucide-react";
 import {
-  AdminPageHeader, Field, Input, Textarea, Select, SaveButton,
-  Alert, Card, SectionTitle, Toggle, ImageUpload,
+  AdminPageHeader, Field, Input, Textarea, Select, SaveButton, ImageUpload,
+  Alert, Card, SectionTitle, Toggle,
 } from "../components/ui";
 
 const EMPTY_META: Omit<ManifestoMeta, "id"> = {
@@ -149,42 +149,44 @@ export default function ManifestoAdmin() {
           </div>
         </div>
         <div className="mt-4">
+          <Card>
+            <SectionTitle>SEO & Schema</SectionTitle>
+            <div className="space-y-3">
+              <Field label="SEO Title">
+                <Input value={(meta as any).seoTitle || ""} onChange={e => setMeta((m:any) => ({...m, seoTitle: e.target.value}))} placeholder="Manifesto | Dinesh Koyyalamudi" />
+              </Field>
+              <Field label="SEO Description" hint="~155 characters">
+                <Textarea value={(meta as any).seoDescription || ""} onChange={e => setMeta((m:any) => ({...m, seoDescription: e.target.value}))} rows={2} />
+              </Field>
+              <Field label="OG Image">
+                <ImageUpload value={(meta as any).seoOgImage || ""} onChange={(v:string) => setMeta((m:any) => ({...m, seoOgImage: v}))} folder="seo" />
+              </Field>
+            </div>
+          </Card>
+          {/* CTA Section */}
+          <Card>
+            <SectionTitle>CTA Section (Bottom of Page)</SectionTitle>
+            <div className="space-y-3">
+              <Field label="Heading" hint="e.g. Will you build">
+                <Input value={(meta as any).ctaHeading || ""} onChange={e => setMeta((m:any) => ({...m, ctaHeading: e.target.value}))} placeholder="Will you build" />
+              </Field>
+              <Field label="Heading Italic Part" hint="e.g. the future with us?">
+                <Input value={(meta as any).ctaHeadingItalic || ""} onChange={e => setMeta((m:any) => ({...m, ctaHeadingItalic: e.target.value}))} placeholder="the future with us?" />
+              </Field>
+              <Field label="Description">
+                <Textarea value={(meta as any).ctaDescription || ""} onChange={e => setMeta((m:any) => ({...m, ctaDescription: e.target.value}))} rows={3} placeholder="We are actively looking for visionary collaborators..." />
+              </Field>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Button 1 Label">
+                  <Input value={(meta as any).ctaBtn1Label || ""} onChange={e => setMeta((m:any) => ({...m, ctaBtn1Label: e.target.value}))} placeholder="Join the Collective" />
+                </Field>
+                <Field label="Button 2 Label">
+                  <Input value={(meta as any).ctaBtn2Label || ""} onChange={e => setMeta((m:any) => ({...m, ctaBtn2Label: e.target.value}))} placeholder="Read the Vision Paper" />
+                </Field>
+              </div>
+            </div>
+          </Card>
           <SaveButton loading={savingMeta} saved={metaSaved} onClick={saveMeta} label="Save Metadata" />
-        </div>
-      </Card>
-
-      {/* SEO Section */}
-      <Card className="mb-8">
-        <SectionTitle>SEO — Manifesto Page</SectionTitle>
-        <div className="space-y-4">
-          <Field label="SEO Title" hint="Shown in Google search results for /manifesto page">
-            <Input
-              value={(meta as any).seoMetaTitle || ""}
-              onChange={e => setMeta(m => ({ ...m, seoMetaTitle: e.target.value } as any))}
-              placeholder="My Manifesto — A Blueprint for Resilient Building"
-            />
-          </Field>
-          <Field label="SEO Description" hint="~155 characters. Falls back to Subtitle if empty.">
-            <Textarea
-              value={(meta as any).seoMetaDescription || ""}
-              onChange={e => setMeta(m => ({ ...m, seoMetaDescription: e.target.value } as any))}
-              rows={3}
-              placeholder="The architecture of intent, infrastructure for the future..."
-            />
-          </Field>
-          <Field label="OG Image URL" hint="Open Graph image for social sharing (1200x630px recommended)">
-            <ImageUpload
-              value={(meta as any).seoOgImage || ""}
-              onChange={v => setMeta(m => ({ ...m, seoOgImage: v } as any))}
-              folder="seo"
-            />
-          </Field>
-        </div>
-        <p className="text-xs text-white/30 mt-3">
-          Leave empty to use default SEO values. OG image is used for social media previews.
-        </p>
-        <div className="mt-6">
-          <SaveButton loading={savingMeta} saved={metaSaved} onClick={saveMeta} label="Save SEO Settings" />
         </div>
       </Card>
 
@@ -233,8 +235,8 @@ export default function ManifestoAdmin() {
               <Field label="Heading">
                 <Input value={sectionForm.heading || ""} onChange={e => setS("heading", e.target.value)} />
               </Field>
-              <Field label="Body Text">
-                <Textarea value={sectionForm.body || ""} onChange={e => setS("body", e.target.value)} rows={6} />
+              <Field label="Body Text" hint="Plain text (blank lines = paragraphs) or paste HTML for rich formatting">
+                <Textarea value={sectionForm.body || ""} onChange={e => setS("body", e.target.value)} rows={10} />
               </Field>
             </div>
           )}

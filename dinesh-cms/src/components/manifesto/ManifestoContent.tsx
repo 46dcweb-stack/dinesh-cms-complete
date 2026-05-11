@@ -65,9 +65,21 @@ function ManifestoBlock({ block }: { block: ManifestoBlock }) {
                             </div>
                         )}
                         <div className="space-y-8 text-lg md:text-xl text-text-secondary leading-relaxed font-light">
-                            {(block.body || block.description || "").split('\n\n').filter(Boolean).map((para: string, i: number) => (
-                                <p key={i}>{para}</p>
-                            ))}
+                            {(() => {
+                                const bodyText = block.body || block.description || "";
+                                const isHtml = bodyText.trimStart().startsWith("<");
+                                if (isHtml) {
+                                    return (
+                                        <div
+                                            className="prose prose-invert prose-lg max-w-none prose-p:text-text-secondary prose-headings:text-white prose-a:text-brand-primary prose-strong:text-white prose-ul:text-text-secondary prose-li:text-text-secondary"
+                                            dangerouslySetInnerHTML={{ __html: bodyText }}
+                                        />
+                                    );
+                                }
+                                return bodyText.split("\n\n").filter(Boolean).map((para: string, i: number) => (
+                                    <p key={i}>{para}</p>
+                                ));
+                            })()}
                         </div>
                         {block.pullQuote && (
                             <blockquote className="mt-10 border-l-2 border-brand-primary pl-6 text-white/90 text-xl leading-relaxed italic">

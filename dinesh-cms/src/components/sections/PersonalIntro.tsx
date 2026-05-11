@@ -57,15 +57,23 @@ export default function PersonalIntro({ data }: { data?: PersonalIntroData }) {
                         ))}
                     </h2>
 
-                    <motion.p
+                    <motion.div
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
                         viewport={{ once: true }}
                         transition={{ delay: 1.5, duration: 1 }}
                         className="text-text-secondary text-lg md:text-xl mb-12 leading-relaxed max-w-3xl"
                     >
-                        {data?.body || "If you're building something meaningful, you're in the right place. I believe in the power of intention, the logic of systems, and the fire of purpose."}
-                    </motion.p>
+                        {(() => {
+                            const body = data?.body || "If you're building something meaningful, you're in the right place. I believe in the power of intention, the logic of systems, and the fire of purpose.";
+                            const isHtml = body.trimStart().startsWith("<");
+                            if (isHtml) return (
+                                <div className="prose prose-invert prose-lg max-w-none prose-p:text-text-secondary prose-strong:text-white prose-a:text-brand-primary"
+                                    dangerouslySetInnerHTML={{ __html: body }} />
+                            );
+                            return <p>{body}</p>;
+                        })()}
+                    </motion.div>
 
                     <Link href={data?.linkUrl || "/about"} className="inline-flex items-center text-brand-primary font-display text-lg group">
                         {data?.linkText || "Learn More About Me"}
