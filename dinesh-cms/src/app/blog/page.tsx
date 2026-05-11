@@ -50,12 +50,15 @@ export default async function BlogListingPage() {
         heroData={heroData}
       />
 
-      <div className="border-t border-white/5">
-        <ContactForm
-          title="Have a Story Idea?"
-          subtitle="Get in Touch"
-          description="Want to collaborate on an article, interview, or guest post? Let's connect."
-        />
+      {/* Compact centred contact block */}
+      <div className="px-6 mt-20 mb-8">
+        <div className="max-w-6xl mx-auto rounded-3xl border border-white/10 bg-zinc-900/60 overflow-hidden p-12 md:p-16">
+          <ContactForm
+            title="Have a Story Idea?"
+            subtitle="Get in Touch"
+            description="Want to collaborate on an article, interview, or guest post? Let's connect."
+          />
+        </div>
       </div>
     </div>
   );
