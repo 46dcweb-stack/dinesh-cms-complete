@@ -75,22 +75,18 @@ export default async function PressPage() {
     <div className="pb-24">
       <PressHeader data={headerData} />
 
-      <div className="max-w-7xl mx-auto px-6 mt-12">
+      <div className="max-w-7xl mx-auto px-6">
         <PressClientWrapper mentions={mentions as any} />
 
         {/* Media Kit CTA */}
-        <div className="mt-24 p-12 glass-card text-center relative overflow-hidden">
+        <div className="mt-16 rounded-3xl border border-white/10 bg-zinc-900/60 p-10 md:p-14 text-center relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/5 rounded-full blur-[80px] -z-10" />
           <h2 className="text-3xl md:text-4xl font-display mb-6">{mediaAssetsTitle}</h2>
           <p className="text-text-secondary mb-10 max-w-xl mx-auto text-lg">
             {mediaAssetsDescription}
           </p>
           {mediaKitDownloadUrl ? (
-            <a
-              href={mediaKitDownloadUrl}
-              download
-              className="btn-premium px-12"
-            >
+            <a href={mediaKitDownloadUrl} download className="btn-premium px-12">
               {mediaKitLabel}
             </a>
           ) : (
@@ -101,13 +97,15 @@ export default async function PressPage() {
         </div>
       </div>
 
-      {/* Contact Section */}
-      <div className="mt-24 border-t border-white/5">
-        <ContactForm
-          title={contactTitle}
-          subtitle={contactSubtitle}
-          description={contactDescription}
-        />
+      {/* Compact centred contact block */}
+      <div className="px-6 mt-20 mb-8">
+        <div className="max-w-6xl mx-auto rounded-3xl border border-white/10 bg-zinc-900/60 overflow-hidden p-12 md:p-16">
+          <ContactForm
+            title={contactTitle}
+            subtitle={contactSubtitle}
+            description={contactDescription}
+          />
+        </div>
       </div>
     </div>
   );
