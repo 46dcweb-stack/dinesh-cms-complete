@@ -3,6 +3,7 @@ import ManifestoContent from "@/components/manifesto/ManifestoContent";
 import ManifestoCTA from "@/components/manifesto/ManifestoCTA";
 import { getManifesto } from "@/lib/firebase-data";
 import { manifestoData } from "@/lib/data";
+import { fbStr } from "@/lib/fallback";
 
 export const revalidate = 60;
 
