@@ -86,12 +86,14 @@ export default async function Home() {
         featuredBlog={
           homeData.featuredBlogSlug && homeData.featuredBlogTitle
             ? { slug: homeData.featuredBlogSlug, title: homeData.featuredBlogTitle }
-            : homeData.featuredBlog ?? null
+            : homeData.featuredBlog
+            ?? (blogs[0] ? { slug: blogs[0].slug, title: blogs[0].title } : null)
         }
         featuredPress={
           homeData.featuredPressTitle
             ? { url: homeData.featuredPressUrl || "/press", title: homeData.featuredPressTitle }
-            : homeData.featuredPress ?? null
+            : homeData.featuredPress
+            ?? (press[0] ? { url: (press[0] as any).url || "/press", title: (press[0] as any).title } : null)
         }
       />
       <PersonalIntro data={homeData.personalIntro} />
