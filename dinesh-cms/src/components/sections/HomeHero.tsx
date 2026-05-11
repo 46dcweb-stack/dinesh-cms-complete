@@ -158,7 +158,7 @@ import type { HomePage, BlogPost, PressMention } from "@/lib/types";
 // }
 
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
@@ -183,8 +183,6 @@ interface HomeHeroProps {
 export default function HomeHero({ data }: HomeHeroProps) {
   const prefersReducedMotion = useReducedMotion();
   const [enableFx, setEnableFx] = useState(false);
-
-  // Fallback data if CMS is empty or not initialized
   const heroTitle = data?.heroTitle || "IT'S ME";
   const heroName = data?.heroName || "Dinesh Koyyalamudi";
   const heroSubtitle = data?.heroSubtitle || "I've earned the trust of over 250 clients and 40 brands, all of whom are very satisfied with my service!";
@@ -223,47 +221,14 @@ export default function HomeHero({ data }: HomeHeroProps) {
     return () => cancel(id);
   }, [prefersReducedMotion]);
 
-  const avatars = useMemo(() => ["D", "C", "4"], []);
 
   return (
     <section className="relative min-h-screen flex items-center pt-20 pb-12 px-6 overflow-hidden bg-zinc-950">
       <div className="max-w-7xl mx-auto w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* Left Column */}
-          <div className="flex flex-col space-y-8 md:space-y-12">
+          <div className="flex flex-col justify-center space-y-8 md:space-y-12">
             <div className="space-y-6">
-              {/* Badge */}
-              <motion.div
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
-                animate={
-                  prefersReducedMotion ? undefined : { opacity: 1, y: 0 }
-                }
-                transition={{ duration: 0.45 }}
-                className="flex items-center space-x-4 mb-4"
-              >
-                <div className="flex -space-x-2">
-                  {avatars.map((label, index) => (
-                    <div
-                      key={label}
-                      className={`w-10 h-10 rounded-full border-2 border-black overflow-hidden flex items-center justify-center text-[11px] font-bold ${
-                        index === 0 ? "bg-brand-primary text-white" : "bg-zinc-800 text-zinc-100"
-                      }`}
-                    >
-                      {label}
-                    </div>
-                  ))}
-                </div>
-
-                <div>
-                  <span className="text-white font-bold text-lg block leading-none">
-                    120+
-                  </span>
-                  <span className="text-zinc-500 text-xs uppercase tracking-wider">
-                    Total Satisfied Clients
-                  </span>
-                </div>
-              </motion.div>
-
               <motion.h1
                 initial={prefersReducedMotion ? false : { opacity: 0, x: -16 }}
                 animate={

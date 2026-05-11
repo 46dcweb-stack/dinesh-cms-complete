@@ -120,24 +120,10 @@ export interface AboutPage {
   updatedAt?: Timestamp;
 
 }
-
 // ── HOME PAGE ─────────────────────────────────────────────────────────────────
 export interface HomePage {
   
   id?: string;
-  fefeaturedBlogSlug: string;
-  featuredBlogSlug: string;
-  featuredPressSlug: string;
-  featuredBlogTitle: string;
-  featuredBlogExcerpt: string;
-  featuredBlogImage: string;
-  featuredPressTitle: string;
-  featuredPressOutlet: string;
-  featuredPressDate: number; // timestamp ms
-  featuredPressUrl: string;
-  title: string;
-  subtitle: string;
-  description: string;  
   heroTitle: string;
   heroName: string;
   heroSubtitle: string;
@@ -169,24 +155,29 @@ export interface HomePage {
   venturesEyebrow?: string;
   venturesHeading?: string;
   venturesHeadingItalic?: string;
-  // Hero Stats
+  // Hero stats
   stat1Value?: string;
   stat1Label?: string;
   stat2Value?: string;
   stat2Label?: string;
   stat3Value?: string;
   stat3Label?: string;
+  // Featured Quote Section
+  featuredBlogSlug?: string;
+  featuredBlogTitle?: string;
+  featuredPressUrl?: string;
+  featuredPressTitle?: string;
   // Manifesto Teaser
   manifestoTeaserEyebrow?: string;
   manifestoTeaserQuote?: string;
   manifestoTeaserCtaLabel?: string;
   manifestoTeaserCtaUrl?: string;
-  // FAQ Section (homepage preview)
+  // FAQ Section
   faqSectionEyebrow?: string;
   faqSectionHeading?: string;
   faqSectionHeadingItalic?: string;
   faqSectionSubtext?: string;
-  // Blog Section (Horizontal Newsroom)
+  // Blog Section
   blogSectionEyebrow?: string;
   blogSectionHeading?: string;
   blogSectionHeadingItalic?: string;
