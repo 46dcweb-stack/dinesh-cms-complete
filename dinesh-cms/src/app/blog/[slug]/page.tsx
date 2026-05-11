@@ -57,7 +57,10 @@ export default async function BlogPostPage({
     if (!post) notFound();
 
     const wordCount = post.content ? post.content.split(/\s+/).length : 0;
-    const readingTime = wordCount ? `${Math.ceil(wordCount / 200)} min read` : "Short read";
+    const calculatedTime = wordCount ? Math.ceil(wordCount / 200) : 5;
+    const readingTime = post.readingTime
+      ? `${post.readingTime} min read`
+      : `${calculatedTime} min read`;
     const publishDate = new Date(post.publishDate);
 
     return (
