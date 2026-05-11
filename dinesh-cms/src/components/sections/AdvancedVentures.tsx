@@ -48,7 +48,7 @@ export default function AdvancedVentures({
       <div className="flex flex-col md:flex-row">
         {/* Left Side: Sticky (Desktop) */}
         <div className="hidden md:block w-1/2 relative bg-black min-h-screen">
-          <div className="h-screen sticky top-0 overflow-hidden flex flex-col justify-between p-12 lg:p-20">
+          <div className="h-screen sticky top-0 flex flex-col justify-between p-12 lg:p-20">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="relative z-20">
               <span className="text-brand-primary font-medium tracking-[0.3em] text-[10px] uppercase block mb-4 font-mono">{eyebrow}</span>
               <h2 className="text-4xl lg:text-6xl font-display text-white leading-[1.1]">
@@ -56,26 +56,47 @@ export default function AdvancedVentures({
               </h2>
             </motion.div>
 
-            <AnimatePresence initial={false}>
-              <motion.div
-                key={activeIndex}
-                initial={{ opacity: 0, scale: 1.05 }}
-                animate={{ opacity: 0.8, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
-                className="absolute inset-0 w-full h-full"
-                style={{ backgroundColor: `${ventures[activeIndex]?.color}10` }}
-              >
-                <Image
-                  src={ventures[activeIndex]?.image || "/gallery/venture-3.png"}
-                  alt={ventures[activeIndex]?.name || "Venture"}
-                  fill
-                  className="object-cover grayscale-[0.5] brightness-[0.5] hover:grayscale-0 hover:brightness-100 transition-all duration-1000"
-                  unoptimized priority
-                />
-                <div className="absolute inset-0 bg-linear-to-b from-brand-dark/90 via-brand-dark/10 to-brand-dark/90" />
-              </motion.div>
-            </AnimatePresence>
+            {/* Centered Curvy Card Container */}
+            <div className="relative z-20 flex items-center justify-center flex-1">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeIndex}
+                  initial={{ opacity: 0, scale: 0.9, rotateY: -15 }}
+                  animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, rotateY: 15 }}
+                  transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
+                  className="relative w-[70%] aspect-[4/5] rounded-[32px] overflow-hidden shadow-2xl"
+                  style={{ 
+                    boxShadow: `0 25px 50px -12px ${ventures[activeIndex]?.color}40`,
+                  }}
+                >
+                  {/* Background Color Glow */}
+                  <div 
+                    className="absolute inset-0 opacity-20"
+                    style={{ backgroundColor: ventures[activeIndex]?.color }}
+                  />
+                  
+                  {/* Image */}
+                  <Image
+                    src={ventures[activeIndex]?.image || "/gallery/venture-3.png"}
+                    alt={ventures[activeIndex]?.name || "Venture"}
+                    fill
+                    className="object-cover transition-all duration-700"
+                    unoptimized 
+                    priority
+                  />
+                  
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60" />
+                  
+                  {/* Border Glow */}
+                  <div 
+                    className="absolute inset-0 rounded-[32px] border-2 opacity-50"
+                    style={{ borderColor: ventures[activeIndex]?.color }}
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
             <div className="relative z-20" />
           </div>

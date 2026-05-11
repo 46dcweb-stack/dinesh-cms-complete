@@ -291,52 +291,6 @@ export default function HomeHero({ data }: HomeHeroProps) {
               >
                 {heroSubtitle}
               </motion.p>
-
-              {(featuredQuoteText || featuredBlog || featuredPress) && (
-                <div className="space-y-4">
-                  {featuredQuoteText && (
-                    <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.03] px-5 py-5 backdrop-blur-md">
-                      <p className="text-base md:text-lg text-white leading-relaxed">
-                        "{featuredQuoteText}"
-                      </p>
-                      {featuredQuoteSource && (
-                        <p className="mt-3 text-[10px] uppercase tracking-[0.24em] text-brand-primary">
-                          {featuredQuoteSource}
-                        </p>
-                      )}
-                    </div>
-                  )}
-
-                  <div className="grid gap-3 md:grid-cols-2">
-                    {featuredBlog && (
-                      <Link
-                        href={`/blog/${featuredBlog.slug}`}
-                        className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 transition-all hover:border-brand-primary/40 hover:bg-brand-primary/5"
-                      >
-                        <span className="block text-[10px] uppercase tracking-[0.22em] text-brand-primary">
-                          Featured Journal
-                        </span>
-                        <span className="mt-2 block text-sm md:text-base text-white leading-snug">
-                          {featuredBlog.title}
-                        </span>
-                      </Link>
-                    )}
-                    {featuredPress && (
-                      <Link
-                        href={featuredPress.url || "/press"}
-                        className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 transition-all hover:border-brand-primary/40 hover:bg-brand-primary/5"
-                      >
-                        <span className="block text-[10px] uppercase tracking-[0.22em] text-brand-primary">
-                          Featured Press
-                        </span>
-                        <span className="mt-2 block text-sm md:text-base text-white leading-snug">
-                          {featuredPress.title}
-                        </span>
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className="flex flex-wrap gap-4">

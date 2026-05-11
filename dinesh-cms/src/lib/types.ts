@@ -125,6 +125,19 @@ export interface AboutPage {
 export interface HomePage {
   
   id?: string;
+  fefeaturedBlogSlug: string;
+  featuredBlogSlug: string;
+  featuredPressSlug: string;
+  featuredBlogTitle: string;
+  featuredBlogExcerpt: string;
+  featuredBlogImage: string;
+  featuredPressTitle: string;
+  featuredPressOutlet: string;
+  featuredPressDate: number; // timestamp ms
+  featuredPressUrl: string;
+  title: string;
+  subtitle: string;
+  description: string;  
   heroTitle: string;
   heroName: string;
   heroSubtitle: string;

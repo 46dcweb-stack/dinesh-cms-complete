@@ -15,6 +15,8 @@ const DEFAULT: Omit<HomePage, "id"> = {
   primaryCtaLabel: "Schedule a Call", primaryCtaUrl: "/contact",
   secondaryCtaLabel: "", secondaryCtaUrl: "",
   featuredQuoteText: "", featuredQuoteSource: "Dinesh Koyyalamudi",
+  featuredBlogSlug: "", featuredBlogTitle: "",
+  featuredPressUrl: "", featuredPressTitle: "",
   personalIntro: { quote: "", body: "", linkText: "Learn More About Me", linkUrl: "/about" },
   ethos: {
     phrase: "",
@@ -121,17 +123,61 @@ export default function HomeAdmin() {
           </div>
         </Card>
 
-
-        {/* Featured Quote */}
+        {/* Featured Quote Section */}
         <Card>
-          <SectionTitle>Featured Quote</SectionTitle>
+          <SectionTitle>Featured Quote Section</SectionTitle>
+          <p className="text-xs text-white/40 mb-4">
+            Standalone section between Hero and Personal Intro. The quote appears large and centred with decorative marks. The two cards below it link to featured content.
+          </p>
           <div className="space-y-4">
-            <Field label="Quote Text">
-              <Textarea value={form.featuredQuoteText} onChange={e => set("featuredQuoteText", e.target.value)} rows={2} />
+            <Field label="Quote Text" hint="Shown large and italic — leave empty to hide the section">
+              <Textarea
+                value={form.featuredQuoteText}
+                onChange={e => set("featuredQuoteText", e.target.value)}
+                rows={2}
+                placeholder='"The best companies are built not just on ideas, but on conviction."'
+              />
             </Field>
-            <Field label="Quote Source">
-              <Input value={form.featuredQuoteSource} onChange={e => set("featuredQuoteSource", e.target.value)} />
+            <Field label="Quote Source" hint="Attribution line e.g. Dinesh Koyyalamudi">
+              <Input
+                value={form.featuredQuoteSource}
+                onChange={e => set("featuredQuoteSource", e.target.value)}
+                placeholder="Dinesh Koyyalamudi"
+              />
             </Field>
+            <div className="pt-3 border-t border-white/10">
+              <p className="text-xs text-white/40 mb-3 uppercase tracking-wider">Featured Cards (shown below quote)</p>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Featured Blog — Slug" hint="e.g. building-resilient-systems">
+                  <Input
+                    value={(form as any).featuredBlogSlug || ""}
+                    onChange={e => set("featuredBlogSlug" as any, e.target.value)}
+                    placeholder="post-slug"
+                  />
+                </Field>
+                <Field label="Featured Blog — Title" hint="Label shown on the card">
+                  <Input
+                    value={(form as any).featuredBlogTitle || ""}
+                    onChange={e => set("featuredBlogTitle" as any, e.target.value)}
+                    placeholder="Article title"
+                  />
+                </Field>
+                <Field label="Featured Press — URL" hint="Link for the press card">
+                  <Input
+                    value={(form as any).featuredPressUrl || ""}
+                    onChange={e => set("featuredPressUrl" as any, e.target.value)}
+                    placeholder="/press or https://..."
+                  />
+                </Field>
+                <Field label="Featured Press — Title" hint="Label shown on the card">
+                  <Input
+                    value={(form as any).featuredPressTitle || ""}
+                    onChange={e => set("featuredPressTitle" as any, e.target.value)}
+                    placeholder="Press mention title"
+                  />
+                </Field>
+              </div>
+            </div>
           </div>
         </Card>
 
@@ -142,7 +188,7 @@ export default function HomeAdmin() {
             <Field label="Intro Quote">
               <Textarea value={form.personalIntro.quote} onChange={e => set("personalIntro", { ...form.personalIntro, quote: e.target.value })} rows={3} />
             </Field>
-            <Field label="Body Text">
+            <Field label="Body Text" hint="Plain text or paste HTML for rich formatting">
               <Textarea value={form.personalIntro.body} onChange={e => set("personalIntro", { ...form.personalIntro, body: e.target.value })} rows={3} />
             </Field>
             <div className="grid grid-cols-2 gap-4">
@@ -301,7 +347,6 @@ export default function HomeAdmin() {
             <Toggle checked={form.showNewsletter} onChange={v => set("showNewsletter", v)} label="Show Newsletter" />
           </div>
         </Card>
-        
 
         {/* Home Page SEO */}
         <Card>
