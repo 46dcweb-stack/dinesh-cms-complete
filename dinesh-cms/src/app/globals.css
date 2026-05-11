@@ -56,6 +56,8 @@
 
   .text-gradient {
     @apply bg-linear-to-br from-brand-primary to-brand-accent bg-clip-text text-transparent;
+    padding-bottom: 0.15em;
+    padding-right: 0.1em;
   }
 
   .nav-blur {

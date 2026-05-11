@@ -11,9 +11,10 @@ import { Plus, Search, Eye, Pencil, Trash2, Globe, FileText } from "lucide-react
 import { AdminPageHeader, StatusBadge, Card, SectionTitle, Field, Input, Textarea, SaveButton, Alert } from "../components/ui";
 
 const HERO_DEFAULTS = {
-  title: "DINESH JOURNAL",
-  subtitle: "Thought Leadership & Insights",
-  description: "Exploring the intersection of venture capital, logistics, and the philosophies that drive global impact.",
+  subtitle:      "Thought Leadership & Insights",
+  heading:       "The",
+  headingItalic: "Journal",
+  description:   "Exploring the intersection of venture capital, logistics, and the philosophies that drive global impact.",
 };
 
 export default function BlogAdmin() {
@@ -41,9 +42,10 @@ export default function BlogAdmin() {
       if (snap.exists()) {
         const d = snap.data() as any;
         setHero({
-          title:       d.title       || HERO_DEFAULTS.title,
-          subtitle:    d.subtitle    || HERO_DEFAULTS.subtitle,
-          description: d.description || HERO_DEFAULTS.description,
+          subtitle:      d.subtitle      || HERO_DEFAULTS.subtitle,
+          heading:       d.heading       || HERO_DEFAULTS.heading,
+          headingItalic: d.headingItalic || HERO_DEFAULTS.headingItalic,
+          description:   d.description   || HERO_DEFAULTS.description,
         });
       }
     } catch (e) { console.error(e); }
@@ -106,25 +108,34 @@ export default function BlogAdmin() {
 
       {/* Blog Page Hero Settings */}
       <Card className="mb-6">
-        <SectionTitle>Blog Page Hero</SectionTitle>
-        <p className="text-xs text-white/40 mb-4">Controls the headline, subtitle, and description shown at the top of the /blog page.</p>
+        <SectionTitle>Blog Page Heading</SectionTitle>
+        <p className="text-xs text-white/40 mb-4">Controls the heading and description shown at the top of the /blog page.</p>
         {heroError && <Alert message={heroError} className="mb-4" />}
         <div className="space-y-3">
-          <Field label="Page Title" hint='Large hero title e.g. "DINESH JOURNAL" — last word becomes the accent colour'>
+          <Field label="Eyebrow / Subtitle" hint='Small label above the title e.g. "Thought Leadership & Insights"'>
             <Input
-              value={hero.title}
-              onChange={e => setHero(h => ({ ...h, title: e.target.value }))}
-              placeholder="DINESH JOURNAL"
-            />
-          </Field>
-          <Field label="Subtitle / Eyebrow" hint='Small label above the title e.g. "Thought Leadership & Insights"'>
-            <Input
-              value={hero.subtitle}
+              value={(hero as any).subtitle}
               onChange={e => setHero(h => ({ ...h, subtitle: e.target.value }))}
               placeholder="Thought Leadership & Insights"
             />
           </Field>
-          <Field label="Description" hint="One or two sentences shown below the title">
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Heading" hint='Main part e.g. "The"'>
+              <Input
+                value={(hero as any).heading}
+                onChange={e => setHero(h => ({ ...h, heading: e.target.value }))}
+                placeholder="The"
+              />
+            </Field>
+            <Field label="Heading — Italic Part" hint='Gradient-styled word e.g. "Journal"'>
+              <Input
+                value={(hero as any).headingItalic}
+                onChange={e => setHero(h => ({ ...h, headingItalic: e.target.value }))}
+                placeholder="Journal"
+              />
+            </Field>
+          </div>
+          <Field label="Description" hint="One or two sentences shown below the heading">
             <Textarea
               value={hero.description}
               onChange={e => setHero(h => ({ ...h, description: e.target.value }))}

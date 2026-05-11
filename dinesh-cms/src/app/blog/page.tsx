@@ -19,13 +19,13 @@ export const metadata: Metadata = {
 export default async function BlogListingPage() {
   const fbPosts = await getPublishedBlogs();
   const posts = fbPosts.length > 0 ? fbPosts : (blogPosts as any[]);
-  const featuredPost = posts.find((p: any) => p.featuredPost) || posts[0] || null;
 
   // Fetch blog page hero settings from Firestore
   let heroData = {
-    title: "DINESH JOURNAL",
-    subtitle: "Thought Leadership & Insights",
-    description: "Exploring the intersection of venture capital, logistics, and the philosophies that drive global impact.",
+    subtitle:      "Thought Leadership & Insights",
+    heading:       "The",
+    headingItalic: "Journal",
+    description:   "Exploring the intersection of venture capital, logistics, and the philosophies that drive global impact.",
   };
   try {
     const { getAdminDb } = await import("@/lib/firebase-admin");
@@ -34,27 +34,23 @@ export default async function BlogListingPage() {
     if (snap.exists) {
       const d = snap.data() as any;
       heroData = {
-        title:       d.title       || heroData.title,
-        subtitle:    d.subtitle    || heroData.subtitle,
-        description: d.description || heroData.description,
+        subtitle:      d.subtitle      || heroData.subtitle,
+        heading:       d.heading       || heroData.heading,
+        headingItalic: d.headingItalic || heroData.headingItalic,
+        description:   d.description   || heroData.description,
       };
     }
   } catch {}
 
   return (
     <div className="pb-24">
-      <div className="pt-28 lg:pt-28 px-6">
-        <div className="max-w-7xl mx-auto">
-          <BlogClientWrapper
-            initialPosts={posts as any}
-            initialFeaturedPost={featuredPost as any}
-            heroData={heroData}
-          />
-        </div>
-      </div>
+      <BlogClientWrapper
+        initialPosts={posts as any}
+        initialFeaturedPost={null}
+        heroData={heroData}
+      />
 
-      {/* Contact CTA */}
-      <div className="mt-24 border-t border-white/5">
+      <div className="border-t border-white/5">
         <ContactForm
           title="Have a Story Idea?"
           subtitle="Get in Touch"
