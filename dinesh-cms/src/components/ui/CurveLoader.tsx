@@ -105,15 +105,16 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 const words = [
-  "Hello",
-  "Bonjour",
-  "Ciao",
-  "Olà",
-  "Hoi",
-  "G'day",
-  "Hej",
-  "नमस्ते",
-  "Welcome",
+  "నేష్ కొయ్యలముడి",
+  "ദിനേഷ് കൊയ്യലമുടി",
+  "दिनेश कोय्यलमुडी",
+  "ディネシュ・コイヤラムディ",
+  "46 డీసీ",
+  "46 ഡിസി",
+  "４６ディーシー",
+  "46 ΔΣ",
+  "46 DC",
+  "DINESH KOYYALAMUDI",
 ];
 
 export default function CurveLoader() {
