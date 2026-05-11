@@ -50,7 +50,7 @@ export default function BlogClientWrapper({ initialPosts, heroData }: BlogClient
             <span className="text-brand-primary font-medium tracking-[0.3em] text-xs uppercase block mb-6 font-mono">
               {eyebrow}
             </span>
-            <h1 className="text-5xl md:text-8xl font-display leading-[1.1] tracking-tight">
+            <h1 className="text-4xl md:text-6xl font-display leading-[1.1] tracking-tight">
               {heading}{" "}
               <span className="text-gradient italic">{headingItalic}</span>
             </h1>

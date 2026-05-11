@@ -8,6 +8,80 @@ import {
   Alert, Card, SectionTitle, Toggle,
 } from "../components/ui";
 
+// ── Built-in city coordinate lookup (no API needed) ─────────────────────────
+const CITY_DB: { name: string; lat: number; lng: number }[] = [
+  { name: "London", lat: 51.51, lng: -0.13 },
+  { name: "New York", lat: 40.71, lng: -74.01 },
+  { name: "San Francisco", lat: 37.78, lng: -122.42 },
+  { name: "Tokyo", lat: 35.68, lng: 139.69 },
+  { name: "Singapore", lat: 1.35, lng: 103.82 },
+  { name: "Dubai", lat: 25.20, lng: 55.27 },
+  { name: "Sydney", lat: -33.87, lng: 151.21 },
+  { name: "Paris", lat: 48.86, lng: 2.35 },
+  { name: "Berlin", lat: 52.52, lng: 13.41 },
+  { name: "Mumbai", lat: 19.08, lng: 72.88 },
+  { name: "Delhi", lat: 28.61, lng: 77.21 },
+  { name: "Bangalore", lat: 12.97, lng: 77.59 },
+  { name: "Hong Kong", lat: 22.32, lng: 114.17 },
+  { name: "Shanghai", lat: 31.23, lng: 121.47 },
+  { name: "Beijing", lat: 39.91, lng: 116.39 },
+  { name: "Seoul", lat: 37.57, lng: 126.98 },
+  { name: "Lagos", lat: 6.52, lng: 3.38 },
+  { name: "Nairobi", lat: -1.29, lng: 36.82 },
+  { name: "Cairo", lat: 30.06, lng: 31.25 },
+  { name: "Johannesburg", lat: -26.20, lng: 28.04 },
+  { name: "São Paulo", lat: -23.55, lng: -46.63 },
+  { name: "Mexico City", lat: 19.43, lng: -99.13 },
+  { name: "Toronto", lat: 43.65, lng: -79.38 },
+  { name: "Los Angeles", lat: 34.05, lng: -118.24 },
+  { name: "Chicago", lat: 41.88, lng: -87.63 },
+  { name: "Amsterdam", lat: 52.37, lng: 4.89 },
+  { name: "Zurich", lat: 47.38, lng: 8.54 },
+  { name: "Stockholm", lat: 59.33, lng: 18.07 },
+  { name: "Moscow", lat: 55.76, lng: 37.62 },
+  { name: "Istanbul", lat: 41.01, lng: 28.95 },
+  { name: "Riyadh", lat: 24.69, lng: 46.72 },
+  { name: "Erbil", lat: 36.19, lng: 44.01 },
+  { name: "Doha", lat: 25.29, lng: 51.53 },
+  { name: "Kuala Lumpur", lat: 3.14, lng: 101.69 },
+  { name: "Jakarta", lat: -6.21, lng: 106.85 },
+  { name: "Bangkok", lat: 13.75, lng: 100.52 },
+  { name: "Karachi", lat: 24.86, lng: 67.01 },
+  { name: "Buenos Aires", lat: -34.60, lng: -58.38 },
+  { name: "Bogotá", lat: 4.71, lng: -74.07 },
+  { name: "Lima", lat: -12.05, lng: -77.04 },
+  { name: "Casablanca", lat: 33.59, lng: -7.62 },
+  { name: "Accra", lat: 5.56, lng: -0.20 },
+  { name: "Addis Ababa", lat: 9.03, lng: 38.74 },
+  { name: "Lisbon", lat: 38.72, lng: -9.14 },
+  { name: "Madrid", lat: 40.42, lng: -3.70 },
+  { name: "Rome", lat: 41.90, lng: 12.50 },
+  { name: "Vienna", lat: 48.21, lng: 16.37 },
+  { name: "Warsaw", lat: 52.23, lng: 21.01 },
+  { name: "Kyiv", lat: 50.45, lng: 30.52 },
+  { name: "Helsinki", lat: 60.17, lng: 24.94 },
+];
+
+function searchCities(q: string) {
+  if (!q.trim()) return [];
+  const lower = q.toLowerCase();
+  return CITY_DB.filter(c => c.name.toLowerCase().includes(lower)).slice(0, 6);
+}
+
+// Auto-generate connections between all markers in sequence
+function buildConnections(markers: { lat: number; lng: number }[]): { from: [number, number]; to: [number, number] }[] {
+  if (markers.length < 2) return [];
+  const conns: { from: [number, number]; to: [number, number] }[] = [];
+  for (let i = 0; i < markers.length - 1; i++) {
+    conns.push({ from: [markers[i].lat, markers[i].lng], to: [markers[i+1].lat, markers[i+1].lng] });
+  }
+  // Close the loop if 3+ cities
+  if (markers.length >= 3) {
+    conns.push({ from: [markers[markers.length-1].lat, markers[markers.length-1].lng], to: [markers[0].lat, markers[0].lng] });
+  }
+  return conns;
+}
+
 const EMPTY_META: Omit<ManifestoMeta, "id"> = {
   title: "My Manifesto", subtitle: "A blueprint for resilient building.",
   eyebrow: "The Architecture of Intent", introLabel: "Infrastructure for the future",
@@ -18,6 +92,42 @@ const EMPTY_META: Omit<ManifestoMeta, "id"> = {
   ],
 };
 
+function ManualCityEntry({ onAdd }: { onAdd: (city: { lat: number; lng: number; label: string }) => void }) {
+  const [label, setLabel] = useState("");
+  const [lat, setLat] = useState("");
+  const [lng, setLng] = useState("");
+  return (
+    <div className="grid grid-cols-3 gap-2 mt-2">
+      <div className="col-span-1">
+        <Field label="City Name">
+          <Input value={label} onChange={e => setLabel(e.target.value)} placeholder="e.g. Erbil" />
+        </Field>
+      </div>
+      <div>
+        <Field label="Latitude">
+          <Input value={lat} onChange={e => setLat(e.target.value)} placeholder="36.19" type="number" />
+        </Field>
+      </div>
+      <div>
+        <Field label="Longitude">
+          <Input value={lng} onChange={e => setLng(e.target.value)} placeholder="44.01" type="number" />
+        </Field>
+      </div>
+      <button
+        type="button"
+        onClick={() => {
+          if (!label || !lat || !lng) return;
+          onAdd({ lat: parseFloat(lat), lng: parseFloat(lng), label });
+          setLabel(""); setLat(""); setLng("");
+        }}
+        className="col-span-3 flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors py-1"
+      >
+        <Plus size={14} /> Add City
+      </button>
+    </div>
+  );
+}
+
 export default function ManifestoAdmin() {
   const [meta, setMeta] = useState<Omit<ManifestoMeta, "id">>(EMPTY_META);
   const [sections, setSections] = useState<ManifestoSection[]>([]);
@@ -26,6 +136,8 @@ export default function ManifestoAdmin() {
   const [metaSaved, setMetaSaved] = useState(false);
   const [error, setError] = useState("");
   const [showSectionForm, setShowSectionForm] = useState(false);
+  const [citySearch, setCitySearch] = useState("");
+  const [citySearchResults, setCitySearchResults] = useState<{name:string;lat:number;lng:number}[]>([]);
   const [editingSection, setEditingSection] = useState<ManifestoSection | null>(null);
   const [sectionForm, setSectionForm] = useState<Omit<ManifestoSection, "id">>({
     sectionType: "Essay", order: 0, type: "text", heading: "", body: "",
@@ -185,6 +297,90 @@ export default function ManifestoAdmin() {
                 </Field>
               </div>
             </div>
+          </Card>
+          {/* Globe Locations */}
+          <Card>
+            <SectionTitle>Globe Locations</SectionTitle>
+            <p className="text-xs text-white/40 mb-4">
+              Add cities to highlight on the globe. Connections are drawn automatically between them in order.
+            </p>
+
+            {/* City search */}
+            <div className="relative mb-4">
+              <Field label="Search & Add City">
+                <div className="relative">
+                  <Input
+                    value={citySearch}
+                    onChange={e => {
+                      setCitySearch(e.target.value);
+                      setCitySearchResults(searchCities(e.target.value));
+                    }}
+                    placeholder="Type a city name e.g. London…"
+                  />
+                  {citySearchResults.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-zinc-900 border border-white/10 rounded-xl overflow-hidden z-50 shadow-2xl">
+                      {citySearchResults.map(city => (
+                        <button
+                          key={city.name}
+                          type="button"
+                          onClick={() => {
+                            const markers = [...((meta as any).globeMarkers || []), { lat: city.lat, lng: city.lng, label: city.name }];
+                            setMeta((m: any) => ({ ...m, globeMarkers: markers, globeConnections: buildConnections(markers) }));
+                            setCitySearch("");
+                            setCitySearchResults([]);
+                          }}
+                          className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-white/5 transition-colors text-left"
+                        >
+                          <span className="text-sm text-white">{city.name}</span>
+                          <span className="text-[10px] text-white/30 font-mono">{city.lat.toFixed(2)}, {city.lng.toFixed(2)}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </Field>
+            </div>
+
+            {/* Manual entry */}
+            <details className="mb-4">
+              <summary className="text-xs text-white/40 cursor-pointer hover:text-white/60 transition-colors mb-2 uppercase tracking-wider font-mono">
+                + Add manually with coordinates
+              </summary>
+              <ManualCityEntry onAdd={(city) => {
+                const markers = [...((meta as any).globeMarkers || []), city];
+                setMeta((m: any) => ({ ...m, globeMarkers: markers, globeConnections: buildConnections(markers) }));
+              }} />
+            </details>
+
+            {/* Markers list */}
+            <div className="space-y-2">
+              {((meta as any).globeMarkers || []).length === 0 && (
+                <p className="text-white/20 text-xs font-mono py-4 text-center">No cities added yet. Globe will use default markers.</p>
+              )}
+              {((meta as any).globeMarkers || []).map((m: any, i: number) => (
+                <div key={i} className="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3 border border-white/5">
+                  <div className="w-2 h-2 rounded-full bg-brand-primary flex-shrink-0" />
+                  <span className="flex-1 text-sm text-white font-medium">{m.label}</span>
+                  <span className="text-[10px] text-white/30 font-mono">{Number(m.lat).toFixed(2)}, {Number(m.lng).toFixed(2)}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const markers = ((meta as any).globeMarkers || []).filter((_: any, j: number) => j !== i);
+                      setMeta((prev: any) => ({ ...prev, globeMarkers: markers, globeConnections: buildConnections(markers) }));
+                    }}
+                    className="text-white/20 hover:text-red-400 transition-colors ml-2"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {((meta as any).globeMarkers || []).length > 0 && (
+              <p className="text-[10px] text-white/30 font-mono mt-3">
+                {((meta as any).globeMarkers || []).length} cities · {((meta as any).globeConnections || []).length} connections auto-generated
+              </p>
+            )}
           </Card>
           <SaveButton loading={savingMeta} saved={metaSaved} onClick={saveMeta} label="Save Metadata" />
         </div>

@@ -30,12 +30,14 @@ export default async function ManifestoPage() {
   const introLabel = meta?.introLabel ?? (manifestoData as any).introLabel;
   const versionTag = meta?.versionTag ?? (manifestoData as any).versionTag;
   const introStats = meta?.introStats ?? (manifestoData as any).introStats;
-  const blocks     = sections.length > 0 ? sections : (manifestoData as any).blocks;
+  const blocks          = sections.length > 0 ? sections : (manifestoData as any).blocks;
+  const globeMarkers    = Array.isArray(meta?.globeMarkers) && meta.globeMarkers.length > 0 ? meta.globeMarkers : undefined;
+  const globeConnections = Array.isArray(meta?.globeConnections) && meta.globeConnections.length > 0 ? meta.globeConnections : undefined;
 
   return (
     <div className="pt-28 lg:pt-28 pb-48 bg-brand-dark min-h-screen">
       <div className="max-w-7xl mx-auto px-6">
-        <ManifestoHeader title={title} subtitle={subtitle} eyebrow={eyebrow} introLabel={introLabel} introStats={introStats} versionTag={versionTag} />
+        <ManifestoHeader title={title} subtitle={subtitle} eyebrow={eyebrow} introLabel={introLabel} introStats={introStats} versionTag={versionTag} globeMarkers={globeMarkers} globeConnections={globeConnections} />
         <ManifestoContent blocks={blocks as any} />
         <ManifestoCTA
           heading={fbStr(meta?.ctaHeading, "Will you build")}

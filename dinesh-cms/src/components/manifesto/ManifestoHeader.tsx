@@ -10,9 +10,11 @@ interface ManifestoHeaderProps {
     subtitle: string;
     versionTag?: string;
     introStats?: { label: string; value: string }[];
+    globeMarkers?: { lat: number; lng: number; label: string }[];
+    globeConnections?: { from: [number, number]; to: [number, number] }[];
 }
 
-export default function ManifestoHeader({ title, subtitle, eyebrow, introLabel, versionTag, introStats }: ManifestoHeaderProps) {
+export default function ManifestoHeader({ title, subtitle, eyebrow, introLabel, versionTag, introStats, globeMarkers, globeConnections }: ManifestoHeaderProps) {
     const stats = introStats?.length
         ? introStats
         : [
@@ -87,6 +89,8 @@ export default function ManifestoHeader({ title, subtitle, eyebrow, introLabel, 
                             dotColor="rgba(255, 90, 0, ALPHA)"
                             arcColor="rgba(255, 90, 0, 0.4)"
                             markerColor="rgba(255, 42, 0, 1)"
+                            markers={globeMarkers && globeMarkers.length > 0 ? globeMarkers : undefined}
+                            connections={globeConnections && globeConnections.length > 0 ? globeConnections : undefined}
                         />
                     </div>
                 </motion.div>

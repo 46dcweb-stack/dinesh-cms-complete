@@ -85,6 +85,8 @@ export interface ManifestoMeta {
   seoMetaTitle?: string;
   seoMetaDescription?: string;
   seoOgImage?: string;
+  globeMarkers?: { lat: number; lng: number; label: string }[];
+  globeConnections?: { from: [number, number]; to: [number, number] }[];
   updatedAt?: Timestamp;
 }
 

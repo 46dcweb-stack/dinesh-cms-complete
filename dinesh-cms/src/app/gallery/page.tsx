@@ -37,7 +37,7 @@ export default async function GalleryPage() {
             <span className="text-brand-primary font-medium tracking-[0.3em] text-xs uppercase block mb-6 font-mono">
               {pd.visualProtocol}
             </span>
-            <h1 className="text-5xl md:text-8xl font-display leading-[1.1] tracking-tight">
+            <h1 className="text-4xl md:text-6xl font-display leading-[1.1] tracking-tight">
               {pd.heading} <span className="text-gradient italic">{pd.headingItalic}</span>
             </h1>
             <p className="mt-8 text-text-secondary text-lg max-w-xl leading-relaxed">{pd.description}</p>
