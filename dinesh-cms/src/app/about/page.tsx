@@ -1,3 +1,4 @@
+import React from "react";
 import NextImage from "next/image";
 import StoryTimeline from "@/components/sections/StoryTimeline";
 import LeadershipTeam from "@/components/sections/LeadershipTeam";
@@ -6,8 +7,28 @@ import { aboutData } from "@/lib/data";
 
 export const revalidate = 60;
 
+// Renders HTML if content starts with <tag>, otherwise plain paragraphs
+function renderContent(text: string) {
+  if (!text) return null;
+  const trimmed = text.trim();
+  const isHtml = trimmed.startsWith("<") || /<[a-z][\s\S]*>/i.test(trimmed.slice(0, 50));
+  if (isHtml) {
+    return (
+      <div
+        className="prose prose-invert prose-lg max-w-none prose-p:text-text-secondary prose-p:leading-relaxed prose-headings:text-white prose-a:text-brand-primary prose-strong:text-white prose-ul:text-text-secondary prose-li:text-text-secondary"
+        dangerouslySetInnerHTML={{ __html: trimmed }}
+      />
+    );
+  }
+  return (
+    <>
+      {trimmed.split("\n\n").map((para: string, i: number) => (
+        <p key={i} className="text-text-secondary leading-relaxed mb-4">{para}</p>
+      ))}
+    </>
+  );
+}
 
-// ADD THIS INSTEAD:
 export async function generateMetadata() {
     const fbAbout = await getAboutPage().catch(() => null) as any;
     const title       = fbAbout?.seoMetaTitle       || "About Dinesh Koyyalamudi — Founder & Strategic Visionary";
@@ -20,6 +41,7 @@ export async function generateMetadata() {
         twitter: { card: "summary_large_image" as const, title, description, images: [ogImage] },
     };
 }
+
 export default async function AboutPage() {
     const [fbAbout, fbTeam] = await Promise.all([
         getAboutPage(),
@@ -27,11 +49,12 @@ export default async function AboutPage() {
     ]);
     const raw = fbAbout ?? aboutData;
 
-    // Team members fetched via Admin SDK above (fbTeam)
     const teamMembers: any[] = Array.isArray(fbTeam) ? fbTeam : [];
 
-    // Safe fallbacks — if Firebase field is empty/missing, use static data
     const downloadableBio   = (raw as any).downloadableBio  || null;
+    const heroEyebrow       = (raw as any).heroEyebrow       || "Behind the Vision";
+    const heroHeading       = (raw as any).heroHeading       || "A Journey of Purpose, Scale, and";
+    const heroHeadingItalic = (raw as any).heroHeadingItalic || "Impact.";
     const shortBio          = (raw as any).shortBio          ?? aboutData.shortBio;
     const longBio           = (raw as any).longBio           ?? aboutData.longBio;
     const profileImage      = (raw as any).profileImage      || aboutData.profileImage;
@@ -51,11 +74,11 @@ export default async function AboutPage() {
                 <div className="max-w-7xl mx-auto">
                     <div className="max-w-3xl mb-24">
                         <span className="text-brand-primary font-medium tracking-[0.3em] text-xs uppercase block mb-6 font-mono">
-                            Behind the Vision
+                            {heroEyebrow}
                         </span>
                         <h1 className="text-5xl md:text-8xl font-display leading-[1.1] tracking-tight">
-                            A Journey of Purpose, Scale, and{" "}
-                            <span className="text-gradient italic">Impact.</span>
+                            {heroHeading}{" "}
+                            <span className="text-gradient italic">{heroHeadingItalic}</span>
                         </h1>
                     </div>
 
@@ -82,8 +105,8 @@ export default async function AboutPage() {
                                     {featuredQuote}
                                 </h3>
                             )}
-                            {shortBio && <p>{shortBio}</p>}
-                            {longBio && <p>{longBio}</p>}
+                            {shortBio && renderContent(shortBio)}
+                            {longBio && renderContent(longBio)}
                             {downloadableBio && (
                               <a
                                 href={`/api/download-media-kit?url=${encodeURIComponent(downloadableBio)}`}
