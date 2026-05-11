@@ -3,8 +3,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import Image from "next/image";
+import { Linkedin, Twitter } from "lucide-react";
 
-// Static fallback data — used when no team members in Firebase yet
 const STATIC_TEAM = [
     {
         name: "Dinesh Koyyalamudi",
@@ -46,7 +46,6 @@ interface Props {
 }
 
 export default function LeadershipTeam({ members }: Props) {
-    // Use CMS data if available, fall back to static
     const team = members && members.length > 0 ? members : STATIC_TEAM;
 
     return (
@@ -73,6 +72,7 @@ export default function LeadershipTeam({ members }: Props) {
 
 function TeamCard({ member, index }: { member: TeamMemberData; index: number }) {
     const [isHovered, setIsHovered] = useState(false);
+    const hasLinks = member.linkedIn || member.twitter;
 
     return (
         <motion.div
@@ -122,6 +122,36 @@ function TeamCard({ member, index }: { member: TeamMemberData; index: number }) 
                     </p>
                 </div>
             </div>
+
+            {/* Social icons — shown when linkedIn or twitter is set in admin */}
+            {hasLinks && (
+                <div className="relative z-20 flex items-center gap-2 mt-4 md:mt-0 md:flex-shrink-0">
+                    {member.linkedIn && (
+                        <a
+                            href={member.linkedIn}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={e => e.stopPropagation()}
+                            className="w-8 h-8 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/30 hover:text-[#0077B5] hover:border-[#0077B5]/40 hover:bg-[#0077B5]/10 transition-all duration-300"
+                            title={`${member.name} on LinkedIn`}
+                        >
+                            <Linkedin size={14} />
+                        </a>
+                    )}
+                    {member.twitter && (
+                        <a
+                            href={member.twitter}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={e => e.stopPropagation()}
+                            className="w-8 h-8 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/30 hover:text-white hover:border-white/30 hover:bg-white/10 transition-all duration-300"
+                            title={`${member.name} on X / Twitter`}
+                        >
+                            <Twitter size={14} />
+                        </a>
+                    )}
+                </div>
+            )}
 
             {/* Mobile image */}
             {member.image && (
