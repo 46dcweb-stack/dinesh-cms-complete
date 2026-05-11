@@ -162,11 +162,15 @@ export interface HomePage {
   stat2Label?: string;
   stat3Value?: string;
   stat3Label?: string;
-  // Featured Quote Section
+  // Featured Quote Section — Box cards (no links)
   featuredBlogSlug?: string;
   featuredBlogTitle?: string;
   featuredPressUrl?: string;
   featuredPressTitle?: string;
+  box1Label?: string;
+  box1Title?: string;
+  box2Label?: string;
+  box2Title?: string;
   // Manifesto Teaser
   manifestoTeaserEyebrow?: string;
   manifestoTeaserQuote?: string;
@@ -335,4 +339,3 @@ export interface TeamMember {
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 }
-

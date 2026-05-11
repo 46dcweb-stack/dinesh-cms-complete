@@ -17,6 +17,8 @@ const DEFAULT: Omit<HomePage, "id"> = {
   featuredQuoteText: "", featuredQuoteSource: "Dinesh Koyyalamudi",
   featuredBlogSlug: "", featuredBlogTitle: "",
   featuredPressUrl: "", featuredPressTitle: "",
+  box1Label: "Featured Journal", box1Title: "",
+  box2Label: "Featured Press", box2Title: "",
   personalIntro: { quote: "", body: "", linkText: "Learn More About Me", linkUrl: "/about" },
   ethos: {
     phrase: "",
@@ -146,36 +148,48 @@ export default function HomeAdmin() {
               />
             </Field>
             <div className="pt-3 border-t border-white/10">
-              <p className="text-xs text-white/40 mb-3 uppercase tracking-wider">Featured Cards (shown below quote)</p>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Featured Blog — Slug" hint="e.g. building-resilient-systems">
-                  <Input
-                    value={(form as any).featuredBlogSlug || ""}
-                    onChange={e => set("featuredBlogSlug" as any, e.target.value)}
-                    placeholder="post-slug"
-                  />
-                </Field>
-                <Field label="Featured Blog — Title" hint="Label shown on the card">
-                  <Input
-                    value={(form as any).featuredBlogTitle || ""}
-                    onChange={e => set("featuredBlogTitle" as any, e.target.value)}
-                    placeholder="Article title"
-                  />
-                </Field>
-                <Field label="Featured Press — URL" hint="Link for the press card">
-                  <Input
-                    value={(form as any).featuredPressUrl || ""}
-                    onChange={e => set("featuredPressUrl" as any, e.target.value)}
-                    placeholder="/press or https://..."
-                  />
-                </Field>
-                <Field label="Featured Press — Title" hint="Label shown on the card">
-                  <Input
-                    value={(form as any).featuredPressTitle || ""}
-                    onChange={e => set("featuredPressTitle" as any, e.target.value)}
-                    placeholder="Press mention title"
-                  />
-                </Field>
+              <p className="text-xs text-white/40 mb-3 uppercase tracking-wider">Info Cards (shown below quote — no links)</p>
+              <div className="grid grid-cols-1 gap-4">
+                {/* Box 1 */}
+                <div className="border border-white/10 rounded-lg p-4">
+                  <p className="text-xs text-white/40 font-mono uppercase tracking-wider mb-3">Box 1</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field label="Eyebrow Label" hint="Small label at the top e.g. Featured Journal">
+                      <Input
+                        value={(form as any).box1Label || ""}
+                        onChange={e => set("box1Label" as any, e.target.value)}
+                        placeholder="Featured Journal"
+                      />
+                    </Field>
+                    <Field label="Title / Info" hint="Main text displayed in the card">
+                      <Input
+                        value={(form as any).box1Title || ""}
+                        onChange={e => set("box1Title" as any, e.target.value)}
+                        placeholder="e.g. Building Resilient Systems"
+                      />
+                    </Field>
+                  </div>
+                </div>
+                {/* Box 2 */}
+                <div className="border border-white/10 rounded-lg p-4">
+                  <p className="text-xs text-white/40 font-mono uppercase tracking-wider mb-3">Box 2</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field label="Eyebrow Label" hint="Small label at the top e.g. Featured Press">
+                      <Input
+                        value={(form as any).box2Label || ""}
+                        onChange={e => set("box2Label" as any, e.target.value)}
+                        placeholder="Featured Press"
+                      />
+                    </Field>
+                    <Field label="Title / Info" hint="Main text displayed in the card">
+                      <Input
+                        value={(form as any).box2Title || ""}
+                        onChange={e => set("box2Title" as any, e.target.value)}
+                        placeholder="e.g. Forbes — Entrepreneur of the Year"
+                      />
+                    </Field>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

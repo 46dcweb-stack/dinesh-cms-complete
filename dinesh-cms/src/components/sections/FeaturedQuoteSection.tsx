@@ -1,11 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
 
 interface FeaturedQuoteSectionProps {
   quote?: string;
   source?: string;
+  box1Label?: string;
+  box1Title?: string;
+  box2Label?: string;
+  box2Title?: string;
+  // legacy props kept so existing Firestore data doesn't break anything
   featuredBlog?: { slug: string; title: string } | null;
   featuredPress?: { url?: string; title: string } | null;
 }
@@ -13,10 +17,22 @@ interface FeaturedQuoteSectionProps {
 export default function FeaturedQuoteSection({
   quote,
   source,
+  box1Label,
+  box1Title,
+  box2Label,
+  box2Title,
   featuredBlog,
   featuredPress,
 }: FeaturedQuoteSectionProps) {
-  if (!quote && !featuredBlog && !featuredPress) return null;
+  // Resolve box content — prefer explicit box fields, fall back to legacy
+  const resolvedBox1Label = box1Label ?? "Featured Journal";
+  const resolvedBox1Title = box1Title ?? featuredBlog?.title ?? "";
+  const resolvedBox2Label = box2Label ?? "Featured Press";
+  const resolvedBox2Title = box2Title ?? featuredPress?.title ?? "";
+
+  const showBoxes = resolvedBox1Title || resolvedBox2Title;
+
+  if (!quote && !showBoxes) return null;
 
   return (
     <section className="py-20 md:py-28 px-6 bg-brand-dark border-t border-white/5 relative overflow-hidden">
@@ -54,8 +70,8 @@ export default function FeaturedQuoteSection({
           </motion.div>
         )}
 
-        {/* Featured Cards */}
-        {(featuredBlog || featuredPress) && (
+        {/* Info Cards — no links, purely informational */}
+        {showBoxes && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -63,31 +79,25 @@ export default function FeaturedQuoteSection({
             transition={{ duration: 0.6, delay: 0.2 }}
             className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto"
           >
-            {featuredBlog && (
-              <Link
-                href={`/blog/${featuredBlog.slug}`}
-                className="group block bg-zinc-900/80 border border-white/10 rounded-2xl px-6 py-5 hover:border-brand-primary/40 hover:bg-zinc-900 transition-all duration-300"
-              >
+            {resolvedBox1Title && (
+              <div className="bg-zinc-900/80 border border-white/10 rounded-2xl px-6 py-5">
                 <span className="block text-[10px] font-bold uppercase tracking-[0.25em] text-brand-primary mb-3">
-                  Featured Journal
+                  {resolvedBox1Label}
                 </span>
-                <span className="block text-sm md:text-base font-medium text-white leading-snug group-hover:text-brand-primary transition-colors">
-                  {featuredBlog.title}
+                <span className="block text-sm md:text-base font-medium text-white leading-snug">
+                  {resolvedBox1Title}
                 </span>
-              </Link>
+              </div>
             )}
-            {featuredPress && (
-              <Link
-                href={featuredPress.url || "/press"}
-                className="group block bg-zinc-900/80 border border-white/10 rounded-2xl px-6 py-5 hover:border-brand-primary/40 hover:bg-zinc-900 transition-all duration-300"
-              >
+            {resolvedBox2Title && (
+              <div className="bg-zinc-900/80 border border-white/10 rounded-2xl px-6 py-5">
                 <span className="block text-[10px] font-bold uppercase tracking-[0.25em] text-brand-primary mb-3">
-                  Featured Press
+                  {resolvedBox2Label}
                 </span>
-                <span className="block text-sm md:text-base font-medium text-white leading-snug group-hover:text-brand-primary transition-colors">
-                  {featuredPress.title}
+                <span className="block text-sm md:text-base font-medium text-white leading-snug">
+                  {resolvedBox2Title}
                 </span>
-              </Link>
+              </div>
             )}
           </motion.div>
         )}

@@ -83,18 +83,10 @@ export default async function Home() {
       <FeaturedQuoteSection
         quote={homeData.featuredQuoteText}
         source={homeData.featuredQuoteSource}
-        featuredBlog={
-          homeData.featuredBlogSlug && homeData.featuredBlogTitle
-            ? { slug: homeData.featuredBlogSlug, title: homeData.featuredBlogTitle }
-            : homeData.featuredBlog
-            ?? (blogs[0] ? { slug: blogs[0].slug, title: blogs[0].title } : null)
-        }
-        featuredPress={
-          homeData.featuredPressTitle
-            ? { url: homeData.featuredPressUrl || "/press", title: homeData.featuredPressTitle }
-            : homeData.featuredPress
-            ?? (press[0] ? { url: (press[0] as any).url || "/press", title: (press[0] as any).title } : null)
-        }
+        box1Label={(homeData as any).box1Label}
+        box1Title={(homeData as any).box1Title}
+        box2Label={(homeData as any).box2Label}
+        box2Title={(homeData as any).box2Title}
       />
       <PersonalIntro data={homeData.personalIntro} />
       <EthosSection data={homeData.ethos} />
