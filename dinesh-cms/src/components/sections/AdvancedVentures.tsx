@@ -51,7 +51,7 @@ export default function AdvancedVentures({
           <div className="h-screen sticky top-0 flex flex-col justify-between p-12 lg:p-20">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="relative z-20">
               <span className="text-brand-primary font-medium tracking-[0.3em] text-[10px] uppercase block mb-4 font-mono">{eyebrow}</span>
-              <h2 className="text-4xl lg:text-6xl font-display text-white leading-[1.1]">
+              <h2 className="text-3xl lg:text-4xl font-display text-white leading-[1.1]">
                 {heading} <br /><span className="text-gradient italic">{headingItalic}</span>
               </h2>
             </motion.div>
@@ -65,7 +65,7 @@ export default function AdvancedVentures({
                   animate={{ opacity: 1, scale: 1, rotateY: 0 }}
                   exit={{ opacity: 0, scale: 0.9, rotateY: 15 }}
                   transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
-                  className="relative w-[70%] aspect-[4/5] rounded-[32px] overflow-hidden shadow-2xl"
+                  className="relative w-[80%] aspect-[5/4] rounded-[32px] overflow-hidden shadow-2xl"
                   style={{ 
                     boxShadow: `0 25px 50px -12px ${ventures[activeIndex]?.color}40`,
                   }}
