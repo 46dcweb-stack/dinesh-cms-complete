@@ -9,6 +9,9 @@ import {
 } from "../components/ui";
 
 const DEFAULT: Omit<AboutPage, "id"> = {
+  heroEyebrow: "Behind the Vision",
+  heroHeading: "A Journey of Purpose, Scale, and",
+  heroHeadingItalic: "Impact.",
   shortBio: "", longBio: "", profileImage: "", featuredQuote: "",
   downloadableBio: "", currentFocusTitle: "Current Focus", currentFocusBody: "",
   proofPoints: [
@@ -67,6 +70,37 @@ export default function AboutAdmin() {
 )}
 
       <div className="space-y-6">
+        {/* Hero Heading */}
+        <Card>
+          <SectionTitle>Hero Section</SectionTitle>
+          <p className="text-xs text-white/40 mb-4">
+            The large heading displayed at the top of the About page. The italic part is styled with a gradient.
+          </p>
+          <div className="space-y-4">
+            <Field label="Eyebrow Label" hint="Small uppercase text above the heading">
+              <Input
+                value={(form as any).heroEyebrow || ""}
+                onChange={e => setField("heroEyebrow" as any, e.target.value)}
+                placeholder="Behind the Vision"
+              />
+            </Field>
+            <Field label="Heading" hint="Main heading text">
+              <Input
+                value={(form as any).heroHeading || ""}
+                onChange={e => setField("heroHeading" as any, e.target.value)}
+                placeholder="A Journey of Purpose, Scale, and"
+              />
+            </Field>
+            <Field label="Heading — Italic Part" hint="The gradient-styled italic word at the end">
+              <Input
+                value={(form as any).heroHeadingItalic || ""}
+                onChange={e => setField("heroHeadingItalic" as any, e.target.value)}
+                placeholder="Impact."
+              />
+            </Field>
+          </div>
+        </Card>
+
         {/* Bio */}
         <Card>
           <SectionTitle>Biography</SectionTitle>
