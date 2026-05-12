@@ -20,10 +20,27 @@
 }
 
 @layer base {
+  html {
+    /* Prevent horizontal scroll on all pages */
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
   body {
     @apply bg-brand-dark text-text-primary font-body antialiased;
     background-image:
       radial-gradient(circle at 50% -20%, rgba(255, 90, 0, 0.08), transparent 70%);
+    /* Prevent long words / names breaking layout on mobile */
+    overflow-wrap: break-word;
+    word-break: break-word;
+    position: relative;
+  }
+
+  h1 {
+    /* Prevent giant display headings from overflowing on mobile */
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
   }
 
   h1,
