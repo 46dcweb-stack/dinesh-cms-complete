@@ -80,6 +80,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col">
+      <CurveLoader />
       <HomeHero data={homeData} />
       <FeaturedQuoteSection
         quote={homeData.featuredQuoteText}
