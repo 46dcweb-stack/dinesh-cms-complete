@@ -24,7 +24,7 @@ export default function ManifestoHeader({ title, subtitle, eyebrow, introLabel, 
           ];
 
     return (
-        <div className="relative pt-16 pb-24 md:pt-24 md:pb-32 overflow-hidden flex items-center justify-center border-b border-white/5 mx-[-1.5rem] lg:mx-[-3rem] px-6 lg:px-12 -mt-20">
+        <div className="relative pt-8 pb-24 md:pt-24 md:pb-32 overflow-hidden flex items-center justify-center border-b border-white/5 mx-[-1.5rem] lg:mx-[-3rem] px-6 lg:px-12">
             <div className="w-full max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between min-h-[500px]">
 
                 {/* Left content */}
@@ -45,7 +45,7 @@ export default function ManifestoHeader({ title, subtitle, eyebrow, introLabel, 
                         </span>
                     )}
 
-                    <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1] mb-6 font-display relative z-10">
+                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1] mb-6 font-display relative z-10 break-words">
                         {title}
                     </h1>
 
@@ -77,9 +77,9 @@ export default function ManifestoHeader({ title, subtitle, eyebrow, introLabel, 
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-                    className="flex-1 flex items-center justify-center md:justify-end mt-16 md:mt-0 min-h-[400px] lg:min-h-[500px]"
+                    className="flex-1 flex items-center justify-center md:justify-end mt-10 md:mt-0 min-h-[280px] md:min-h-[400px] lg:min-h-[500px]"
                 >
-                    <div className="relative w-full aspect-square max-w-[600px] flex items-center justify-center mix-blend-screen">
+                    <div className="relative w-full aspect-square max-w-[280px] md:max-w-[600px] flex items-center justify-center mix-blend-screen">
                         {/* Subtle ambient glow behind globe matching brand theme */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-[radial-gradient(ellipse_at_center,rgba(255,90,0,0.15)_0%,transparent_60%)] rounded-full -z-10 pointer-events-none" />
 

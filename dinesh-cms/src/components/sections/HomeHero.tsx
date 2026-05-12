@@ -75,19 +75,19 @@ import type { HomePage, BlogPost, PressMention } from "@/lib/types";
 //                             initial={{ opacity: 0, y: 20 }}
 //                             animate={{ opacity: 1, y: 0 }}
 //                             transition={{ duration: 0.8, delay: 0.5 }}
-//                             className="grid grid-cols-3 gap-8 border-t border-white/5 pt-10"
+//                             className="grid grid-cols-3 gap-4 md:gap-8 border-t border-white/5 pt-8"
 //                         >
 //                             <div>
-//                                 <h3 className="text-3xl md:text-4xl font-bold text-white mb-1">600+</h3>
-//                                 <p className="text-zinc-500 text-sm uppercase tracking-wide font-medium">Projects Done</p>
+//                                 <h3 className="text-2xl md:text-4xl font-bold text-white mb-1">600+</h3>
+//                                 <p className="text-zinc-500 text-[10px] md:text-sm uppercase tracking-wide font-medium">Projects Done</p>
 //                             </div>
 //                             <div>
-//                                 <h3 className="text-3xl md:text-4xl font-bold text-white mb-1">50+</h3>
-//                                 <p className="text-zinc-500 text-sm uppercase tracking-wide font-medium">Brand Partnerships</p>
+//                                 <h3 className="text-2xl md:text-4xl font-bold text-white mb-1">50+</h3>
+//                                 <p className="text-zinc-500 text-[10px] md:text-sm uppercase tracking-wide font-medium">Brand Partnerships</p>
 //                             </div>
 //                             <div>
-//                                 <h3 className="text-3xl md:text-4xl font-bold text-white mb-1">12+</h3>
-//                                 <p className="text-zinc-500 text-sm uppercase tracking-wide font-medium">Years Experience</p>
+//                                 <h3 className="text-2xl md:text-4xl font-bold text-white mb-1">12+</h3>
+//                                 <p className="text-zinc-500 text-[10px] md:text-sm uppercase tracking-wide font-medium">Years Experience</p>
 //                             </div>
 //                         </motion.div>
 //                     </div>
@@ -106,7 +106,7 @@ import type { HomePage, BlogPost, PressMention } from "@/lib/types";
 //                             initial={{ opacity: 0, x: 100 }}
 //                             animate={{ opacity: 1, x: 0 }}
 //                             transition={{ duration: 1, ease: "easeOut" }}
-//                             className="relative w-full max-w-lg aspect-[4/5] rounded-[3rem] overflow-hidden"
+//                             className="relative w-full max-w-sm md:max-w-lg aspect-[4/5] rounded-[2rem] md:rounded-[3rem] overflow-hidden"
 //                         >
 //                             <GlowingEffect
 //                                 spread={60}
@@ -223,7 +223,7 @@ export default function HomeHero({ data }: HomeHeroProps) {
 
 
   return (
-    <section className="relative min-h-screen flex items-center pt-20 pb-12 px-6 overflow-hidden bg-zinc-950">
+    <section className="relative min-h-screen flex items-center pt-28 pb-12 px-6 overflow-hidden bg-zinc-950">
       <div className="max-w-7xl mx-auto w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* Left Column */}
@@ -237,10 +237,10 @@ export default function HomeHero({ data }: HomeHeroProps) {
                 transition={{ duration: 0.55 }}
                 className="font-display font-bold leading-[0.9] tracking-tighter"
               >
-                <span className="block text-lg md:text-xl lg:text-2xl text-brand-primary font-medium tracking-normal mb-3">
+                <span className="block text-base md:text-xl lg:text-2xl text-brand-primary font-medium tracking-normal mb-3">
                   {heroTitle.toUpperCase()}
                 </span>
-                <span className="block text-6xl md:text-7xl lg:text-8xl text-white">
+                <span className="block text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-white break-words">
                   {heroName}
                 </span>
               </motion.h1>
@@ -261,13 +261,13 @@ export default function HomeHero({ data }: HomeHeroProps) {
             <div className="flex flex-wrap gap-4">
               <Link
                 href={primaryCtaUrl}
-                className="group flex items-center space-x-3 bg-brand-primary text-white px-8 py-4 rounded-full shadow-[0_0_30px_rgba(var(--brand-primary-rgb),0.4)] hover:shadow-[0_0_50px_rgba(var(--brand-primary-rgb),0.6)] transition-all duration-300 hover:scale-105"
+                className="group flex items-center space-x-3 bg-brand-primary text-white px-6 md:px-8 py-3 md:py-4 rounded-full shadow-[0_0_30px_rgba(var(--brand-primary-rgb),0.4)] hover:shadow-[0_0_50px_rgba(var(--brand-primary-rgb),0.6)] transition-all duration-300 hover:scale-105"
                 style={{ backgroundColor: "var(--brand-primary)" }}
               >
                 <div className="bg-white/20 p-2 rounded-lg">
                   <Calendar className="w-5 h-5" />
                 </div>
-                <span className="text-lg font-bold">{primaryCtaLabel}</span>
+                <span className="text-base md:text-lg font-bold">{primaryCtaLabel}</span>
               </Link>
 
               {secondaryCtaLabel && secondaryCtaUrl && (
@@ -281,28 +281,28 @@ export default function HomeHero({ data }: HomeHeroProps) {
             </div>
 
             {/* Stats row: keep it simple; no expensive effects */}
-            <div className="grid grid-cols-3 gap-8 border-t border-white/5 pt-10">
+            <div className="grid grid-cols-3 gap-4 md:gap-8 border-t border-white/5 pt-8">
               <div>
-                <h3 className="text-3xl md:text-4xl font-bold text-white mb-1">
+                <h3 className="text-2xl md:text-4xl font-bold text-white mb-1">
                   {stat1Value}
                 </h3>
-                <p className="text-zinc-500 text-sm uppercase tracking-wide font-medium">
+                <p className="text-zinc-500 text-[10px] md:text-sm uppercase tracking-wide font-medium">
                   {stat1Label}
                 </p>
               </div>
               <div>
-                <h3 className="text-3xl md:text-4xl font-bold text-white mb-1">
+                <h3 className="text-2xl md:text-4xl font-bold text-white mb-1">
                   {stat2Value}
                 </h3>
-                <p className="text-zinc-500 text-sm uppercase tracking-wide font-medium">
+                <p className="text-zinc-500 text-[10px] md:text-sm uppercase tracking-wide font-medium">
                   {stat2Label}
                 </p>
               </div>
               <div>
-                <h3 className="text-3xl md:text-4xl font-bold text-white mb-1">
+                <h3 className="text-2xl md:text-4xl font-bold text-white mb-1">
                   {stat3Value}
                 </h3>
-                <p className="text-zinc-500 text-sm uppercase tracking-wide font-medium">
+                <p className="text-zinc-500 text-[10px] md:text-sm uppercase tracking-wide font-medium">
                   {stat3Label}
                 </p>
               </div>
@@ -315,7 +315,7 @@ export default function HomeHero({ data }: HomeHeroProps) {
               initial={prefersReducedMotion ? false : { opacity: 0, x: 40 }}
               animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="relative w-full max-w-lg aspect-[4/5] rounded-[3rem] overflow-hidden"
+              className="relative w-full max-w-sm md:max-w-lg aspect-[4/5] rounded-[2rem] md:rounded-[3rem] overflow-hidden"
             >
               {heroVideo && (
                 <video

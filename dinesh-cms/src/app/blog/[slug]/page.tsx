@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import Link from "next/link";
-import { ArrowLeft, Share2, Twitter, Linkedin, Clock } from "lucide-react";
+import { ArrowLeft, Clock } from "lucide-react";
+import ShareButton from "@/components/blog/ShareButton";
 import BlogContentWrapper from "@/components/blog/BlogContentWrapper";
 import { blogPosts } from "@/lib/data";
 import { getBlogBySlug, getPublishedBlogs } from "@/lib/firebase-data";
@@ -64,7 +65,7 @@ export default async function BlogPostPage({
     const publishDate = new Date(post.publishDate);
 
     return (
-        <article className="pt-32 pb-24 px-6">
+        <article className="pt-28 pb-24 px-6">
             {/* SEO: Article schema + Breadcrumb for Google */}
             <ArticleSchema
                 title={post.title}
@@ -101,7 +102,7 @@ export default async function BlogPostPage({
                         </div>
                     </div>
 
-                    <h1 className="text-4xl md:text-7xl font-display leading-[1.1] text-white mb-10 tracking-tight">
+                    <h1 className="text-3xl md:text-6xl font-display leading-[1.1] text-white mb-10 tracking-tight break-words">
                         {post.title}
                     </h1>
 
@@ -118,17 +119,10 @@ export default async function BlogPostPage({
                             </div>
                         </div>
 
-                        <div className="flex items-center space-x-3">
-                            <button className="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-text-muted hover:text-brand-primary hover:border-brand-primary/30 transition-all">
-                                <Twitter size={18} />
-                            </button>
-                            <button className="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-text-muted hover:text-brand-primary hover:border-brand-primary/30 transition-all">
-                                <Linkedin size={18} />
-                            </button>
-                            <button className="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-text-muted hover:text-brand-primary hover:border-brand-primary/30 transition-all">
-                                <Share2 size={18} />
-                            </button>
-                        </div>
+                        <ShareButton
+                            title={post.title}
+                            url={`https://dineshkoyyalamudi.com/blog/${post.slug}`}
+                        />
                     </div>
                 </div>
 
