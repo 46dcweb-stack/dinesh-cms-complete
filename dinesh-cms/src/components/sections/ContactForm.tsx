@@ -102,7 +102,7 @@ export default function ContactForm({
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20">
             {/* Left Column: Info */}
             <div>
                 <motion.span
@@ -115,7 +115,7 @@ export default function ContactForm({
                 <motion.h1
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-5xl md:text-7xl font-display leading-tight mb-8"
+                    className="text-3xl md:text-5xl lg:text-7xl font-display leading-tight mb-6 md:mb-8 break-words"
                 >
                     {title.split(' ').slice(0, -1).join(' ')} <span className="text-gradient italic">{title.split(' ').slice(-1)}</span>
                 </motion.h1>
@@ -123,7 +123,7 @@ export default function ContactForm({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="text-text-secondary text-xl mb-12 max-w-lg"
+                    className="text-text-secondary text-base md:text-xl mb-8 md:mb-12 max-w-lg"
                 >
                     {description}
                 </motion.p>
@@ -132,7 +132,7 @@ export default function ContactForm({
                     {contactInfo.map((info) => (
                         <div
                             key={info.id}
-                            className="w-full text-left p-6 rounded-2xl border bg-brand-muted/50 border-white/5 hover:border-white/20 transition-all duration-300 flex items-start space-x-4 group"
+                            className="w-full text-left p-4 md:p-6 rounded-2xl border bg-brand-muted/50 border-white/5 hover:border-white/20 transition-all duration-300 flex items-start space-x-3 md:space-x-4 group"
                         >
                             <div className="p-3 rounded-xl bg-white/5 text-white/40 group-hover:bg-brand-primary group-hover:text-white transition-colors">
                                 {info.icon}
@@ -144,12 +144,12 @@ export default function ContactForm({
                                 {info.href ? (
                                     <a
                                         href={info.href}
-                                        className="text-xl font-display text-white hover:text-brand-primary transition-colors"
+                                        className="text-base md:text-xl font-display text-white hover:text-brand-primary transition-colors"
                                     >
                                         {info.value}
                                     </a>
                                 ) : (
-                                    <p className="text-xl font-display text-white leading-relaxed">
+                                    <p className="text-base md:text-xl font-display text-white leading-relaxed">
                                         {info.value}
                                     </p>
                                 )}
@@ -164,7 +164,7 @@ export default function ContactForm({
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
-                className="glass-card p-8 md:p-12 relative overflow-hidden"
+                className="glass-card p-5 md:p-8 lg:p-12 relative overflow-hidden"
             >
                 {status === "success" ? (
                     <div className="h-full flex flex-col items-center justify-center text-center py-20">
@@ -182,8 +182,8 @@ export default function ContactForm({
                         </button>
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit} className="space-y-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <form onSubmit={handleSubmit} className="space-y-5 md:space-y-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                             <div className="space-y-2">
                                 <label className="text-xs font-semibold uppercase tracking-widest text-text-muted ml-1">Name</label>
                                 <input
@@ -191,7 +191,7 @@ export default function ContactForm({
                                     type="text"
                                     value={formData.name}
                                     onChange={(e) => setLocalFormData({ ...formData, name: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-brand-primary/50 transition-colors"
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white focus:outline-none focus:border-brand-primary/50 transition-colors"
                                     placeholder="Your Name"
                                 />
                             </div>
@@ -202,7 +202,7 @@ export default function ContactForm({
                                     type="email"
                                     value={formData.email}
                                     onChange={(e) => setLocalFormData({ ...formData, email: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-brand-primary/50 transition-colors"
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white focus:outline-none focus:border-brand-primary/50 transition-colors"
                                     placeholder="email@example.com"
                                 />
                             </div>
@@ -236,7 +236,7 @@ export default function ContactForm({
                                 type="text"
                                 value={formData.subject}
                                 onChange={(e) => setLocalFormData({ ...formData, subject: e.target.value })}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-brand-primary/50 transition-colors"
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white focus:outline-none focus:border-brand-primary/50 transition-colors"
                                 placeholder="What is this regarding?"
                             />
                         </div>
@@ -248,14 +248,14 @@ export default function ContactForm({
                                 rows={5}
                                 value={formData.message}
                                 onChange={(e) => setLocalFormData({ ...formData, message: e.target.value })}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-brand-primary/50 transition-colors resize-none"
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white focus:outline-none focus:border-brand-primary/50 transition-colors resize-none"
                                 placeholder="Tell me about your project or inquiry..."
                             />
                         </div>
                         <button
                             type="submit"
                             disabled={status === "loading"}
-                            className="w-full btn-premium py-5 text-lg group"
+                            className="w-full btn-premium py-3 md:py-5 text-base md:text-lg group"
                         >
                             {status === "loading" ? "Sending..." : (
                                 <>

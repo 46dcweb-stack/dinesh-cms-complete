@@ -52,7 +52,7 @@ export default async function BlogListingPage() {
 
       {/* Compact centred contact block */}
       <div className="px-6 mt-20 mb-8">
-        <div className="max-w-6xl mx-auto rounded-3xl border border-white/10 bg-zinc-900/60 overflow-hidden p-12 md:p-16">
+        <div className="max-w-6xl mx-auto rounded-3xl border border-white/10 bg-zinc-900/60 overflow-hidden p-5 md:p-10 lg:p-16">
           <ContactForm
             title="Have a Story Idea?"
             subtitle="Get in Touch"
