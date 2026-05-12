@@ -44,6 +44,7 @@ export interface PressMention {
   featured: boolean;
   pullQuote?: string;
   downloadableAsset?: string;
+  showInFeaturedBar?: boolean;
   sortOrder: number;
   status: "draft" | "published";
   createdAt?: Timestamp;

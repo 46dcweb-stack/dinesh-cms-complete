@@ -12,7 +12,7 @@ import {
 const MEDIA_TYPES = ["Article", "Interview", "Podcast", "Video", "Award", "Featured", "Profile"];
 
 const EMPTY: Omit<PressMention, "id"> = {
-  title: "", outlet: "", outletLogo: "", date: Date.now(), url: "",
+  title: "", outlet: "", outletLogo: "", date: Date.now(), url: "", showInFeaturedBar: false,
   thumbnail: "", description: "", mediaType: "Article",
   featured: false, pullQuote: "", downloadableAsset: "",
   sortOrder: 0, status: "published",
@@ -330,6 +330,19 @@ export default function PressAdmin() {
             </div>
             <Field label="Outlet Logo URL">
               <Input value={form.outletLogo || ""} onChange={e => set("outletLogo", e.target.value)} placeholder="Logo image URL" />
+            </Field>
+            <Field label="Show in 'As Featured In' Bar" hint="Displays the outlet logo in the homepage featured bar — requires Outlet Logo to be set">
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <div
+                  onClick={() => set("showInFeaturedBar", !(form as any).showInFeaturedBar)}
+                  className={`relative w-11 h-6 rounded-full border transition-all duration-300 cursor-pointer flex-shrink-0 ${(form as any).showInFeaturedBar ? "bg-brand-primary border-brand-primary" : "bg-white/5 border-white/10"}`}
+                >
+                  <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-all duration-300 ${(form as any).showInFeaturedBar ? "translate-x-5" : "translate-x-0"}`} />
+                </div>
+                <span className={`text-sm transition-colors ${(form as any).showInFeaturedBar ? "text-white" : "text-white/40"}`}>
+                  {(form as any).showInFeaturedBar ? "Showing in featured bar" : "Hidden from featured bar"}
+                </span>
+              </label>
             </Field>
             <Field label="Cover / Thumbnail Image">
               <ImageUpload value={form.thumbnail || ""} onChange={v => set("thumbnail", v)} folder="press" />
