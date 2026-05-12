@@ -146,6 +146,7 @@ export default function Footer() {
             <Link href="/privacy" className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-widest transition-colors">Privacy</Link>
             <Link href="/terms"   className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-widest transition-colors">Terms of Use</Link>
             <Link href="/cookies" className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-widest transition-colors">Cookie Policy</Link>
+            <Link href="/sitemap.xml" className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-widest transition-colors">Sitemap</Link>
           </div>
         </div>
       </div>
