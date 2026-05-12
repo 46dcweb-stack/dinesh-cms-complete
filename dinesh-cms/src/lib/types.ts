@@ -211,7 +211,7 @@ export interface Venture {
   url?: string;
   sortOrder: number;
   featured: boolean;
-  status: "active" | "inactive";
+  status: "active" | "inactive" | "pre-launch" | "coming-soon" | "building";
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 }

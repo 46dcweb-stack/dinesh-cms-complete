@@ -128,6 +128,9 @@ export default function VenturesAdmin() {
             <Field label="Status">
               <Select value={form.status} onChange={e => set("status", e.target.value)}>
                 <option value="active">Active</option>
+                <option value="pre-launch">Pre Launch</option>
+                <option value="coming-soon">Coming Soon</option>
+                <option value="building">Building</option>
                 <option value="inactive">Inactive</option>
               </Select>
             </Field>

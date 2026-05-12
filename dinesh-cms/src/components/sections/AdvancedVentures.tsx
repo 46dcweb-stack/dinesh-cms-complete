@@ -19,6 +19,14 @@ const DEFAULT_VENTURES: VentureDisplay[] = [
   { name: "Future Pulse", role: "Angel Investor", description: "Identifying and backing the next generation of storytellers and system builders. We invest in ideas that redefine the human-tech relationship.", image: "/gallery/venture-4.png", color: "#EAB308" },
 ];
 
+const STATUS_CONFIG: Record<string, { label: string; color: string; dot: string }> = {
+  "active":      { label: "Active",      color: "text-green-400 bg-green-400/10 border-green-400/20",           dot: "bg-green-400" },
+  "pre-launch":  { label: "Pre Launch",  color: "text-blue-400 bg-blue-400/10 border-blue-400/20",              dot: "bg-blue-400" },
+  "coming-soon": { label: "Coming Soon", color: "text-yellow-400 bg-yellow-400/10 border-yellow-400/20",        dot: "bg-yellow-400" },
+  "building":    { label: "Building",    color: "text-brand-primary bg-brand-primary/10 border-brand-primary/20", dot: "bg-brand-primary animate-pulse" },
+  "inactive":    { label: "Inactive",    color: "text-white/30 bg-white/5 border-white/10",                     dot: "bg-white/30" },
+};
+
 interface AdvancedVenturesProps {
   data?: VentureDisplay[];
   eyebrow?: string;
@@ -66,34 +74,19 @@ export default function AdvancedVentures({
                   exit={{ opacity: 0, scale: 0.9, rotateY: 15 }}
                   transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
                   className="relative w-[80%] aspect-[5/4] rounded-[32px] overflow-hidden shadow-2xl"
-                  style={{ 
-                    boxShadow: `0 25px 50px -12px ${ventures[activeIndex]?.color}40`,
-                  }}
+                  style={{ boxShadow: `0 25px 50px -12px ${ventures[activeIndex]?.color}40` }}
                 >
-                  {/* Background Color Glow */}
-                  <div 
-                    className="absolute inset-0 opacity-20"
-                    style={{ backgroundColor: ventures[activeIndex]?.color }}
-                  />
-                  
-                  {/* Image */}
+                  <div className="absolute inset-0 opacity-20" style={{ backgroundColor: ventures[activeIndex]?.color }} />
                   <Image
                     src={ventures[activeIndex]?.image || "/gallery/venture-3.png"}
                     alt={ventures[activeIndex]?.name || "Venture"}
                     fill
                     className="object-cover transition-all duration-700"
-                    unoptimized 
+                    sizes="(max-width: 768px) 100vw, 50vw"
                     priority
                   />
-                  
-                  {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60" />
-                  
-                  {/* Border Glow */}
-                  <div 
-                    className="absolute inset-0 rounded-[32px] border-2 opacity-50"
-                    style={{ borderColor: ventures[activeIndex]?.color }}
-                  />
+                  <div className="absolute inset-0 rounded-[32px] border-2 opacity-50" style={{ borderColor: ventures[activeIndex]?.color }} />
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -117,12 +110,30 @@ export default function AdvancedVentures({
 
 function VentureCard({ venture, index, onInView }: { venture: VentureDisplay; index: number; onInView: () => void }) {
   const cardRef = useRef(null);
+  const statusCfg = venture.status ? STATUS_CONFIG[venture.status] : null;
+
   return (
     <motion.div ref={cardRef} onViewportEnter={onInView} viewport={{ amount: 0.3 }} className="group">
+      {/* Mobile image */}
       <div className="block md:hidden aspect-video relative overflow-hidden rounded-2xl mb-8 border border-white/5">
-        <Image src={venture?.image || "/gallery/venture-3.png"} alt={venture?.name || "Venture"} fill className="object-cover" unoptimized />
+        <Image
+          src={venture?.image || "/gallery/venture-3.png"}
+          alt={venture?.name || "Venture"}
+          fill
+          className="object-cover"
+          sizes="100vw"
+        />
         <div className="absolute inset-0 bg-linear-to-t from-brand-dark/80 to-transparent" />
       </div>
+
+      {/* Status badge */}
+      {statusCfg && (
+        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-bold uppercase tracking-[0.2em] mb-5 ${statusCfg.color}`}>
+          <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot}`} />
+          {statusCfg.label}
+        </div>
+      )}
+
       <h3 className="text-4xl md:text-6xl font-display mb-8 text-white group-hover:text-brand-primary transition-colors cursor-pointer">{venture.name}</h3>
       <p className="text-text-secondary text-lg md:text-xl leading-relaxed mb-12 max-w-lg">{venture.description}</p>
       {venture.url && (
