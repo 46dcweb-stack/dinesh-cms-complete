@@ -42,17 +42,28 @@ export default function PressClientWrapper({ mentions }: PressClientWrapperProps
           transition={{ duration: 0.5, delay: index * 0.07 }}
           className="group flex flex-col md:flex-row gap-0 rounded-3xl border border-white/10 bg-zinc-900/60 hover:border-brand-primary/40 hover:bg-zinc-900/90 transition-all duration-400 overflow-hidden"
         >
-          {/* Left — Logo / Image panel */}
-          <div className="relative w-full md:w-[280px] lg:w-[320px] shrink-0 aspect-[16/10] md:aspect-auto md:min-h-[200px] bg-zinc-800/60 flex items-center justify-center">
-            {item.outletLogo ? (
-              <div className="relative w-full h-full">
+          {/* Left — thumbnail first, outletLogo as fallback, then text */}
+          <div className="relative w-full md:w-[280px] lg:w-[320px] shrink-0 aspect-[16/10] md:aspect-auto md:min-h-[200px] bg-zinc-800/60">
+            {item.thumbnail ? (
+              <>
+                <Image
+                  src={item.thumbnail}
+                  alt={item.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  sizes="(max-width: 768px) 100vw, 320px"
+                />
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500" />
+              </>
+            ) : item.outletLogo ? (
+              <div className="absolute inset-0 flex items-center justify-center p-10">
                 <Image
                   src={item.outletLogo}
                   alt={item.outlet || item.title}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="object-contain p-10 opacity-30"
+                  sizes="(max-width: 768px) 100vw, 320px"
                 />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500" />
               </div>
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/10 via-zinc-800 to-zinc-900 flex items-center justify-center p-8">
