@@ -87,6 +87,7 @@ export default function ContactForm({
         fd.append("page_url", typeof window !== "undefined" ? window.location.href : "");
 
         try {
+            // Save to Firestore
             await contactService.submit({
                 name: formData.name,
                 email: formData.email,
@@ -94,6 +95,21 @@ export default function ContactForm({
                 message: formData.message,
                 type: (formData.type.toLowerCase() as any) || "general",
             });
+
+            // Send email notification via Nodemailer
+            await fetch("/api/contact", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    subject: formData.subject,
+                    message: formData.message,
+                    type: formData.type,
+                    page_url: typeof window !== "undefined" ? window.location.href : "",
+                }),
+            });
+
             setStatus("success");
             setLocalFormData({ name: "", email: "", subject: "", message: "", type: "General" });
         } catch (error) {
