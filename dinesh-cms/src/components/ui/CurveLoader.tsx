@@ -105,7 +105,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 const words = [
-  "నేష్ కొయ్యలముడి",
+  "దినేష్ కొయ్యలముడి",
   "ദിനേഷ് കൊയ്യലമുടി",
   "दिनेश कोय्यलमुडी",
   "ディネシュ・コイヤラムディ",
@@ -190,7 +190,7 @@ export default function CurveLoader() {
                 delay: 0.1,
               },
             }}
-            className="flex items-center text-white text-[42px] z-[1] font-display font-medium"
+            className="flex items-center text-white text-[32px] z-[1] font-display font-medium"
           >
             <span className="block w-[12px] h-[12px] bg-white rounded-full mr-[12px]" />
             {words[index]}
