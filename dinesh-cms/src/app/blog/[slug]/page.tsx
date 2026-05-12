@@ -65,7 +65,7 @@ export default async function BlogPostPage({
     const publishDate = new Date(post.publishDate);
 
     return (
-        <article className="pt-28 pb-24 px-6">
+        <article className="pt-36 pb-24 px-6">
             {/* SEO: Article schema + Breadcrumb for Google */}
             <ArticleSchema
                 title={post.title}
