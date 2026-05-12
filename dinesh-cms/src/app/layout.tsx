@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { spaceGrotesk, inter } from "./fonts";
 import "./globals.css";
-import CurveLoader from "@/components/ui/CurveLoader";
 import LenisProvider from "@/components/providers/LenisProvider";
 import SiteChrome from "@/components/providers/SiteChrome";
 import { PersonSchema, OrganizationSchema, WebsiteSchema } from "@/components/seo/JsonLd";
@@ -37,7 +36,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <OrganizationSchema />
         <WebsiteSchema />
         <LenisProvider>
-          <CurveLoader />
           <SiteChrome>{children}</SiteChrome>
         </LenisProvider>
       </body>

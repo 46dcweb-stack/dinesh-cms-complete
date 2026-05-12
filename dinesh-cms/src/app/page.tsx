@@ -1,4 +1,5 @@
 import HomeHero from "@/components/sections/HomeHero";
+import CurveLoader from "@/components/ui/CurveLoader";
 import FeaturedQuoteSection from "@/components/sections/FeaturedQuoteSection";
 import PersonalIntro from "@/components/sections/PersonalIntro";
 import AdvancedVentures from "@/components/sections/AdvancedVentures";

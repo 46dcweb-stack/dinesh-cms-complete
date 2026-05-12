@@ -117,9 +117,15 @@ const words = [
   "DINESH KOYYALAMUDI",
 ];
 
+
 export default function CurveLoader() {
   const prefersReducedMotion = useReducedMotion();
-  const [open, setOpen] = useState(true);
+  // Only show once per browser session
+  const [open, setOpen] = useState(() => {
+    if (typeof window === "undefined") return true;
+    if (sessionStorage.getItem("loader_shown")) return false;
+    return true;
+  });
   const [index, setIndex] = useState(0);
 
   // Keep the SVG path stable (no window-dependent geometry).
@@ -150,7 +156,10 @@ export default function CurveLoader() {
 
     if (isLast) {
       const t = window.setTimeout(
-        () => setOpen(false),
+        () => {
+          sessionStorage.setItem("loader_shown", "1");
+          setOpen(false);
+        },
         prefersReducedMotion ? 0 : 400,
       );
       return () => window.clearTimeout(t);
@@ -190,7 +199,7 @@ export default function CurveLoader() {
                 delay: 0.1,
               },
             }}
-            className="flex items-center text-white text-[22px] z-[1] font-display font-medium"
+            className="flex items-center text-white text-[42px] z-[1] font-display font-medium"
           >
             <span className="block w-[12px] h-[12px] bg-white rounded-full mr-[12px]" />
             {words[index]}
