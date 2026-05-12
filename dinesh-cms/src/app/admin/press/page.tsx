@@ -329,7 +329,7 @@ export default function PressAdmin() {
               </Field>
             </div>
             <Field label="Outlet Logo URL">
-              <Input value={form.outletLogo || ""} onChange={e => set("outletLogo", e.target.value)} placeholder="Logo image URL" />
+              <ImageUpload value={form.outletLogo || ""} onChange={v => set("outletLogo", v)} folder="press/logos" />
             </Field>
             <Field label="Show in 'As Featured In' Bar" hint="Displays the outlet logo in the homepage featured bar — requires Outlet Logo to be set">
               <label className="flex items-center gap-3 cursor-pointer group">
