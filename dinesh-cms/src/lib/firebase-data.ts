@@ -52,6 +52,9 @@ export async function getManifesto() {
 export async function getSiteSettings() {
   try { const db = getAdminDb(); const s = await db.collection("siteSettings").doc("main").get(); return s.exists ? serialize(s.data()) : null; } catch (e) { console.error("[getSiteSettings]", e); return null; }
 }
+export async function getFaqPageSettings() {
+  try { const db = getAdminDb(); const s = await db.collection("faqPageMeta").doc("main").get(); return s.exists ? serialize(s.data()) : null; } catch (e) { console.error("[getFaqPageSettings]", e); return null; }
+}
 export async function getTeamMembers() {
   try { const db = getAdminDb(); const s = await db.collection("teamMembers").where("status","==","active").orderBy("sortOrder","asc").get(); return s.docs.map(d => serialize({ id: d.id, ...d.data() })); } catch (e) { console.error("[getTeamMembers]", e); return []; }
 }

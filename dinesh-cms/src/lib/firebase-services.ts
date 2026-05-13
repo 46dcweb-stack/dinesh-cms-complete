@@ -455,6 +455,21 @@ export const pressPageService = {
   },
 };
 
+// ── FAQ PAGE META ──────────────────────────────────────────────────────────────
+export const faqPageService = {
+  async get(): Promise<import("./types").FaqPageSettings | null> {
+    const snap = await getDoc(doc(db, "faqPageMeta", "main"));
+    if (!snap.exists()) return null;
+    return snap.data() as import("./types").FaqPageSettings;
+  },
+
+  async save(data: import("./types").FaqPageSettings): Promise<void> {
+    const prev = await fetchSnapshot("faqPageMeta", "main");
+    await setDoc(doc(db, "faqPageMeta", "main"), { ...data, updatedAt: serverTimestamp() });
+    await writeAudit("faqPageMeta", "main", "update", "Updated FAQ page meta", undefined, prev);
+  },
+};
+
 // ── MEDIA / STORAGE UPLOAD ─────────────────────────────────────────────────────
 export const mediaService = {
   async upload(file: File, folder: string = "uploads"): Promise<string> {

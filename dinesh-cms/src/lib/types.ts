@@ -92,11 +92,20 @@ export interface ManifestoMeta {
 }
 
 // ── FAQ ──────────────────────────────────────────────────────────────────────
+export interface FaqPageSettings {
+  id?: string;
+  pageLabel?: string;
+  pageTitle?: string;
+  pageTitleItalic?: string;
+  pageDescription?: string;
+  updatedAt?: Timestamp;
+}
+
 export interface FaqItem {
   id?: string;
   question: string;
   answer: string; // rich text
-  category: "About Dinesh" | "FourSix46 & Ventures" | "Speaking & Media" | "Collaboration & Advisory" | "Vision & Strategy" | "Operations & Collaboration";
+  category: "About Dinesh Koyyalamudi" | "FourSix46 & Ventures" | "Speaking & Media" | "Collaboration & Advisory" | "Vision & Strategy" | "Operations & Collaboration";
   sortOrder: number;
   featured: boolean;
   status: "draft" | "published";

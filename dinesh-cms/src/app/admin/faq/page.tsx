@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { faqService } from "@/lib/firebase-services";
-import type { FaqItem } from "@/lib/types";
+import { faqService, faqPageService } from "@/lib/firebase-services";
+import type { FaqItem, FaqPageSettings } from "@/lib/types";
 import { Plus, Pencil, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import {
   AdminPageHeader, Field, Input, Textarea, Select, Toggle,
@@ -9,13 +9,20 @@ import {
 } from "../components/ui";
 
 const CATEGORIES: FaqItem["category"][] = [
-  "About Dinesh", "FourSix46 & Ventures", "Speaking & Media",
+  "About Dinesh Koyyalamudi", "FourSix46 & Ventures", "Speaking & Media",
   "Collaboration & Advisory", "Vision & Strategy", "Operations & Collaboration",
 ];
 
 const EMPTY: Omit<FaqItem, "id"> = {
-  question: "", answer: "", category: "About Dinesh",
+  question: "", answer: "", category: "About Dinesh Koyyalamudi",
   sortOrder: 0, featured: false, status: "published",
+};
+
+const PAGE_DEFAULTS: FaqPageSettings = {
+  pageLabel: "Knowledge Protocol",
+  pageTitle: "Frequently Asked",
+  pageTitleItalic: "Questions.",
+  pageDescription: "Answers to the most common questions about Dinesh Koyyalamudi, FourSix46, and our ventures.",
 };
 
 export default function FaqAdmin() {
@@ -29,7 +36,13 @@ export default function FaqAdmin() {
   const [error, setError] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  useEffect(() => { load(); }, []);
+  // Page settings state
+  const [pageSettings, setPageSettings] = useState<FaqPageSettings>(PAGE_DEFAULTS);
+  const [pageSettingsSaving, setPageSettingsSaving] = useState(false);
+  const [pageSettingsSaved, setPageSettingsSaved] = useState(false);
+  const [pageSettingsError, setPageSettingsError] = useState("");
+
+  useEffect(() => { load(); loadPageSettings(); }, []);
 
   async function load() {
     setLoading(true);
@@ -37,9 +50,19 @@ export default function FaqAdmin() {
     setLoading(false);
   }
 
+  async function loadPageSettings() {
+    const data = await faqPageService.get();
+    if (data) setPageSettings({ ...PAGE_DEFAULTS, ...data });
+  }
+
   function set(key: keyof typeof form, val: any) {
     setForm(f => ({ ...f, [key]: val }));
     setSaved(false);
+  }
+
+  function setPage(key: keyof FaqPageSettings, val: string) {
+    setPageSettings(s => ({ ...s, [key]: val }));
+    setPageSettingsSaved(false);
   }
 
   function openNew() {
@@ -74,6 +97,17 @@ export default function FaqAdmin() {
     setSaving(false);
   }
 
+  async function handleSavePageSettings() {
+    setPageSettingsSaving(true);
+    setPageSettingsError("");
+    try {
+      await faqPageService.save(pageSettings);
+      setPageSettingsSaved(true);
+      setTimeout(() => setPageSettingsSaved(false), 3000);
+    } catch (err: any) { setPageSettingsError(err.message); }
+    setPageSettingsSaving(false);
+  }
+
   async function handleDelete(id: string) {
     if (!confirm("Delete this FAQ?")) return;
     await faqService.delete(id);
@@ -90,7 +124,7 @@ export default function FaqAdmin() {
     <div className="p-8">
       <AdminPageHeader
         title="FAQ"
-        subtitle="Manage frequently asked questions"
+        subtitle="Manage frequently asked questions and FAQ page settings"
         action={
           <button onClick={openNew}
             className="flex items-center gap-2 bg-[#E22D2D] hover:bg-[#c91f1f] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
@@ -99,6 +133,29 @@ export default function FaqAdmin() {
           </button>
         }
       />
+
+      {/* ── Page Settings ─────────────────────────────────────────── */}
+      <Card className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <SectionTitle>FAQ Page Settings</SectionTitle>
+          <SaveButton loading={pageSettingsSaving} saved={pageSettingsSaved} onClick={handleSavePageSettings} />
+        </div>
+        {pageSettingsError && <Alert message={pageSettingsError} className="mb-4" />}
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Page Label / Eyebrow" hint="Small uppercase label above the title (e.g. Knowledge Protocol)">
+            <Input value={pageSettings.pageLabel ?? ""} onChange={e => setPage("pageLabel", e.target.value)} placeholder="Knowledge Protocol" />
+          </Field>
+          <Field label="Page Title" hint="Main heading text">
+            <Input value={pageSettings.pageTitle ?? ""} onChange={e => setPage("pageTitle", e.target.value)} placeholder="Frequently Asked" />
+          </Field>
+          <Field label="Title Italic Suffix" hint="Italic gradient portion at the end of the title">
+            <Input value={pageSettings.pageTitleItalic ?? ""} onChange={e => setPage("pageTitleItalic", e.target.value)} placeholder="Questions." />
+          </Field>
+          <Field label="Page Description" hint="Short subtitle shown under the heading">
+            <Input value={pageSettings.pageDescription ?? ""} onChange={e => setPage("pageDescription", e.target.value)} placeholder="Answers to common questions…" />
+          </Field>
+        </div>
+      </Card>
 
       {showForm && (
         <Card className="mb-8">
@@ -127,7 +184,7 @@ export default function FaqAdmin() {
                 </Select>
               </Field>
             </div>
-            <Toggle checked={form.featured} onChange={v => set("featured", v)} label="Featured FAQ" />
+            <Toggle checked={form.featured} onChange={v => set("featured", v)} label="Featured FAQ (shown on Home page)" />
           </div>
           <div className="flex items-center gap-3 mt-6">
             <SaveButton loading={saving} saved={saved} onClick={handleSave} />

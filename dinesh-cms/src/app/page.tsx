@@ -66,7 +66,20 @@ export default async function Home() {
   const ventures = (fbVentures.length > 0 ? fbVentures : (static_home.ventures ?? []));
 
   const faqItems = fbFaq.length > 0
-    ? fbFaq.map((item: any) => ({ q: item.question, a: item.answer }))
+    ? (() => {
+        // Deduplicate by question text
+        const seen = new Set<string>();
+        const deduped = fbFaq.filter((item: any) => {
+          const key = (item.question ?? "").trim().toLowerCase();
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+        // Show featured FAQs first; fall back to all if none are featured
+        const featured = deduped.filter((item: any) => item.featured);
+        const source   = featured.length > 0 ? featured : deduped;
+        return source.map((item: any) => ({ q: item.question, a: item.answer }));
+      })()
     : faqGroups.flatMap((g) => g.questions) as any[];
 
   const show = {
