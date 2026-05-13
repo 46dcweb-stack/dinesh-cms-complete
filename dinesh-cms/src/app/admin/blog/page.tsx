@@ -15,6 +15,9 @@ const HERO_DEFAULTS = {
   heading:       "The",
   headingItalic: "Journal",
   description:   "Exploring the intersection of venture capital, logistics, and the philosophies that drive global impact.",
+  contactTitle:       "Have a Story Idea?",
+  contactSubtitle:    "Get in Touch",
+  contactDescription: "Want to collaborate on an article, interview, or guest post? Let's connect.",
 };
 
 export default function BlogAdmin() {
@@ -46,6 +49,9 @@ export default function BlogAdmin() {
           heading:       d.heading       || HERO_DEFAULTS.heading,
           headingItalic: d.headingItalic || HERO_DEFAULTS.headingItalic,
           description:   d.description   || HERO_DEFAULTS.description,
+          contactTitle:       d.contactTitle       || HERO_DEFAULTS.contactTitle,
+          contactSubtitle:    d.contactSubtitle    || HERO_DEFAULTS.contactSubtitle,
+          contactDescription: d.contactDescription || HERO_DEFAULTS.contactDescription,
         });
       }
     } catch (e) { console.error(e); }
@@ -141,6 +147,39 @@ export default function BlogAdmin() {
               onChange={e => setHero(h => ({ ...h, description: e.target.value }))}
               rows={2}
               placeholder="Exploring the intersection of venture capital, logistics, and the philosophies that drive global impact."
+            />
+          </Field>
+        </div>
+        <div className="mt-4">
+          <SaveButton loading={heroSaving} saved={heroSaved} onClick={saveHero} />
+        </div>
+      </Card>
+
+      {/* Contact Section CMS */}
+      <Card className="mb-6">
+        <SectionTitle>Contact Section</SectionTitle>
+        <p className="text-xs text-white/40 mb-4">Controls the "Get in Touch" block shown at the bottom of the blog page.</p>
+        <div className="space-y-3">
+          <Field label="Subtitle / Eyebrow">
+            <Input
+              value={(hero as any).contactSubtitle || ""}
+              onChange={e => setHero(h => ({ ...h, contactSubtitle: e.target.value }))}
+              placeholder="Get in Touch"
+            />
+          </Field>
+          <Field label="Title">
+            <Input
+              value={(hero as any).contactTitle || ""}
+              onChange={e => setHero(h => ({ ...h, contactTitle: e.target.value }))}
+              placeholder="Have a Story Idea?"
+            />
+          </Field>
+          <Field label="Description">
+            <Textarea
+              value={(hero as any).contactDescription || ""}
+              onChange={e => setHero(h => ({ ...h, contactDescription: e.target.value }))}
+              rows={2}
+              placeholder="Want to collaborate on an article, interview, or guest post?"
             />
           </Field>
         </div>
