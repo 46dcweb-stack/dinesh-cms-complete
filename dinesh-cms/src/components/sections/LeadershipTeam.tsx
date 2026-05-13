@@ -46,7 +46,8 @@ interface Props {
 }
 
 export default function LeadershipTeam({ members }: Props) {
-    const team = members && members.length > 0 ? members : STATIC_TEAM;
+    if (!members || members.length === 0) return null;
+    const team = members;
 
     return (
         <section className="py-24 md:py-32 bg-brand-dark overflow-hidden">
@@ -156,7 +157,7 @@ function TeamCard({ member, index }: { member: TeamMemberData; index: number }) 
             {/* Mobile image */}
             {member.image && (
                 <div className="md:hidden mt-6 overflow-hidden aspect-[4/5] rounded-xl relative grayscale">
-                    <Image src={member.image} alt={member.name} fill className="object-cover" unoptimized />
+                    <Image src={member.image} alt={member.name} fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" />
                 </div>
             )}
         </motion.div>
