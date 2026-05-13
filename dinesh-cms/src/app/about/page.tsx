@@ -76,7 +76,7 @@ export default async function AboutPage() {
                         <span className="text-brand-primary font-medium tracking-[0.3em] text-xs uppercase block mb-6 font-mono">
                             {heroEyebrow}
                         </span>
-                        <h1 className="text-5xl md:text-8xl font-display leading-[1.1] tracking-tight">
+                        <h1 className="text-4xl md:text-6xl font-display leading-[1.05] tracking-tight">
                             {heroHeading}{" "}
                             <span className="text-gradient italic">{heroHeadingItalic}</span>
                         </h1>
