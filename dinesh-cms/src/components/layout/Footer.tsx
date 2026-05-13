@@ -17,13 +17,14 @@ const DEFAULTS = {
   footerLocation: "Global Base",
   footerQuote: "The best companies are built not just on ideas, but on conviction.",
   navItems: [
-    { label: "Read My Story", url: "/about", order: 1 },
-    { label: "The Journal", url: "/blog", order: 2 },
-    { label: "Visual Gallery", url: "/gallery", order: 3 },
-    { label: "FAQ Protocol", url: "/faq", order: 4 },
-    { label: "My Manifesto", url: "/manifesto", order: 5 },
-    { label: "Subscribe", url: "/subscribe", order: 6 },
-    { label: "Get in Touch", url: "/contact", order: 7 },
+    { label: "About", url: "/about", order: 1 },
+    { label: "Blog", url: "/blog", order: 2 },
+    { label: "Press", url: "/press", order: 3 },
+    { label: "Gallery", url: "/gallery", order: 4 },
+    { label: "FAQs", url: "/faq", order: 5 },
+    { label: "Manifesto", url: "/manifesto", order: 6 },
+    { label: "Subscribe", url: "/subscribe", order: 7 },
+    { label: "Contact", url: "/contact", order: 8 },
   ],
 };
 
@@ -128,25 +129,25 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden">
+        <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-20 h-[1px] bg-brand-primary animate-light-sweep-horizontal shadow-[0_0_10px_rgba(255,90,0,0.5)]" />
 
           <div className="flex flex-col sm:flex-row items-center gap-1 relative z-10">
-            <p className="text-text-muted text-[10px] uppercase font-mono tracking-[0.3em]">
+            <p className="text-text-muted text-[10px] uppercase font-mono tracking-[0.2em] whitespace-nowrap">
               &copy; {new Date().getFullYear()} {copyright.replace(/^©\s*\d{4}\s*/i, "")}
             </p>
             {tagline && (
-              <p className="text-text-muted text-[10px] uppercase font-mono tracking-[0.3em] sm:before:content-['//'] sm:before:mx-2 sm:before:opacity-30">
+              <p className="text-text-muted text-[10px] uppercase font-mono tracking-[0.2em] whitespace-nowrap sm:before:content-['//'] sm:before:mx-2 sm:before:opacity-30">
                 {tagline}
               </p>
             )}
           </div>
 
-          <div className="flex space-x-8 relative z-10">
-            <Link href="/privacy" className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-widest transition-colors">Privacy</Link>
-            <Link href="/terms"   className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-widest transition-colors">Terms of Use</Link>
-            <Link href="/cookies" className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-widest transition-colors">Cookie Policy</Link>
-            <Link href="/sitemap.xml" className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-widest transition-colors">Sitemap</Link>
+          <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2 relative z-10">
+            <Link href="/privacy"    className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-[0.15em] transition-colors whitespace-nowrap">Privacy</Link>
+            <Link href="/terms"      className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-[0.15em] transition-colors whitespace-nowrap">Terms of Use</Link>
+            <Link href="/cookies"    className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-[0.15em] transition-colors whitespace-nowrap">Cookie Policy</Link>
+            <Link href="/sitemap.xml" className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-[0.15em] transition-colors whitespace-nowrap">Sitemap</Link>
           </div>
         </div>
       </div>
