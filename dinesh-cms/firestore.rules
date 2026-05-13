@@ -96,6 +96,12 @@ service cloud.firestore {
       allow write: if isEditorOrAbove();
     }
 
+    // FAQ page meta — public read
+    match /faqPageMeta/{docId} {
+      allow read: if true;
+      allow write: if isEditorOrAbove();
+    }
+
     // ── Private collections (admin only) ──────────────────────────────────────
 
     // Subscribers — write public (for signup), read admin only

@@ -23,38 +23,44 @@ export default function FAQPage() {
 
   useEffect(() => {
     async function load() {
-      const [pageMeta, fbFaq] = await Promise.all([
-        faqPageService.get(),
-        faqService.getPublished(),
-      ]);
+      try {
+        const [pageMeta, fbFaq] = await Promise.all([
+          faqPageService.get().catch(() => null),
+          faqService.getPublished().catch(() => null),
+        ]);
 
-      if (pageMeta) setPageSettings({ ...PAGE_DEFAULTS, ...pageMeta });
+        if (pageMeta) setPageSettings({ ...PAGE_DEFAULTS, ...pageMeta });
 
-      if (fbFaq && fbFaq.length > 0) {
-        // Deduplicate by question text to remove any duplicates
-        const seen = new Set<string>();
-        const deduped = fbFaq.filter((item: any) => {
-          const key = item.question?.trim().toLowerCase();
-          if (seen.has(key)) return false;
-          seen.add(key);
-          return true;
-        });
+        if (fbFaq && fbFaq.length > 0) {
+          // Deduplicate by question text to remove any duplicates
+          const seen = new Set<string>();
+          const deduped = fbFaq.filter((item: any) => {
+            const key = item.question?.trim().toLowerCase();
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          });
 
-        const grouped = Object.entries(
-          deduped.reduce((acc: any, item: any) => {
-            const cat = item.category ?? "General";
-            if (!acc[cat]) acc[cat] = [];
-            acc[cat].push({ q: item.question, a: item.answer });
-            return acc;
-          }, {})
-        ).map(([category, questions]) => ({ category, questions: questions as { q: string; a: string }[] }));
+          const grouped = Object.entries(
+            deduped.reduce((acc: any, item: any) => {
+              const cat = item.category ?? "General";
+              if (!acc[cat]) acc[cat] = [];
+              acc[cat].push({ q: item.question, a: item.answer });
+              return acc;
+            }, {})
+          ).map(([category, questions]) => ({ category, questions: questions as { q: string; a: string }[] }));
 
-        setFaqGroupsData(grouped);
-      } else {
+          setFaqGroupsData(grouped);
+        } else {
+          setFaqGroupsData(faqGroups);
+        }
+      } catch (err) {
+        console.error("FAQ page load error:", err);
+        // Fall back to static data if Firebase fails
         setFaqGroupsData(faqGroups);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     }
     load();
   }, []);
