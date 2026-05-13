@@ -25,6 +25,10 @@ const HERO_DEFAULTS = {
   contactTitle:       "Have a Story Idea?",
   contactSubtitle:    "Get in Touch",
   contactDescription: "Want to collaborate on an article, interview, or guest post? Let's connect.",
+  contactEmail:  "dinesh@46dc.com",
+  contactPhone:  "+44 02045188119",
+  contactOffice: "London, England, United Kingdom",
+  contactHours:  "Available 24/7",
 };
 
 export default async function BlogListingPage() {
@@ -35,19 +39,25 @@ export default async function BlogListingPage() {
 
   try {
     const db = getAdminDb();
-    const snap = await db.collection("siteSettings").doc("blogPage").get();
-    if (snap.exists) {
-      const d = snap.data() as any;
-      heroData = {
-        subtitle:           d.subtitle           || HERO_DEFAULTS.subtitle,
-        heading:            d.heading            || HERO_DEFAULTS.heading,
-        headingItalic:      d.headingItalic      || HERO_DEFAULTS.headingItalic,
-        description:        d.description        || HERO_DEFAULTS.description,
-        contactTitle:       d.contactTitle       || HERO_DEFAULTS.contactTitle,
-        contactSubtitle:    d.contactSubtitle    || HERO_DEFAULTS.contactSubtitle,
-        contactDescription: d.contactDescription || HERO_DEFAULTS.contactDescription,
-      };
-    }
+    const [blogSnap, siteSnap] = await Promise.all([
+      db.collection("siteSettings").doc("blogPage").get(),
+      db.collection("siteSettings").doc("main").get(),
+    ]);
+    const d = blogSnap.exists ? blogSnap.data() as any : {};
+    const s = siteSnap.exists ? siteSnap.data() as any : {};
+    heroData = {
+      subtitle:           d.subtitle           || HERO_DEFAULTS.subtitle,
+      heading:            d.heading            || HERO_DEFAULTS.heading,
+      headingItalic:      d.headingItalic      || HERO_DEFAULTS.headingItalic,
+      description:        d.description        || HERO_DEFAULTS.description,
+      contactTitle:       d.contactTitle       || HERO_DEFAULTS.contactTitle,
+      contactSubtitle:    d.contactSubtitle    || HERO_DEFAULTS.contactSubtitle,
+      contactDescription: d.contactDescription || HERO_DEFAULTS.contactDescription,
+      contactEmail:       s.contactEmail       || HERO_DEFAULTS.contactEmail,
+      contactPhone:       s.contactPhone       || HERO_DEFAULTS.contactPhone,
+      contactOffice:      s.contactOffice      || HERO_DEFAULTS.contactOffice,
+      contactHours:       s.contactHours       || HERO_DEFAULTS.contactHours,
+    };
   } catch (e) {
     console.error("[BlogListingPage heroData]", e);
   }
@@ -67,6 +77,10 @@ export default async function BlogListingPage() {
             title={heroData.contactTitle}
             subtitle={heroData.contactSubtitle}
             description={heroData.contactDescription}
+            email={heroData.contactEmail}
+            phone={heroData.contactPhone}
+            office={heroData.contactOffice}
+            hours={heroData.contactHours}
           />
         </div>
       </div>
