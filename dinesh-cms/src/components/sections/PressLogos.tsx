@@ -47,7 +47,7 @@ export default function PressLogos({ items = [] }: { items?: PressItem[] }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="relative h-8 w-28 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+                className="relative h-12 w-36 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
               >
                 <Image src={item.outletLogo!} alt={item.outlet || "Press"} fill className="object-contain" />
               </motion.a>
