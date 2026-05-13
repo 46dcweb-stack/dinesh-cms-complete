@@ -49,9 +49,17 @@ export default function Footer() {
   const email     = (settings as any)?.footerEmail    ?? DEFAULTS.footerEmail;
   const location  = (settings as any)?.footerLocation ?? DEFAULTS.footerLocation;
   const quote     = (settings as any)?.footerQuote    ?? DEFAULTS.footerQuote;
-  const navItems  = (settings?.navItems ?? DEFAULTS.navItems)
-    .slice()
-    .sort((a, b) => a.order - b.order);
+
+  // Merge Firestore navItems with defaults so entries added after the last
+  // Firestore save (e.g. FAQs) are always present in the footer.
+  const rawNavItems = settings?.navItems ?? DEFAULTS.navItems;
+  const mergedNavItems = [...rawNavItems];
+  for (const defaultItem of DEFAULTS.navItems) {
+    if (!mergedNavItems.some(n => n.url === defaultItem.url)) {
+      mergedNavItems.push(defaultItem);
+    }
+  }
+  const navItems = mergedNavItems.slice().sort((a, b) => a.order - b.order);
 
   // Show only social links that have a URL, in a fixed display order
   const socialOrder = ["linkedin", "twitter", "instagram", "youtube", "facebook"] as const;
