@@ -41,7 +41,7 @@ export async function getPublishedFaq() {
   try { const db = getAdminDb(); const s = await db.collection("faqItems").where("status","==","published").orderBy("sortOrder","asc").get(); return s.docs.map(d => serialize({ id: d.id, ...d.data() })); } catch (e) { console.error("[getPublishedFaq]", e); return []; }
 }
 export async function getVentures() {
-  try { const db = getAdminDb(); const s = await db.collection("ventures").where("status","==","active").orderBy("sortOrder","asc").get(); return s.docs.map(d => serialize({ id: d.id, ...d.data() })); } catch (e) { console.error("[getVentures]", e); return []; }
+  try { const db = getAdminDb(); const s = await db.collection("ventures").where("status","!=","inactive").orderBy("status","asc").get(); const sorted = s.docs.map(d => serialize({ id: d.id, ...d.data() })).sort((a:any,b:any) => (a.sortOrder||0)-(b.sortOrder||0)); return sorted; } catch (e) { console.error("[getVentures]", e); return []; }
 }
 export async function getGallery() {
   try { const db = getAdminDb(); const s = await db.collection("galleryImages").where("status","==","active").orderBy("sortOrder","asc").get(); return s.docs.map(d => serialize({ id: d.id, ...d.data() })); } catch (e) { console.error("[getGallery]", e); return []; }

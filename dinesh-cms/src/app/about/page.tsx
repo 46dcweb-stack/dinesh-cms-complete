@@ -5,7 +5,7 @@ import LeadershipTeam from "@/components/sections/LeadershipTeam";
 import { getAboutPage, getTeamMembers } from "@/lib/firebase-data";
 import { aboutData } from "@/lib/data";
 
-export const revalidate = 60;
+export const revalidate = 10;
 
 // Renders HTML if content starts with <tag>, otherwise plain paragraphs
 function renderContent(text: string) {
@@ -76,7 +76,7 @@ export default async function AboutPage() {
                         <span className="text-brand-primary font-medium tracking-[0.3em] text-xs uppercase block mb-6 font-mono">
                             {heroEyebrow}
                         </span>
-                        <h1 className="text-4xl md:text-6xl font-display leading-[1.1] tracking-tight">
+                        <h1 className="text-5xl md:text-8xl font-display leading-[1.1] tracking-tight">
                             {heroHeading}{" "}
                             <span className="text-gradient italic">{heroHeadingItalic}</span>
                         </h1>
@@ -90,7 +90,7 @@ export default async function AboutPage() {
                                     alt="Dinesh Koyyalamudi"
                                     fill
                                     className="object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:scale-105 group-hover:brightness-100 transition-all duration-1000 ease-out"
-                                    unoptimized
+                                    sizes="(max-width: 1024px) 100vw, 50vw"
                                     priority
                                 />
                             )}
