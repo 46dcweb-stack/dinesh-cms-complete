@@ -4,7 +4,7 @@ import ContactForm from "@/components/sections/ContactForm";
 import { getPublishedPress, getSiteSettings, getPressPageMeta } from "@/lib/firebase-data";
 import { pressMentions, pressPageData } from "@/lib/data";
 
-export const revalidate = 60;
+export const revalidate = 10;
 
 export async function generateMetadata() {
   const fbMeta = await getPressPageMeta().catch(() => null) as any;
@@ -42,34 +42,36 @@ export default async function PressPage() {
   const s        = settings as any;
   const m        = fbMeta   as any;
 
-  // Header data — fbMeta fields take priority over static fallbacks
+  // Header data
   const headerData = {
-    title:              m?.title           || pressPageData.title,
-    subtitle:           m?.subtitle        || pressPageData.subtitle,
-    description:        m?.description     || pressPageData.description,
-    heroBackground:     m?.heroBackground  || pressPageData.heroBackground,
-    heroBackgroundImage:m?.heroBackground  || pressPageData.heroBackground,
-    mediaKitLabel:      m?.mediaKitLabel   || pressPageData.mediaKitLabel,
-    mediaKitUrl:        m?.mediaKitUrl     || pressPageData.mediaKitUrl,
+    title:               m?.title            || pressPageData.title,
+    subtitle:            m?.subtitle         || pressPageData.subtitle,
+    description:         m?.description      || pressPageData.description,
+    heroBackground:      m?.heroBackground   || pressPageData.heroBackground,
+    heroBackgroundImage: m?.heroBackground   || pressPageData.heroBackground,
+    mediaKitLabel:       m?.mediaKitLabel    || pressPageData.mediaKitLabel,
+    mediaKitUrl:         m?.mediaKitUrl      || pressPageData.mediaKitUrl,
   };
 
-  // Media kit — site settings mediaKitUrl wins (it's the upload field)
-  const rawMediaKitUrl   = s?.mediaKitUrl   || m?.mediaKitUrl   || (pressPageData as any).mediaKitUrl   || "";
-  const mediaKitLabel    = m?.mediaKitLabel || s?.mediaKitLabel || (pressPageData as any).mediaKitLabel || "Download Media Kit";
-
-  // Build a proxied download URL so the browser downloads instead of navigating
+  // Media kit
+  const rawMediaKitUrl      = s?.mediaKitUrl   || m?.mediaKitUrl   || (pressPageData as any).mediaKitUrl   || "";
+  const mediaKitLabel       = m?.mediaKitLabel || s?.mediaKitLabel || (pressPageData as any).mediaKitLabel || "Download Media Kit";
   const mediaKitDownloadUrl = rawMediaKitUrl
     ? `/api/download-media-kit?url=${encodeURIComponent(rawMediaKitUrl)}`
     : "";
 
-  // Media Assets CTA text
+  // Media Assets CTA
   const mediaAssetsTitle       = m?.mediaAssetsTitle       || "Need Media Assets?";
   const mediaAssetsDescription = m?.mediaAssetsDescription || "Access hi-res photos, official bios, and brand assets for speaking engagements and press coverage.";
 
-  // Contact section text
+  // Contact section — titles from press page meta, details from site settings
   const contactTitle       = m?.contactTitle       || "Press Enquiries?";
   const contactSubtitle    = m?.contactSubtitle    || "Media Contact";
   const contactDescription = m?.contactDescription || "For interview requests, press releases, and media collaborations, reach out directly.";
+  const contactEmail       = s?.contactEmail       || "dinesh@46dc.com";
+  const contactPhone       = s?.contactPhone       || "+44 02045188119";
+  const contactOffice      = s?.contactOffice      || "London, England, United Kingdom";
+  const contactHours       = s?.contactHours       || "Available 24/7";
 
   return (
     <div className="pb-24">
@@ -104,6 +106,10 @@ export default async function PressPage() {
             title={contactTitle}
             subtitle={contactSubtitle}
             description={contactDescription}
+            email={contactEmail}
+            phone={contactPhone}
+            office={contactOffice}
+            hours={contactHours}
           />
         </div>
       </div>
