@@ -30,7 +30,7 @@ export default async function GalleryPage() {
   };
 
   return (
-    <div className="pt-28 lg:pt-28 pb-24 bg-brand-dark min-h-screen">
+    <div className="pt-48 lg:pt-48 pb-24 bg-brand-dark min-h-screen">
       <div className="px-6">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-3xl mb-24">
