@@ -77,7 +77,7 @@ export default function FAQPage() {
   const description = pageSettings.pageDescription ?? PAGE_DEFAULTS.pageDescription;
 
   return (
-    <div className="pt-28 lg:pt-28 pb-24">
+    <div className="pt-48 lg:pt-48 pb-24">
       <div className="px-6">
         <div className="max-w-7xl mx-auto">
 

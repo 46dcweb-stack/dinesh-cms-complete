@@ -63,7 +63,7 @@ export default function BlogClientWrapper({ initialPosts, heroData }: BlogClient
   }, [initialPosts, activeCategory, searchQuery]);
 
   return (
-    <div className="pt-36 pb-24">
+    <div className="pt-48 pb-24">
       <div className="px-6">
         <div className="max-w-7xl mx-auto">
 

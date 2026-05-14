@@ -119,7 +119,13 @@ export default async function Home() {
       />}
       {show.press           && <PressLogos items={press as any[]} />}
       {show.manifestoTeaser && <ManifestoTeaser />}
-      {show.faq             && <FAQSection items={faqItems.slice(0, 4)} />}
+      {show.faq             && <FAQSection
+        items={faqItems.slice(0, 4)}
+        eyebrow={(homeData as any).faqSectionEyebrow}
+        heading={(homeData as any).faqSectionHeading}
+        headingItalic={(homeData as any).faqSectionHeadingItalic}
+        subtext={(homeData as any).faqSectionSubtext}
+      />}
       {show.newsletter      && <Newsletter />}
     </div>
   );
