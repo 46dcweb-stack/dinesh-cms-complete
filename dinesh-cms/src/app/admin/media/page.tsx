@@ -207,9 +207,9 @@ export default function MediaLibrary() {
         </div>
       </div>
 
-      <div className="flex gap-6 h-[calc(100vh-280px)]">
+      <div className="flex gap-6">
         {/* Grid */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1">
           {loading ? (
             <div className="flex items-center justify-center h-40 text-white/30 text-sm">Loading media...</div>
           ) : filtered.length === 0 ? (
@@ -272,7 +272,7 @@ export default function MediaLibrary() {
 
         {/* Detail Panel */}
         {selected && (
-          <div className="w-72 flex-shrink-0 bg-white/3 border border-white/10 rounded-2xl p-5 overflow-y-auto">
+          <div className="w-72 flex-shrink-0 bg-white/3 border border-white/10 rounded-2xl p-5">
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-mono uppercase tracking-widest text-white/40">Details</span>
               <button onClick={() => setSelected(null)} className="text-white/30 hover:text-white transition-colors">
