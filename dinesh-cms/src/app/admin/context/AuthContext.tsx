@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, query, where, getDocs, updateDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import type { AdminUser } from "@/lib/types";
 
@@ -43,7 +43,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
       if (u) {
-        const snap = await getDoc(doc(db, "adminUsers", u.uid));
+        let snap = await getDoc(doc(db, "adminUsers", u.uid));
+
+        // First-time Google sign-in: check for a pre-approval by email
+        if (!snap.exists() && u.email) {
+          try {
+            const q = query(
+              collection(db, "adminInvites"),
+              where("email", "==", u.email.toLowerCase().trim()),
+              where("status", "==", "pending")
+            );
+            const inviteSnap = await getDocs(q);
+            if (!inviteSnap.empty) {
+              const invite = inviteSnap.docs[0].data();
+              // Create the adminUsers document automatically
+              await setDoc(doc(db, "adminUsers", u.uid), {
+                email:       u.email,
+                displayName: u.displayName || invite.displayName || "",
+                role:        invite.role || "author",
+                permissions: invite.permissions || {},
+                createdAt:   new Date().toISOString(),
+                invitedBy:   invite.createdBy || "",
+              });
+              // Mark invite as accepted
+              await updateDoc(inviteSnap.docs[0].ref, { status: "accepted", acceptedAt: Date.now(), uid: u.uid });
+              // Re-fetch
+              snap = await getDoc(doc(db, "adminUsers", u.uid));
+            }
+          } catch (e) {
+            console.error("Pre-approval check failed:", e);
+          }
+        }
+
         setAdminUser(snap.exists() ? ({ uid: u.uid, ...snap.data() } as AdminUser) : null);
       } else {
         setAdminUser(null);
