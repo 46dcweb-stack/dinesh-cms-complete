@@ -72,14 +72,6 @@
         { "fieldPath": "status", "order": "ASCENDING" },
         { "fieldPath": "sortOrder", "order": "ASCENDING" }
       ]
-    },
-    {
-      "collectionGroup": "teamMembers",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "status", "order": "ASCENDING" },
-        { "fieldPath": "sortOrder", "order": "ASCENDING" }
-      ]
     }
   ],
   "fieldOverrides": []
