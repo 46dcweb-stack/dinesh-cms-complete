@@ -16,22 +16,29 @@ export default function AdminLogin() {
   const [error, setError]                 = useState("");
   const [signingIn, setSigningIn]         = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [googleSignedIn, setGoogleSignedIn] = useState(false); // tracks if google popup completed
 
   const router = useRouter();
   const { user, adminUser, loading: authLoading } = useAuth();
 
   useEffect(() => {
-    if (authLoading) return; // wait — AuthContext may still be creating the adminUsers doc
+    // Only redirect if auth is fully loaded
+    if (authLoading) return;
+
     if (user && adminUser) {
       router.replace("/admin");
-    } else if (user && !adminUser) {
-      // AuthContext finished and found no adminUsers doc — truly not authorised
-      auth.signOut();
-      setError("This account is not authorised to access the CMS. Contact the site admin.");
-      setGoogleLoading(false);
-      setSigningIn(false);
+      return;
     }
-  }, [user, adminUser, authLoading, router]);
+
+    // Only show "not authorised" if the user explicitly signed in via Google
+    // and AuthContext has finished loading (invite check complete)
+    if (user && !adminUser && googleSignedIn) {
+      auth.signOut();
+      setError("This Google account is not authorised. Ask your admin to add your email in Users & Roles first.");
+      setGoogleLoading(false);
+      setGoogleSignedIn(false);
+    }
+  }, [user, adminUser, authLoading, googleSignedIn, router]);
 
   async function handleEmailSignIn(e: FormEvent) {
     e.preventDefault();
@@ -62,12 +69,13 @@ export default function AdminLogin() {
 
   async function handleGoogleSignIn() {
     setGoogleLoading(true);
+    setGoogleSignedIn(false);
     setError("");
     try {
       await signInWithPopup(auth, provider);
-      // Do NOT check adminUsers here — AuthContext.onAuthStateChanged handles
-      // the invite lookup and adminUsers creation. The useEffect above will
-      // redirect once authLoading is false and adminUser is set.
+      // Mark that google sign-in completed — useEffect will handle the rest
+      // once authLoading becomes false
+      setGoogleSignedIn(true);
     } catch (err: any) {
       if (err.code !== "auth/popup-closed-by-user") {
         setError(err.message || "Google sign-in failed. Try again.");
