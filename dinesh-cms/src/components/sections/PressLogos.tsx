@@ -35,7 +35,7 @@ export default function PressLogos({ items = [] }: { items?: PressItem[] }) {
         >
           As Featured In
         </motion.p>
-        <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16">
+        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20">
           {displayItems.length > 0 ? (
             displayItems.map((item, i) => (
               <motion.a
@@ -47,7 +47,7 @@ export default function PressLogos({ items = [] }: { items?: PressItem[] }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="relative h-14 w-40 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+                className="relative h-20 w-52 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
               >
                 <Image src={item.outletLogo!} alt={item.outlet || "Press"} fill className="object-contain" />
               </motion.a>
