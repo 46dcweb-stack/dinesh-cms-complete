@@ -22,7 +22,6 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 const ADMIN_ONLY_ROUTES = ["/admin/users", "/admin/settings", "/admin/audit"];
-const AUTHOR_ROUTES = ["/admin/blog"];
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -35,23 +34,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (u) {
         let snap = await getDoc(doc(db, "adminUsers", u.uid));
 
-        // First-time Google sign-in: check for a pending invite by email
+        // First-time Google sign-in: check for a pending invite by email.
         if (!snap.exists() && u.email) {
           try {
+            // Query by email ONLY (single-field query = no composite index needed).
+            // Filtering by status too would require a Firestore composite index
+            // which throws a silent error and breaks the whole invite flow.
             const q = query(
               collection(db, "adminInvites"),
-              where("email", "==", u.email.toLowerCase().trim()),
-              where("status", "==", "pending")
+              where("email", "==", u.email.toLowerCase().trim())
             );
             const inviteSnap = await getDocs(q);
-            const pendingDoc = inviteSnap.docs[0];
+            // Filter status in JS instead
+            const pendingDoc = inviteSnap.docs.find(d => d.data().status === "pending");
 
             if (pendingDoc) {
               const invite = pendingDoc.data();
-              // Firestore rules allow this create because:
-              //   - request.auth.uid == id  ✓
-              //   - email matches token     ✓
-              //   - role is editor/author   ✓  (never admin via invite flow)
               await setDoc(doc(db, "adminUsers", u.uid), {
                 email:       u.email,
                 displayName: u.displayName || invite.displayName || "",
@@ -60,8 +58,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 createdAt:   new Date().toISOString(),
                 invitedBy:   invite.createdBy || "",
               });
-              // Mark invite as accepted — rules allow update only when
-              // email matches token, status→"accepted", role/permissions unchanged
               await updateDoc(pendingDoc.ref, {
                 status:     "accepted",
                 acceptedAt: Date.now(),
