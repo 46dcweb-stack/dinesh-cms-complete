@@ -4,7 +4,9 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, CheckCircle2, AlertCircle } from "lucide-react";
 
-export default function Newsletter() {
+interface NewsletterProps { buttonText?: string; }
+
+export default function Newsletter({ buttonText = "Subscribe" }: NewsletterProps) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [consent, setConsent] = useState(false);
@@ -51,32 +53,12 @@ export default function Newsletter() {
     };
 
     return (
-        <section className="py-24 px-6 overflow-hidden relative">
-            {/* Ambient blobs */}
-            <div className="absolute top-1/2 left-0 w-96 h-96 bg-[radial-gradient(ellipse_at_center,rgba(255,160,0,0.05)_0%,transparent_70%)] rounded-full -z-10 pointer-events-none" />
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-[radial-gradient(ellipse_at_center,rgba(255,160,0,0.05)_0%,transparent_70%)] rounded-full -z-10 pointer-events-none" />
-
-            <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
-                className="max-w-4xl mx-auto glass-card p-10 md:p-20 relative overflow-hidden border-brand-primary/10"
-            >
-                <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-64 h-64 bg-[radial-gradient(ellipse_at_center,rgba(255,160,0,0.1)_0%,transparent_70%)] rounded-full pointer-events-none" />
-
-                <div className="text-center mb-12 relative z-10">
-                    <h2 className="text-4xl md:text-5xl font-display mb-6">Let's Stay Connected</h2>
-                    <p className="text-text-secondary text-lg max-w-xl mx-auto">
-                        I send occasional letters on entrepreneurship, building, and life. No fluff. Just real talk.
-                    </p>
-                </div>
-
+        <div className="w-full">
                 {status === "success" ? (
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="relative z-10 text-center py-8"
+                        className="text-center py-8"
                     >
                         <CheckCircle2 size={48} className="text-brand-primary mx-auto mb-4" />
                         <h3 className="text-2xl font-display text-white mb-2">You're in!</h3>
@@ -88,7 +70,7 @@ export default function Newsletter() {
                         </p>
                     </motion.div>
                 ) : (
-                    <form onSubmit={handleSubmit} className="relative z-10 max-w-lg mx-auto">
+                    <form onSubmit={handleSubmit} className="w-full">
                         <div className="flex flex-col gap-4">
                             <div className="flex flex-col sm:flex-row gap-4">
                                 <input
@@ -169,7 +151,6 @@ export default function Newsletter() {
                         </div>
                     </form>
                 )}
-            </motion.div>
-        </section>
+        </div>
     );
 }
