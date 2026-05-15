@@ -110,6 +110,7 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${inter.variable}`}
     >
       <head>
+        <script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/91a8605ad0c3c4e915f73c9cfd7c1a54/script.js"></script> 
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-W83P0Y4EX8"
