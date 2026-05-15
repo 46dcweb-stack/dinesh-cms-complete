@@ -37,19 +37,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // First-time Google sign-in: check for a pending invite by email.
         if (!snap.exists() && u.email) {
           try {
-            // Query by email ONLY (single-field query = no composite index needed).
-            // Filtering by status too would require a Firestore composite index
-            // which throws a silent error and breaks the whole invite flow.
+            // Single-field query only — two fields needs a composite index
             const q = query(
               collection(db, "adminInvites"),
               where("email", "==", u.email.toLowerCase().trim())
             );
             const inviteSnap = await getDocs(q);
-            // Filter status in JS instead
             const pendingDoc = inviteSnap.docs.find(d => d.data().status === "pending");
 
             if (pendingDoc) {
               const invite = pendingDoc.data();
+
+              // Step 1: Create the adminUsers doc
               await setDoc(doc(db, "adminUsers", u.uid), {
                 email:       u.email,
                 displayName: u.displayName || invite.displayName || "",
@@ -58,17 +57,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 createdAt:   new Date().toISOString(),
                 invitedBy:   invite.createdBy || "",
               });
-              await updateDoc(pendingDoc.ref, {
-                status:     "accepted",
-                acceptedAt: Date.now(),
-                uid:        u.uid,
-              });
-              // Re-fetch the newly created doc
-              snap = await getDoc(doc(db, "adminUsers", u.uid));
+
+              // Step 2: Mark invite as accepted — separate try/catch so a
+              // failure here does NOT block the user from getting access
+              try {
+                await updateDoc(pendingDoc.ref, {
+                  status:     "accepted",
+                  acceptedAt: Date.now(),
+                  uid:        u.uid,
+                });
+              } catch (updateErr) {
+                console.warn("Could not mark invite as accepted:", updateErr);
+                // Non-critical — user still gets access
+              }
             }
           } catch (e) {
             console.error("Invite acceptance failed:", e);
           }
+
+          // Always re-fetch after the invite block, regardless of whether
+          // updateDoc succeeded — setDoc may have worked even if updateDoc failed
+          snap = await getDoc(doc(db, "adminUsers", u.uid));
         }
 
         setAdminUser(snap.exists() ? ({ uid: u.uid, ...snap.data() } as AdminUser) : null);
