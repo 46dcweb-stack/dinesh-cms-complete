@@ -10,22 +10,22 @@ import { Eye, EyeOff } from "lucide-react";
 const provider = new GoogleAuthProvider();
 
 export default function AdminLogin() {
-  const [email, setEmail]             = useState("");
-  const [password, setPassword]       = useState("");
-  const [showPw, setShowPw]           = useState(false);
-  const [error, setError]             = useState("");
-  const [signingIn, setSigningIn]     = useState(false);
+  const [email, setEmail]                 = useState("");
+  const [password, setPassword]           = useState("");
+  const [showPw, setShowPw]               = useState(false);
+  const [error, setError]                 = useState("");
+  const [signingIn, setSigningIn]         = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
   const router = useRouter();
-  const { user, adminUser, loading: authLoading } = useAuth(); // renamed to authLoading
+  const { user, adminUser, loading: authLoading } = useAuth();
 
   useEffect(() => {
-    if (authLoading) return; // wait for AuthContext to finish
+    if (authLoading) return; // wait — AuthContext may still be creating the adminUsers doc
     if (user && adminUser) {
       router.replace("/admin");
     } else if (user && !adminUser) {
-      // Signed in but not in adminUsers — not authorised
+      // AuthContext finished and found no adminUsers doc — truly not authorised
       auth.signOut();
       setError("This account is not authorised to access the CMS. Contact the site admin.");
       setGoogleLoading(false);
@@ -65,8 +65,9 @@ export default function AdminLogin() {
     setError("");
     try {
       await signInWithPopup(auth, provider);
-      // AuthContext onAuthStateChanged handles invite check + adminUsers creation
-      // useEffect above will redirect or show error once authLoading is false
+      // Do NOT check adminUsers here — AuthContext.onAuthStateChanged handles
+      // the invite lookup and adminUsers creation. The useEffect above will
+      // redirect once authLoading is false and adminUser is set.
     } catch (err: any) {
       if (err.code !== "auth/popup-closed-by-user") {
         setError(err.message || "Google sign-in failed. Try again.");
@@ -80,9 +81,7 @@ export default function AdminLogin() {
       <div className="w-full max-w-sm">
 
         <div className="mb-8 text-center">
-          <div className="text-xs font-mono text-[#E22D2D] uppercase tracking-widest mb-2">
-            Admin Access
-          </div>
+          <div className="text-xs font-mono text-[#E22D2D] uppercase tracking-widest mb-2">Admin Access</div>
           <h1 className="text-2xl font-bold text-white">Dinesh CMS</h1>
           <p className="text-sm text-white/40 mt-1">Sign in to manage your content</p>
         </div>
@@ -98,10 +97,7 @@ export default function AdminLogin() {
           <div>
             <label className="block text-xs text-white/50 mb-1.5 font-mono uppercase tracking-wider">Email</label>
             <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
+              type="email" value={email} onChange={e => setEmail(e.target.value)} required
               className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-[#E22D2D]/50 transition-colors"
               placeholder="admin@example.com"
             />
@@ -110,25 +106,16 @@ export default function AdminLogin() {
             <label className="block text-xs text-white/50 mb-1.5 font-mono uppercase tracking-wider">Password</label>
             <div className="relative">
               <input
-                type={showPw ? "text" : "password"}
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
+                type={showPw ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} required
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-[#E22D2D]/50 transition-colors pr-10"
                 placeholder="••••••••"
               />
-              <button
-                type="button"
-                onClick={() => setShowPw(p => !p)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white"
-              >
+              <button type="button" onClick={() => setShowPw(p => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white">
                 {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             </div>
           </div>
-          <button
-            type="submit"
-            disabled={signingIn}
+          <button type="submit" disabled={signingIn}
             className="w-full bg-[#E22D2D] hover:bg-[#c91f1f] disabled:opacity-50 text-white font-medium py-3 rounded-lg text-sm transition-colors"
           >
             {signingIn ? "Signing in…" : "Sign In"}
@@ -163,9 +150,7 @@ export default function AdminLogin() {
           )}
         </button>
 
-        <p className="text-center text-white/20 text-xs mt-6">
-          Only pre-approved accounts can access this panel.
-        </p>
+        <p className="text-center text-white/20 text-xs mt-6">Only pre-approved accounts can access this panel.</p>
       </div>
     </div>
   );
