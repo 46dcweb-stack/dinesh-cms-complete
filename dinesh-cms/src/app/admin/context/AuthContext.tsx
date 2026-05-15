@@ -50,12 +50,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           try {
             const q = query(
               collection(db, "adminInvites"),
-              where("email", "==", u.email.toLowerCase().trim()),
-              where("status", "==", "pending")
+              where("email", "==", u.email.toLowerCase().trim())
             );
             const inviteSnap = await getDocs(q);
-            if (!inviteSnap.empty) {
-              const invite = inviteSnap.docs[0].data();
+            // Filter pending in JS to avoid needing a composite Firestore index
+            const pendingDoc = inviteSnap.docs.find(d => d.data().status === "pending");
+            if (pendingDoc) {
+              const invite = pendingDoc.data();
               // Create the adminUsers document automatically
               await setDoc(doc(db, "adminUsers", u.uid), {
                 email:       u.email,
@@ -66,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 invitedBy:   invite.createdBy || "",
               });
               // Mark invite as accepted
-              await updateDoc(inviteSnap.docs[0].ref, { status: "accepted", acceptedAt: Date.now(), uid: u.uid });
+              await updateDoc(pendingDoc.ref, { status: "accepted", acceptedAt: Date.now(), uid: u.uid });
               // Re-fetch
               snap = await getDoc(doc(db, "adminUsers", u.uid));
             }

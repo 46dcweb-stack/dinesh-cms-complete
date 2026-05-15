@@ -10,22 +10,32 @@ import { Eye, EyeOff } from "lucide-react";
 const provider = new GoogleAuthProvider();
 
 export default function AdminLogin() {
-  const [email, setEmail]       = useState("");
-  const [password, setPassword] = useState("");
-  const [showPw, setShowPw]     = useState(false);
-  const [error, setError]       = useState("");
-  const [loading, setLoading]   = useState(false);
+  const [email, setEmail]             = useState("");
+  const [password, setPassword]       = useState("");
+  const [showPw, setShowPw]           = useState(false);
+  const [error, setError]             = useState("");
+  const [signingIn, setSigningIn]     = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+
   const router = useRouter();
-  const { user, adminUser } = useAuth();
+  const { user, adminUser, loading: authLoading } = useAuth(); // renamed to authLoading
 
   useEffect(() => {
-    if (user && adminUser) router.replace("/admin");
-  }, [user, adminUser, router]);
+    if (authLoading) return; // wait for AuthContext to finish
+    if (user && adminUser) {
+      router.replace("/admin");
+    } else if (user && !adminUser) {
+      // Signed in but not in adminUsers — not authorised
+      auth.signOut();
+      setError("This account is not authorised to access the CMS. Contact the site admin.");
+      setGoogleLoading(false);
+      setSigningIn(false);
+    }
+  }, [user, adminUser, authLoading, router]);
 
   async function handleEmailSignIn(e: FormEvent) {
     e.preventDefault();
-    setLoading(true);
+    setSigningIn(true);
     setError("");
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
@@ -33,42 +43,36 @@ export default function AdminLogin() {
       if (!snap.exists()) {
         await auth.signOut();
         setError("This account is not authorised to access the CMS.");
-        setLoading(false);
+        setSigningIn(false);
         return;
       }
       router.replace("/admin");
     } catch (err: any) {
       const msg: Record<string, string> = {
-        "auth/invalid-credential":    "Incorrect email or password.",
-        "auth/user-not-found":        "No account found with this email.",
-        "auth/wrong-password":        "Incorrect password.",
-        "auth/too-many-requests":     "Too many attempts. Try again later.",
-        "auth/invalid-email":         "Invalid email address.",
+        "auth/invalid-credential": "Incorrect email or password.",
+        "auth/user-not-found":     "No account found with this email.",
+        "auth/wrong-password":     "Incorrect password.",
+        "auth/too-many-requests":  "Too many attempts. Try again later.",
+        "auth/invalid-email":      "Invalid email address.",
       };
       setError(msg[err.code] || err.message);
     }
-    setLoading(false);
+    setSigningIn(false);
   }
 
   async function handleGoogleSignIn() {
     setGoogleLoading(true);
     setError("");
     try {
-      const result = await signInWithPopup(auth, provider);
-      const snap = await getDoc(doc(db, "adminUsers", result.user.uid));
-      if (!snap.exists()) {
-        await auth.signOut();
-        setError("This Google account is not authorised. Contact the site admin.");
-        setGoogleLoading(false);
-        return;
-      }
-      router.replace("/admin");
+      await signInWithPopup(auth, provider);
+      // AuthContext onAuthStateChanged handles invite check + adminUsers creation
+      // useEffect above will redirect or show error once authLoading is false
     } catch (err: any) {
       if (err.code !== "auth/popup-closed-by-user") {
         setError(err.message || "Google sign-in failed. Try again.");
       }
+      setGoogleLoading(false);
     }
-    setGoogleLoading(false);
   }
 
   return (
@@ -89,12 +93,10 @@ export default function AdminLogin() {
           </div>
         )}
 
-        {/* Email / Password form */}
+        {/* Email / Password */}
         <form onSubmit={handleEmailSignIn} className="space-y-4 mb-5">
           <div>
-            <label className="block text-xs text-white/50 mb-1.5 font-mono uppercase tracking-wider">
-              Email
-            </label>
+            <label className="block text-xs text-white/50 mb-1.5 font-mono uppercase tracking-wider">Email</label>
             <input
               type="email"
               value={email}
@@ -105,9 +107,7 @@ export default function AdminLogin() {
             />
           </div>
           <div>
-            <label className="block text-xs text-white/50 mb-1.5 font-mono uppercase tracking-wider">
-              Password
-            </label>
+            <label className="block text-xs text-white/50 mb-1.5 font-mono uppercase tracking-wider">Password</label>
             <div className="relative">
               <input
                 type={showPw ? "text" : "password"}
@@ -128,10 +128,10 @@ export default function AdminLogin() {
           </div>
           <button
             type="submit"
-            disabled={loading}
+            disabled={signingIn}
             className="w-full bg-[#E22D2D] hover:bg-[#c91f1f] disabled:opacity-50 text-white font-medium py-3 rounded-lg text-sm transition-colors"
           >
-            {loading ? "Signing in…" : "Sign In"}
+            {signingIn ? "Signing in…" : "Sign In"}
           </button>
         </form>
 
@@ -142,10 +142,10 @@ export default function AdminLogin() {
           <div className="flex-1 h-px bg-white/10" />
         </div>
 
-        {/* Google Sign-In */}
+        {/* Google */}
         <button
           onClick={handleGoogleSignIn}
-          disabled={googleLoading}
+          disabled={googleLoading || authLoading}
           className="w-full flex items-center justify-center gap-3 bg-white hover:bg-white/90 disabled:opacity-50 text-gray-900 font-medium py-3 rounded-lg text-sm transition-all"
         >
           {googleLoading ? (
