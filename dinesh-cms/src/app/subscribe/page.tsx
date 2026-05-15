@@ -49,7 +49,8 @@ export default function SubscribePage() {
               <p className="text-text-secondary text-base mb-8 leading-relaxed">
                 I write when I have something real to say. You'll hear from me when it matters.
               </p>
-              <Newsletter />
+              {/* variant="form" renders plain form only — no outer box/section wrapper */}
+              <Newsletter variant="form" />
             </div>
           </div>
 
