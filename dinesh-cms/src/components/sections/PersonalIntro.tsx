@@ -34,7 +34,7 @@ export default function PersonalIntro({ data }: { data?: PersonalIntroData }) {
                     className="flex-grow"
                 >
                     <div className="inline-block px-4 py-1.5 rounded-full border border-brand-primary/20 bg-brand-primary/5 text-brand-primary text-[10px] md:text-xs font-mono uppercase tracking-widest mb-8 md:mb-10">
-                        The Human Element
+                        The Founder
                     </div>
 
                     <h2 className="text-2xl md:text-5xl font-display leading-tight mb-8 md:mb-12 text-white">
