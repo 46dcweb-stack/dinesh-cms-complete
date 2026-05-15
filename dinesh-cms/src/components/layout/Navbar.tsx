@@ -22,7 +22,7 @@ import { NavBar } from "@/components/ui/tubelight-navbar";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-    { name: 'Home', url: '/', icon: Home },
+    { name: 'Founder', url: '/', icon: Home },
     { name: 'About', url: '/about', icon: User },
     { name: 'Gallery', url: '/gallery', icon: GalleryIcon },
     { name: 'Blog', url: '/blog', icon: FileText },
