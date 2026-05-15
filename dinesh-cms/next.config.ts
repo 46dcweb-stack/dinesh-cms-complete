@@ -35,17 +35,6 @@ const nextConfig: NextConfig = {
         destination: "https://46dc.com/:path*",
         permanent: true,
       },
-      {
-        source: "/:path*",
-        has: [
-          {
-            type: "host",
-            value: "www.46dc.com",
-          },
-        ],
-        destination: "https://46dc.com/:path*",
-        permanent: true,
-      },
     ];
   },
 };
