@@ -176,25 +176,11 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
               <div>
                 <span className="text-brand-primary font-mono text-[10px] uppercase tracking-[0.4em] block mb-6">Stay Connected</span>
                 <h2 className="text-4xl md:text-5xl font-display leading-[1.1] mb-6">
-                  Thinking in<br /><span className="text-gradient italic">Decades.</span>
+                  Follow the<br /><span className="text-gradient italic">Build.</span>
                 </h2>
                 <p className="text-text-secondary text-base leading-relaxed max-w-xs">
-                  Occasional letters on entrepreneurship, building, and life. No fluff — just real talk from the frontlines.
+                  I write when I have something real to say. You'll hear from me when it matters.
                 </p>
-              </div>
-              <div className="flex gap-8 mt-10 pt-8 border-t border-white/8">
-                <div>
-                  <div className="text-2xl font-display text-white">2K+</div>
-                  <div className="text-xs text-text-muted font-mono mt-1">Subscribers</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-display text-white">Monthly</div>
-                  <div className="text-xs text-text-muted font-mono mt-1">Cadence</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-display text-white">0</div>
-                  <div className="text-xs text-text-muted font-mono mt-1">Spam. Ever.</div>
-                </div>
               </div>
             </div>
 
