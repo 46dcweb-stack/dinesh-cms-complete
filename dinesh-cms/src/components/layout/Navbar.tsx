@@ -105,14 +105,14 @@ export default function Navbar() {
 
                     {/* Mobile Toggle */}
                     <button
-                        className="md:hidden pointer-events-auto text-white hover:text-brand-primary transition-colors p-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10"
+                        className="lg:hidden pointer-events-auto text-white hover:text-brand-primary transition-colors p-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10"
                         onClick={() => setIsOpen(!isOpen)}
                     >
                         {isOpen ? <X size={24} /> : <Menu size={24} />}
                     </button>
 
                     {/* Desktop Nav */}
-                    <div className="hidden md:flex flex-1 min-w-0 items-center justify-end pl-4">
+                    <div className="hidden lg:flex flex-1 min-w-0 items-center justify-end pl-4">
                         <NavBar items={navItems} />
                     </div>
                 </div>
@@ -125,7 +125,7 @@ export default function Navbar() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "100vh" }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="fixed inset-0 top-0 bg-brand-dark z-40 md:hidden overflow-hidden flex flex-col justify-center px-6"
+                        className="fixed inset-0 top-0 bg-brand-dark z-40 lg:hidden overflow-hidden flex flex-col justify-center px-6"
                     >
                         <div className="flex flex-col space-y-8 py-10 mt-16">
                             {navItems.map((link, i) => (

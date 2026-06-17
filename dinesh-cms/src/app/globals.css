@@ -51,6 +51,13 @@
   h6 {
     @apply font-display font-bold tracking-tight;
   }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
 }
 
 @layer components {
