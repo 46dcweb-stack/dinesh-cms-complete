@@ -38,9 +38,10 @@ export default function ScrollToTop() {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.8, y: 20 }}
                     onClick={scrollToTop}
-                    className="fixed bottom-10 right-10 z-[100] p-4 rounded-full bg-brand-primary text-white shadow-[0_0_20px_rgba(var(--brand-primary-rgb),0.3)] hover:shadow-[0_0_35px_rgba(var(--brand-primary-rgb),0.5)] transition-all duration-300 group"
+                    className="fixed right-6 sm:right-10 z-[100] p-4 rounded-full bg-brand-primary text-white shadow-[0_0_20px_rgba(var(--brand-primary-rgb),0.3)] hover:shadow-[0_0_35px_rgba(var(--brand-primary-rgb),0.5)] transition-all duration-300 group"
                     style={{
-                        backgroundColor: 'var(--brand-primary)'
+                        backgroundColor: 'var(--brand-primary)',
+                        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 1rem)'
                     }}
                     aria-label="Scroll to top"
                 >

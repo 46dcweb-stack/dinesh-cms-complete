@@ -60,6 +60,9 @@ export default function Footer() {
     }
   }
   const navItems = mergedNavItems.slice().sort((a, b) => a.order - b.order);
+  const transmissionLabels = new Set(["Blog", "Press", "Manifesto"]);
+  const primaryNavItems = navItems.filter(nav => !transmissionLabels.has(nav.label));
+  const transmissionNavItems = navItems.filter(nav => transmissionLabels.has(nav.label));
 
   // Show only social links that have a URL, in a fixed display order
   const socialOrder = ["linkedin", "twitter", "instagram", "youtube", "facebook"] as const;
@@ -68,7 +71,7 @@ export default function Footer() {
   return (
     <footer className="bg-brand-dark border-t border-brand-border py-20 px-6 relative z-10 pointer-events-auto">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
 
           {/* Brand Info */}
           <div className="col-span-1 lg:col-span-1">
@@ -99,11 +102,23 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-display text-xl mb-8 uppercase tracking-widest text-[10px] font-bold opacity-40 italic">Navigation</h4>
             <ul className="space-y-4">
-              {navItems.map(nav => (
+              {primaryNavItems.map(nav => (
                 <FooterLink key={nav.url} href={nav.url} label={nav.label} />
               ))}
             </ul>
           </div>
+
+          {/* Transmissions */}
+          {transmissionNavItems.length > 0 && (
+            <div>
+              <h4 className="text-white font-display text-xl mb-8 uppercase tracking-widest text-[10px] font-bold opacity-40 italic">Transmissions</h4>
+              <ul className="space-y-4">
+                {transmissionNavItems.map(nav => (
+                  <FooterLink key={nav.url} href={nav.url} label={nav.label} />
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Contact / Frequency */}
           <div>
@@ -141,11 +156,11 @@ export default function Footer() {
           <div className="absolute top-0 left-0 w-20 h-[1px] bg-brand-primary animate-light-sweep-horizontal shadow-[0_0_10px_rgba(255,90,0,0.5)]" />
 
           <div className="flex flex-col sm:flex-row items-center gap-1 relative z-10">
-            <p className="text-text-muted text-[10px] uppercase font-mono tracking-[0.2em] whitespace-nowrap">
+            <p className="text-text-muted text-[10px] uppercase font-mono tracking-[0.12em] sm:tracking-[0.2em] whitespace-normal sm:whitespace-nowrap break-words text-center">
               &copy; {new Date().getFullYear()} {copyright.replace(/^©\s*\d{4}\s*/i, "")}
             </p>
             {tagline && (
-              <p className="text-text-muted text-[10px] uppercase font-mono tracking-[0.2em] whitespace-nowrap sm:before:content-['//'] sm:before:mx-2 sm:before:opacity-30">
+              <p className="text-text-muted text-[10px] uppercase font-mono tracking-[0.12em] sm:tracking-[0.2em] whitespace-normal sm:whitespace-nowrap text-center sm:before:content-['//'] sm:before:mx-2 sm:before:opacity-30">
                 {tagline}
               </p>
             )}
@@ -157,6 +172,15 @@ export default function Footer() {
             <Link href="/cookies"    className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-[0.15em] transition-colors whitespace-nowrap">Cookie Policy</Link>
             <Link href="/sitemap.xml" className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-[0.15em] transition-colors whitespace-nowrap">Sitemap</Link>
           </div>
+        </div>
+
+        <div className="mt-8 text-center space-y-2">
+          <p className="text-text-secondary text-xs sm:text-sm font-mono tracking-[0.08em]">
+            Designed &amp; built by <a href="https://stack46.com/" target="_blank" rel="noopener noreferrer" className="text-sm sm:text-base font-bold text-[#FFC845] hover:text-[#FFC845] hover:underline underline-offset-4 decoration-[#FFC845] transition-colors duration-300">Stack46</a> · Full-stack software agency
+          </p>
+          <p className="text-text-muted text-[11px] sm:text-xs uppercase font-mono tracking-[0.2em]">
+            A FourSix46 venture
+          </p>
         </div>
       </div>
     </footer>

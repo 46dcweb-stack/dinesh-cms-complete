@@ -45,7 +45,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
     return (
         <>
             <Navbar />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 pb-[env(safe-area-inset-bottom)]">{children}</main>
             <Footer />
             <ScrollToTop />
         </>
