@@ -199,6 +199,12 @@ export default function ContactForm({
         }
     };
 
+    const canSubmit =
+        !validateField("name", formData.name) &&
+        !validateField("email", formData.email) &&
+        !validateField("subject", formData.subject) &&
+        !validateField("message", formData.message);
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20">
             {/* Left Column: Info */}
@@ -380,8 +386,8 @@ export default function ContactForm({
                         </div>
                         <button
                             type="submit"
-                            disabled={status === "loading"}
-                            className="w-full btn-premium py-3 md:py-5 text-base md:text-lg group"
+                            disabled={status === "loading" || !canSubmit}
+                            className="w-full btn-premium py-3 md:py-5 text-base md:text-lg group disabled:opacity-45 disabled:cursor-not-allowed disabled:pointer-events-none"
                         >
                             {status === "loading" ? "Sending..." : (
                                 <>

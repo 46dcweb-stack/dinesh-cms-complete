@@ -18,6 +18,8 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
   const emailInputRef = useRef<HTMLInputElement>(null);
 
   const [consent, setConsent]   = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [email, setEmail] = useState("");
   const [status, setStatus]     = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string }>({});
@@ -41,8 +43,8 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
   };
 
   const getValues = () => ({
-    name: nameInputRef.current?.value?.trim() ?? "",
-    email: emailInputRef.current?.value?.trim() ?? "",
+    name: firstName.trim(),
+    email: email.trim(),
   });
 
   const validateAll = () => {
@@ -58,8 +60,8 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const name = nameInputRef.current?.value?.trim() ?? "";
-    const email = emailInputRef.current?.value?.trim() ?? "";
+    const name = firstName.trim();
+    const emailValue = email.trim();
 
     if (!validateAll()) {
       setStatus("idle");
@@ -74,12 +76,14 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
         : window.location.pathname.includes("subscribe") ? "subscribe-page" : "homepage";
       const res  = await fetch("/api/subscribe", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name: name || undefined, source, consent }),
+        body: JSON.stringify({ email: emailValue, name: name || undefined, source, consent }),
       });
       const data = await res.json();
       if (!res.ok) { setStatus("error"); setErrorMsg(data.error || "Something went wrong."); return; }
       setStatus("success");
       formRef.current?.reset();
+      setFirstName("");
+      setEmail("");
       setConsent(false);
       setFieldErrors({});
     } catch {
@@ -87,6 +91,8 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
       setErrorMsg("Network error. Please check your connection and try again.");
     }
   };
+
+  const canSubmit = !validateName(firstName) && !validateEmail(email) && consent;
 
   // ── Shared success JSX ────────────────────────────────────────────────────
   const successJSX = (
@@ -114,12 +120,14 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
             ref={nameInputRef}
             type="text"
             name="firstName"
+            value={firstName}
             autoComplete="given-name"
             placeholder="First Name"
             minLength={3}
             maxLength={80}
-            onBlur={() => setFieldErrors((prev) => ({ ...prev, name: validateName(nameInputRef.current?.value ?? "") }))}
-            onChange={() => {
+            onBlur={() => setFieldErrors((prev) => ({ ...prev, name: validateName(firstName) }))}
+            onChange={(e) => {
+              setFirstName(e.target.value);
               if (fieldErrors.name) setFieldErrors((prev) => ({ ...prev, name: "" }));
             }}
             className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-white text-sm focus:outline-none focus:border-brand-primary/50 focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-white/20"
@@ -136,13 +144,15 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
             ref={emailInputRef}
             type="email"
             name="email"
+            value={email}
             autoComplete="email"
             placeholder="Your email address"
             required
             minLength={6}
             maxLength={254}
-            onBlur={() => setFieldErrors((prev) => ({ ...prev, email: validateEmail(emailInputRef.current?.value ?? "") }))}
-            onChange={() => {
+            onBlur={() => setFieldErrors((prev) => ({ ...prev, email: validateEmail(email) }))}
+            onChange={(e) => {
+              setEmail(e.target.value);
               if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: "" }));
             }}
             className={`w-full bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-brand-primary/50 focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-white/20 ${variant === "form" ? "rounded-full px-6 py-4" : "rounded-xl px-5 py-3.5"} ${variant === "form" ? "mt-0" : ""}`}
@@ -185,7 +195,7 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
 
       <button
         type="submit"
-        disabled={status === "loading" || !consent}
+        disabled={status === "loading" || !canSubmit}
         className={`flex items-center justify-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium text-sm transition-all duration-300 group
           ${variant === "box"
             ? "w-full bg-brand-primary hover:bg-brand-primary/90 px-6 py-4 rounded-xl mt-2"

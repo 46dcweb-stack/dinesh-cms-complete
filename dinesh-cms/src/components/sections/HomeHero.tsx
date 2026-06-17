@@ -180,7 +180,7 @@ interface HomeHeroProps {
   };
 }
 
-export default function HomeHero({ data }: HomeHeroProps) {
+function HomeHeroComponent({ data }: HomeHeroProps) {
   const prefersReducedMotion = useReducedMotion();
   const [mounted, setMounted] = useState(false);
   const [enableFx, setEnableFx] = useState(false);
@@ -320,6 +320,7 @@ export default function HomeHero({ data }: HomeHeroProps) {
               animate={allowMotion ? { opacity: 1, x: 0 } : undefined}
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="relative w-full max-w-sm md:max-w-lg aspect-[4/5] rounded-[2rem] md:rounded-[3rem] overflow-hidden"
+              suppressHydrationWarning
             >
               {heroVideo && (
                 <video
@@ -366,3 +367,5 @@ export default function HomeHero({ data }: HomeHeroProps) {
     </section>
   );
 }
+
+export default dynamic(() => Promise.resolve(HomeHeroComponent), { ssr: false });

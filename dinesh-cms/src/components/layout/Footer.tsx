@@ -12,7 +12,6 @@ import type { SiteSettings } from "@/lib/types";
 const DEFAULTS = {
   socialLinks: { linkedin: "", twitter: "", instagram: "", youtube: "", facebook: "" },
   footerCopyright: `© ${new Date().getFullYear()} Dinesh Koyyalamudi. All rights reserved.`,
-  footerTagline: "Built with intention. Shared with purpose.",
   footerEmail: "dinesh@foursix46.com",
   footerLocation: "Global Base",
   footerQuote: "The best companies are built not just on ideas, but on conviction.",
@@ -45,7 +44,6 @@ export default function Footer() {
 
   const social    = settings?.socialLinks    ?? DEFAULTS.socialLinks;
   const copyright = settings?.footerCopyright ?? DEFAULTS.footerCopyright;
-  const tagline   = settings?.footerTagline   ?? DEFAULTS.footerTagline;
   const email     = (settings as any)?.footerEmail    ?? DEFAULTS.footerEmail;
   const location  = (settings as any)?.footerLocation ?? DEFAULTS.footerLocation;
   const quote     = (settings as any)?.footerQuote    ?? DEFAULTS.footerQuote;
@@ -71,7 +69,7 @@ export default function Footer() {
   return (
     <footer className="bg-brand-dark border-t border-brand-border py-20 px-6 relative z-10 pointer-events-auto">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12 mb-16">
 
           {/* Brand Info */}
           <div className="col-span-1 lg:col-span-1">
@@ -90,7 +88,7 @@ export default function Footer() {
               Founder, entrepreneur, and the mind behind FourSix46 Ventures. Building products that matter and telling stories that resonate.
             </p>
             {activeSocials.length > 0 && (
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-nowrap gap-3">
                 {activeSocials.map(key => (
                   <SocialLink key={key} href={(social as any)[key]} icon={SOCIAL_ICONS[key]} />
                 ))}
@@ -100,7 +98,7 @@ export default function Footer() {
 
           {/* Navigation */}
           <div>
-            <h4 className="text-white font-display text-xl mb-8 uppercase tracking-widest text-[10px] font-bold opacity-40 italic">Navigation</h4>
+            <h4 className="text-white font-display text-xl mb-8 uppercase tracking-widest text-[10px] font-bold opacity-40 italic">Ecosystem</h4>
             <ul className="space-y-4">
               {primaryNavItems.map(nav => (
                 <FooterLink key={nav.url} href={nav.url} label={nav.label} />
@@ -119,6 +117,17 @@ export default function Footer() {
               </ul>
             </div>
           )}
+
+          {/* Legal */}
+          <div>
+            <h4 className="text-white font-display text-xl mb-8 uppercase tracking-widest text-[10px] font-bold opacity-40 italic">Legal</h4>
+            <ul className="space-y-4">
+              <FooterLink href="/privacy" label="Privacy" />
+              <FooterLink href="/terms" label="Terms of Use" />
+              <FooterLink href="/cookies" label="Cookie Policy" />
+              <FooterLink href="/sitemap.xml" label="Sitemap" />
+            </ul>
+          </div>
 
           {/* Contact / Frequency */}
           <div>
@@ -152,25 +161,13 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 relative overflow-hidden">
+        <div className="pt-10 border-t border-white/5 flex flex-col items-center gap-4 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-20 h-[1px] bg-brand-primary animate-light-sweep-horizontal shadow-[0_0_10px_rgba(255,90,0,0.5)]" />
 
-          <div className="flex flex-col sm:flex-row items-center gap-1 relative z-10">
+          <div className="flex flex-col sm:flex-row items-center gap-1 relative z-10 justify-center">
             <p className="text-text-muted text-[10px] uppercase font-mono tracking-[0.12em] sm:tracking-[0.2em] whitespace-normal sm:whitespace-nowrap break-words text-center">
               &copy; {new Date().getFullYear()} {copyright.replace(/^©\s*\d{4}\s*/i, "")}
             </p>
-            {tagline && (
-              <p className="text-text-muted text-[10px] uppercase font-mono tracking-[0.12em] sm:tracking-[0.2em] whitespace-normal sm:whitespace-nowrap text-center sm:before:content-['//'] sm:before:mx-2 sm:before:opacity-30">
-                {tagline}
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2 relative z-10">
-            <Link href="/privacy"    className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-[0.15em] transition-colors whitespace-nowrap">Privacy</Link>
-            <Link href="/terms"      className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-[0.15em] transition-colors whitespace-nowrap">Terms of Use</Link>
-            <Link href="/cookies"    className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-[0.15em] transition-colors whitespace-nowrap">Cookie Policy</Link>
-            <Link href="/sitemap.xml" className="text-text-muted hover:text-brand-primary text-[10px] uppercase font-mono tracking-[0.15em] transition-colors whitespace-nowrap">Sitemap</Link>
           </div>
         </div>
 
@@ -195,7 +192,7 @@ function SocialLink({ href, icon }: { href: string; icon: React.ReactNode }) {
       href={href}
       whileHover={{ scale: 1.2, rotate: 5, boxShadow: "0 0 15px rgba(255, 90, 0, 0.3)", borderColor: "rgba(255, 90, 0, 0.4)" }}
       whileTap={{ scale: 0.9 }}
-      className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-text-muted hover:text-brand-primary transition-all duration-300"
+      className="w-12 h-12 min-w-12 min-h-12 aspect-square shrink-0 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-text-muted hover:text-brand-primary transition-all duration-300"
       target="_blank"
       rel="noopener noreferrer"
     >
