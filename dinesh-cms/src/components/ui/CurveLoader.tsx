@@ -117,9 +117,9 @@ const words = [
   "DINESH KOYYALAMUDI",
 ];
 
-const FIRST_WORD_DELAY_MS = 400;
-const WORD_DELAY_MS = 400;
-const FINAL_HOLD_MS = 400;
+const FIRST_WORD_DELAY_MS = 200;
+const WORD_DELAY_MS = 200;
+const FINAL_HOLD_MS = 200;
 
 
 export default function CurveLoader() {
