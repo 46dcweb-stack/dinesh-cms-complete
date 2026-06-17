@@ -117,13 +117,18 @@ const words = [
   "DINESH KOYYALAMUDI",
 ];
 
+const FIRST_WORD_DELAY_MS = 400;
+const WORD_DELAY_MS = 400;
+const FINAL_HOLD_MS = 400;
+
 
 export default function CurveLoader() {
   const prefersReducedMotion = useReducedMotion();
+  const SESSION_KEY = "loader_shown_v2";
   // Only show once per browser session
   const [open, setOpen] = useState(() => {
     if (typeof window === "undefined") return true;
-    if (sessionStorage.getItem("loader_shown")) return false;
+    if (sessionStorage.getItem(SESSION_KEY)) return false;
     return true;
   });
   const [index, setIndex] = useState(0);
@@ -157,15 +162,15 @@ export default function CurveLoader() {
     if (isLast) {
       const t = window.setTimeout(
         () => {
-          sessionStorage.setItem("loader_shown", "1");
+          sessionStorage.setItem(SESSION_KEY, "1");
           setOpen(false);
         },
-        prefersReducedMotion ? 0 : 400,
+        prefersReducedMotion ? 0 : FINAL_HOLD_MS,
       );
       return () => window.clearTimeout(t);
     }
 
-    const delay = index === 0 ? 700 : 180;
+    const delay = index === 0 ? FIRST_WORD_DELAY_MS : WORD_DELAY_MS;
     const t = window.setTimeout(
       () => setIndex((i) => i + 1),
       prefersReducedMotion ? 0 : delay,
