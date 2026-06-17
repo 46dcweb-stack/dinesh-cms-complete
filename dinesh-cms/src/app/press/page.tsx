@@ -1,5 +1,6 @@
 import PressClientWrapper from "@/components/press/PressClientWrapper";
 import PressHeader from "@/components/press/PressHeader";
+import MediaKitButton from "@/components/press/MediaKitButton";
 import ContactForm from "@/components/sections/ContactForm";
 import { getPublishedPress, getSiteSettings, getPressPageMeta } from "@/lib/firebase-data";
 import { pressMentions, pressPageData } from "@/lib/data";
@@ -56,10 +57,6 @@ export default async function PressPage() {
   // Media kit
   const rawMediaKitUrl      = s?.mediaKitUrl   || m?.mediaKitUrl   || (pressPageData as any).mediaKitUrl   || "";
   const mediaKitLabel       = m?.mediaKitLabel || s?.mediaKitLabel || (pressPageData as any).mediaKitLabel || "Download Media Kit";
-  const mediaKitDownloadUrl = rawMediaKitUrl
-    ? `/api/download-media-kit?url=${encodeURIComponent(rawMediaKitUrl)}`
-    : "";
-
   // Media Assets CTA
   const mediaAssetsTitle       = m?.mediaAssetsTitle       || "Need Media Assets?";
   const mediaAssetsDescription = m?.mediaAssetsDescription || "Access hi-res photos, official bios, and brand assets for speaking engagements and press coverage.";
@@ -87,15 +84,7 @@ export default async function PressPage() {
           <p className="text-text-secondary mb-10 max-w-xl mx-auto text-lg">
             {mediaAssetsDescription}
           </p>
-          {mediaKitDownloadUrl ? (
-            <a href={mediaKitDownloadUrl} download className="btn-premium px-12">
-              {mediaKitLabel}
-            </a>
-          ) : (
-            <span className="opacity-40 btn-premium px-12 cursor-default">
-              {mediaKitLabel}
-            </span>
-          )}
+          <MediaKitButton url={rawMediaKitUrl} label={mediaKitLabel} />
         </div>
       </div>
 

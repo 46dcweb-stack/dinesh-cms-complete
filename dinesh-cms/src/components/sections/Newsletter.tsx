@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, AlertCircle, ArrowRight } from "lucide-react";
 
@@ -12,14 +12,60 @@ interface NewsletterProps {
 }
 
 export default function Newsletter({ buttonText = "Join the Conversation", variant = "box" }: NewsletterProps) {
-  const [name, setName]         = useState("");
-  const [email, setEmail]       = useState("");
+  const consentId = useId();
+  const formRef = useRef<HTMLFormElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+
   const [consent, setConsent]   = useState(false);
   const [status, setStatus]     = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string }>({});
+
+  const validateName = (value: string) => {
+    const trimmed = value.trim();
+    const letterCount = trimmed.replace(/[^a-zA-Z]/g, "").length;
+    if (!trimmed) return "Please enter your first name.";
+    if (letterCount < 3) return "Name must contain at least 3 letters.";
+    if (trimmed.length > 80) return "Name must be 80 characters or less.";
+    return "";
+  };
+
+  const validateEmail = (value: string) => {
+    const trimmed = value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!trimmed) return "Please enter your email address.";
+    if (!emailRegex.test(trimmed)) return "Enter a valid email address.";
+    if (trimmed.includes("..")) return "Email address is invalid.";
+    return "";
+  };
+
+  const getValues = () => ({
+    name: nameInputRef.current?.value?.trim() ?? "",
+    email: emailInputRef.current?.value?.trim() ?? "",
+  });
+
+  const validateAll = () => {
+    const values = getValues();
+    const nextErrors = {
+      name: validateName(values.name),
+      email: validateEmail(values.email),
+    };
+
+    setFieldErrors(nextErrors);
+    return !nextErrors.name && !nextErrors.email;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const name = nameInputRef.current?.value?.trim() ?? "";
+    const email = emailInputRef.current?.value?.trim() ?? "";
+
+    if (!validateAll()) {
+      setStatus("idle");
+      return;
+    }
+
     if (!consent) { setErrorMsg("Please agree to receive emails before subscribing."); return; }
     setStatus("loading");
     setErrorMsg("");
@@ -33,15 +79,17 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
       const data = await res.json();
       if (!res.ok) { setStatus("error"); setErrorMsg(data.error || "Something went wrong."); return; }
       setStatus("success");
-      setName(""); setEmail(""); setConsent(false);
+      formRef.current?.reset();
+      setConsent(false);
+      setFieldErrors({});
     } catch {
       setStatus("error");
       setErrorMsg("Network error. Please check your connection and try again.");
     }
   };
 
-  // ── Shared success state ───────────────────────────────────────────────────
-  const SuccessState = () => (
+  // ── Shared success JSX ────────────────────────────────────────────────────
+  const successJSX = (
     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
       className="text-center py-8"
     >
@@ -54,21 +102,29 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
     </motion.div>
   );
 
-  // ── Shared form fields ─────────────────────────────────────────────────────
-  const FormFields = () => (
-    <form onSubmit={handleSubmit} className="space-y-4 w-full">
+  // ── Shared form JSX ────────────────────────────────────────────────────────
+  const formJSX = (
+    <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 w-full">
       <div className={variant === "form" ? "flex flex-col sm:flex-row gap-4" : ""}>
         <div className={variant === "form" ? "flex-1" : ""}>
           {variant === "box" && (
             <label className="text-xs font-mono uppercase tracking-[0.2em] text-text-muted block mb-2">First Name</label>
           )}
           <input
+            ref={nameInputRef}
             type="text"
+            name="firstName"
+            autoComplete="given-name"
             placeholder="First Name"
-            value={name}
-            onChange={e => setName(e.target.value)}
+            minLength={3}
+            maxLength={80}
+            onBlur={() => setFieldErrors((prev) => ({ ...prev, name: validateName(nameInputRef.current?.value ?? "") }))}
+            onChange={() => {
+              if (fieldErrors.name) setFieldErrors((prev) => ({ ...prev, name: "" }));
+            }}
             className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-white text-sm focus:outline-none focus:border-brand-primary/50 focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-white/20"
           />
+          {fieldErrors.name && <p className="mt-2 text-xs text-red-400">{fieldErrors.name}</p>}
         </div>
         <div className={variant === "form" ? "flex-1" : ""}>
           {variant === "box" && (
@@ -77,24 +133,32 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
             </label>
           )}
           <input
+            ref={emailInputRef}
             type="email"
+            name="email"
+            autoComplete="email"
             placeholder="Your email address"
             required
-            value={email}
-            onChange={e => setEmail(e.target.value)}
+            minLength={6}
+            maxLength={254}
+            onBlur={() => setFieldErrors((prev) => ({ ...prev, email: validateEmail(emailInputRef.current?.value ?? "") }))}
+            onChange={() => {
+              if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: "" }));
+            }}
             className={`w-full bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-brand-primary/50 focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-white/20 ${variant === "form" ? "rounded-full px-6 py-4" : "rounded-xl px-5 py-3.5"} ${variant === "form" ? "mt-0" : ""}`}
           />
+          {fieldErrors.email && <p className="mt-2 text-xs text-red-400">{fieldErrors.email}</p>}
         </div>
       </div>
 
       {/* GDPR */}
       <div className="flex items-start gap-3 pt-1">
         <div className="relative flex-shrink-0 mt-0.5">
-          <input type="checkbox" id="nl-consent" checked={consent}
+          <input type="checkbox" id={consentId} checked={consent}
             onChange={e => { setConsent(e.target.checked); if (e.target.checked) setErrorMsg(""); }}
             className="sr-only peer"
           />
-          <label htmlFor="nl-consent"
+          <label htmlFor={consentId}
             className="w-4 h-4 border border-white/30 rounded bg-white/5 flex items-center justify-center cursor-pointer peer-checked:bg-brand-primary peer-checked:border-brand-primary transition-colors block"
           >
             {consent && (
@@ -104,7 +168,7 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
             )}
           </label>
         </div>
-        <label htmlFor="nl-consent" className="text-xs text-text-muted cursor-pointer leading-relaxed">
+        <label htmlFor={consentId} className="text-xs text-text-muted cursor-pointer leading-relaxed">
           I agree to receive email updates, insights, and announcements from Dinesh Koyyalamudi.
           I understand I can unsubscribe at any time. My data will be handled in accordance with
           the <a href="/privacy" className="underline hover:text-white transition-colors">Privacy Policy</a>.
@@ -148,7 +212,7 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
   if (variant === "form") {
     return (
       <div className="w-full">
-        {status === "success" ? <SuccessState /> : <FormFields />}
+        {status === "success" ? successJSX : formJSX}
       </div>
     );
   }
@@ -186,7 +250,7 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
 
             {/* Right — form */}
             <div className="p-10 md:p-14 flex flex-col justify-center">
-              {status === "success" ? <SuccessState /> : <FormFields />}
+              {status === "success" ? successJSX : formJSX}
             </div>
           </div>
         </div>

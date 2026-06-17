@@ -182,7 +182,9 @@ interface HomeHeroProps {
 
 export default function HomeHero({ data }: HomeHeroProps) {
   const prefersReducedMotion = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
   const [enableFx, setEnableFx] = useState(false);
+  const allowMotion = mounted && !prefersReducedMotion;
   const heroTitle = data?.heroTitle || "IT'S ME";
   const heroName = data?.heroName || "Dinesh Koyyalamudi";
   const heroSubtitle = data?.heroSubtitle || "I've earned the trust of over 250 clients and 40 brands, all of whom are very satisfied with my service!";
@@ -205,7 +207,11 @@ export default function HomeHero({ data }: HomeHeroProps) {
   const featuredPress = data?.featuredPress;
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!allowMotion) return;
 
     const ric =
       typeof window !== "undefined" && "requestIdleCallback" in window
@@ -219,7 +225,7 @@ export default function HomeHero({ data }: HomeHeroProps) {
 
     const id = ric(() => setEnableFx(true));
     return () => cancel(id);
-  }, [prefersReducedMotion]);
+  }, [allowMotion]);
 
 
   return (
@@ -230,10 +236,8 @@ export default function HomeHero({ data }: HomeHeroProps) {
           <div className="flex flex-col justify-center space-y-8 md:space-y-12">
             <div className="space-y-6">
               <motion.h1
-                initial={prefersReducedMotion ? false : { opacity: 0, x: -16 }}
-                animate={
-                  prefersReducedMotion ? undefined : { opacity: 1, x: 0 }
-                }
+                initial={allowMotion ? { opacity: 0, x: -16 } : false}
+                animate={allowMotion ? { opacity: 1, x: 0 } : undefined}
                 transition={{ duration: 0.55 }}
                 className="font-display font-bold leading-[0.9] tracking-tighter"
               >
@@ -246,11 +250,11 @@ export default function HomeHero({ data }: HomeHeroProps) {
               </motion.h1>
 
               <motion.p
-                initial={prefersReducedMotion ? false : { opacity: 0 }}
-                animate={prefersReducedMotion ? undefined : { opacity: 1 }}
+                initial={allowMotion ? { opacity: 0 } : false}
+                animate={allowMotion ? { opacity: 1 } : undefined}
                 transition={{
                   duration: 0.55,
-                  delay: prefersReducedMotion ? 0 : 0.15,
+                  delay: allowMotion ? 0.15 : 0,
                 }}
                 className="max-w-md text-text-secondary font-light text-lg md:text-xl leading-relaxed"
               >
@@ -312,8 +316,8 @@ export default function HomeHero({ data }: HomeHeroProps) {
           {/* Right Column */}
           <div className="relative flex flex-col items-center">
             <motion.div
-              initial={prefersReducedMotion ? false : { opacity: 0, x: 40 }}
-              animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
+              initial={allowMotion ? { opacity: 0, x: 40 } : false}
+              animate={allowMotion ? { opacity: 1, x: 0 } : undefined}
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="relative w-full max-w-sm md:max-w-lg aspect-[4/5] rounded-[2rem] md:rounded-[3rem] overflow-hidden"
             >

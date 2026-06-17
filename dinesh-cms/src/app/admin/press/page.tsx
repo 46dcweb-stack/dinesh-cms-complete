@@ -33,7 +33,7 @@ export default function PressAdmin() {
     title: "Media & Mentions",
     subtitle: "Validation & Visibility",
     description: "Insights and features from leading publications on venture building, leadership, and the future of technology.",
-    heroBackground: "/images/press_hero.png",
+    heroBackground: "",
     mediaKitLabel: "Download Media Kit",
     mediaKitUrl: "",
     contactTitle: "Press Enquiries?",
@@ -183,6 +183,7 @@ export default function PressAdmin() {
                 value={pageMeta.heroBackground || ""}
                 onChange={v => setPageMeta(m => ({ ...m, heroBackground: v }))}
                 folder="press"
+                previewImageClass="h-52 md:h-72 object-contain bg-black/20"
               />
             </Field>
           </div>
@@ -329,7 +330,12 @@ export default function PressAdmin() {
               </Field>
             </div>
             <Field label="Outlet Logo URL">
-              <ImageUpload value={form.outletLogo || ""} onChange={v => set("outletLogo", v)} folder="press/logos" />
+              <ImageUpload
+                value={form.outletLogo || ""}
+                onChange={v => set("outletLogo", v)}
+                folder="press/logos"
+                previewImageClass="h-44 object-contain bg-black/20"
+              />
             </Field>
             <Field label="Show in 'As Featured In' Bar" hint="Displays the outlet logo in the homepage featured bar — requires Outlet Logo to be set">
               <label className="flex items-center gap-3 cursor-pointer group">
@@ -345,7 +351,12 @@ export default function PressAdmin() {
               </label>
             </Field>
             <Field label="Cover / Thumbnail Image">
-              <ImageUpload value={form.thumbnail || ""} onChange={v => set("thumbnail", v)} folder="press" />
+              <ImageUpload
+                value={form.thumbnail || ""}
+                onChange={v => set("thumbnail", v)}
+                folder="press"
+                previewImageClass="h-52 object-contain bg-black/20"
+              />
             </Field>
             <Field label="Downloadable Asset URL" hint="Press kit, PDF, screenshots">
               <ImageUpload value={form.downloadableAsset || ""} onChange={v => set("downloadableAsset", v)} folder="press/assets" allowPdf={true} />

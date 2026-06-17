@@ -136,7 +136,12 @@ export default function VenturesAdmin() {
             </Field>
             <div className="col-span-2">
               <Field label="Venture Image">
-                <ImageUpload value={form.image} onChange={v => set("image", v)} folder="ventures" />
+                <ImageUpload
+                  value={form.image}
+                  onChange={v => set("image", v)}
+                  folder="ventures"
+                  previewImageClass="h-52 md:h-72 object-contain bg-black/20"
+                />
               </Field>
             </div>
             <Toggle checked={form.featured} onChange={v => set("featured", v)} label="Featured Venture" />
@@ -163,7 +168,7 @@ export default function VenturesAdmin() {
                 <button onClick={() => move(i, "down")} disabled={i === items.length - 1} className="hover:text-white disabled:opacity-20 transition-colors"><ChevronDown size={14} /></button>
               </div>
               <div className="w-3 h-8 rounded-sm flex-shrink-0" style={{ backgroundColor: item.color }} />
-              {item.image && <img src={item.image} alt={item.name} className="w-12 h-12 rounded-lg object-cover border border-white/10" />}
+              {item.image && <img src={item.image} alt={item.name} className="w-12 h-12 rounded-lg object-contain bg-black/20 border border-white/10 p-1" />}
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-white text-sm">{item.name}</div>
                 <div className="text-xs text-white/40 mt-0.5">{item.role}</div>

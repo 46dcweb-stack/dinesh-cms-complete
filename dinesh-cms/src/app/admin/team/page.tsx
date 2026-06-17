@@ -14,6 +14,11 @@ const EMPTY: Omit<TeamMember, "id"> = {
   sortOrder: 0, featured: false, status: "active",
 };
 
+const NAME_MIN = 3;
+const NAME_MAX = 80;
+const ROLE_MIN = 2;
+const ROLE_MAX = 100;
+
 export default function TeamAdmin() {
   const [items, setItems] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,11 +56,36 @@ export default function TeamAdmin() {
   }
 
   async function handleSave() {
-    if (!form.name || !form.role) { setError("Name and Role are required."); return; }
+    const payload: Omit<TeamMember, "id"> = {
+      ...form,
+      name: form.name.trim(),
+      role: form.role.trim(),
+      bio: form.bio.trim(),
+      image: form.image.trim(),
+      linkedIn: (form.linkedIn || "").trim(),
+      twitter: (form.twitter || "").trim(),
+      sortOrder: Number(form.sortOrder) || 0,
+    };
+
+    if (!payload.name || !payload.role) {
+      setError("Name and Role are required.");
+      return;
+    }
+
+    if (payload.name.length < NAME_MIN || payload.name.length > NAME_MAX) {
+      setError(`Name must be between ${NAME_MIN} and ${NAME_MAX} characters.`);
+      return;
+    }
+
+    if (payload.role.length < ROLE_MIN || payload.role.length > ROLE_MAX) {
+      setError(`Role must be between ${ROLE_MIN} and ${ROLE_MAX} characters.`);
+      return;
+    }
+
     setSaving(true); setError("");
     try {
-      if (editing?.id) { await teamService.update(editing.id, form); }
-      else { await teamService.create(form); }
+      if (editing?.id) { await teamService.update(editing.id, payload); }
+      else { await teamService.create(payload); }
       setSaved(true); setShowForm(false); load();
     } catch (err: any) { setError(err.message); }
     setSaving(false);
@@ -92,8 +122,8 @@ export default function TeamAdmin() {
           <SectionTitle>{editing ? "Edit Team Member" : "Add Team Member"}</SectionTitle>
           {error && <div className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3 mb-4">{error}</div>}
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Full Name" required><Input value={form.name} onChange={e => set("name", e.target.value)} placeholder="Elena Rossi" /></Field>
-            <Field label="Role / Title" required><Input value={form.role} onChange={e => set("role", e.target.value)} placeholder="Head of Strategy" /></Field>
+            <Field label="Full Name" required><Input value={form.name} onChange={e => set("name", e.target.value)} placeholder="Elena Rossi" minLength={NAME_MIN} maxLength={NAME_MAX} /></Field>
+            <Field label="Role / Title" required><Input value={form.role} onChange={e => set("role", e.target.value)} placeholder="Head of Strategy" minLength={ROLE_MIN} maxLength={ROLE_MAX} /></Field>
             <div className="col-span-2">
               <Field label="Bio" hint="Short description shown on hover">
                 <Textarea value={form.bio} onChange={e => set("bio", e.target.value)} rows={3} placeholder="Specializing in global operations..." />

@@ -113,15 +113,15 @@ export default function RootLayout({
         <Script
   id="cookieyes"
   src="https://cdn-cookieyes.com/client_data/91a8605ad0c3c4e915f73c9cfd7c1a54/script.js"
-  strategy="afterInteractive"
+  strategy="lazyOnload"
 />
 {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-W83P0Y4EX8"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
 
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-analytics" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}

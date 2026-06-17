@@ -24,6 +24,15 @@ interface ContactFormProps {
     hours?: string;
 }
 
+type FormErrors = {
+    name?: string;
+    email?: string;
+    subject?: string;
+    message?: string;
+};
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
 export default function ContactForm({ 
     title, 
     subtitle, 
@@ -34,6 +43,7 @@ export default function ContactForm({
     hours = "Available 24/7"
 }: ContactFormProps) {
     const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+    const [errors, setErrors] = useState<FormErrors>({});
     const [formData, setLocalFormData] = useState({
         name: "",
         email: "",
@@ -74,17 +84,88 @@ export default function ContactForm({
 
     const inquiryTypes = ["General", "Speaking", "Media", "Collaboration"];
 
+    const validateField = (field: keyof Omit<typeof formData, "type">, value: string): string | undefined => {
+        const trimmed = value.trim();
+
+        if (field === "name") {
+            const letterCount = trimmed.replace(/[^a-zA-Z]/g, "").length;
+            if (letterCount < 3) return "Name must contain at least 3 letters.";
+            if (trimmed.length > 80) return "Name must be 80 characters or less.";
+            return undefined;
+        }
+
+        if (field === "email") {
+            if (!EMAIL_REGEX.test(trimmed)) return "Enter a valid email address.";
+            const localPart = trimmed.split("@")[0] ?? "";
+            const domain = trimmed.split("@")[1] ?? "";
+            if (localPart.length < 2 || domain.length < 4 || !domain.includes(".")) {
+                return "Enter a complete email address.";
+            }
+            if (trimmed.includes("..")) return "Email address is invalid.";
+            return undefined;
+        }
+
+        if (field === "subject") {
+            if (trimmed.length < 6) return "Subject must be at least 6 characters.";
+            if (trimmed.length > 120) return "Subject must be 120 characters or less.";
+            return undefined;
+        }
+
+        if (field === "message") {
+            if (trimmed.length < 20) return "Message must be at least 20 characters.";
+            if (trimmed.length > 2000) return "Message must be 2000 characters or less.";
+            return undefined;
+        }
+
+        return undefined;
+    };
+
+    const validateAll = (): FormErrors => {
+        const nextErrors: FormErrors = {
+            name: validateField("name", formData.name),
+            email: validateField("email", formData.email),
+            subject: validateField("subject", formData.subject),
+            message: validateField("message", formData.message),
+        };
+
+        Object.keys(nextErrors).forEach((key) => {
+            const k = key as keyof FormErrors;
+            if (!nextErrors[k]) delete nextErrors[k];
+        });
+
+        return nextErrors;
+    };
+
+    const setFieldValue = (field: keyof typeof formData, value: string) => {
+        setLocalFormData((prev) => ({ ...prev, [field]: value }));
+
+        if (field !== "type") {
+            const fieldKey = field as keyof FormErrors;
+            setErrors((prev) => {
+                if (!prev[fieldKey]) return prev;
+                const next = { ...prev };
+                delete next[fieldKey];
+                return next;
+            });
+        }
+    };
+
+    const handleFieldBlur = (field: keyof Omit<typeof formData, "type">) => {
+        const message = validateField(field, formData[field]);
+        setErrors((prev) => ({ ...prev, [field]: message }));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setStatus("loading");
 
-        const fd = new FormData();
-        fd.append("name", formData.name);
-        fd.append("email", formData.email);
-        fd.append("subject", formData.subject);
-        fd.append("message", formData.message);
-        fd.append("type", formData.type);
-        fd.append("page_url", typeof window !== "undefined" ? window.location.href : "");
+        const nextErrors = validateAll();
+        setErrors(nextErrors);
+        if (Object.keys(nextErrors).length > 0) {
+            setStatus("idle");
+            return;
+        }
+
+        setStatus("loading");
 
         try {
             // Save to Firestore
@@ -111,6 +192,7 @@ export default function ContactForm({
             });
 
             setStatus("success");
+            setErrors({});
             setLocalFormData({ name: "", email: "", subject: "", message: "", type: "General" });
         } catch (error) {
             setStatus("error");
@@ -206,10 +288,17 @@ export default function ContactForm({
                                     required
                                     type="text"
                                     value={formData.name}
-                                    onChange={(e) => setLocalFormData({ ...formData, name: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white focus:outline-none focus:border-brand-primary/50 transition-colors"
+                                    minLength={3}
+                                    maxLength={80}
+                                    onBlur={() => handleFieldBlur("name")}
+                                    onChange={(e) => setFieldValue("name", e.target.value)}
+                                    className={cn(
+                                        "w-full bg-white/5 border rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white focus:outline-none transition-colors",
+                                        errors.name ? "border-red-400/60 focus:border-red-400" : "border-white/10 focus:border-brand-primary/50"
+                                    )}
                                     placeholder="Your Name"
                                 />
+                                {errors.name && <p className="text-red-400 text-xs ml-1">{errors.name}</p>}
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-semibold uppercase tracking-widest text-text-muted ml-1">Email</label>
@@ -217,23 +306,30 @@ export default function ContactForm({
                                     required
                                     type="email"
                                     value={formData.email}
-                                    onChange={(e) => setLocalFormData({ ...formData, email: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white focus:outline-none focus:border-brand-primary/50 transition-colors"
+                                    minLength={6}
+                                    maxLength={254}
+                                    onBlur={() => handleFieldBlur("email")}
+                                    onChange={(e) => setFieldValue("email", e.target.value)}
+                                    className={cn(
+                                        "w-full bg-white/5 border rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white focus:outline-none transition-colors",
+                                        errors.email ? "border-red-400/60 focus:border-red-400" : "border-white/10 focus:border-brand-primary/50"
+                                    )}
                                     placeholder="email@example.com"
                                 />
+                                {errors.email && <p className="text-red-400 text-xs ml-1">{errors.email}</p>}
                             </div>
                         </div>
 
                         <div className="space-y-4">
                             <label className="text-xs font-semibold uppercase tracking-widest text-text-muted ml-1">Inquiry Type</label>
-                            <div className="flex flex-wrap gap-2 md:gap-4">
+                            <div className="grid grid-cols-2 gap-2 md:flex md:flex-wrap md:gap-4">
                                 {inquiryTypes.map((type) => (
                                     <button
                                         key={type}
                                         type="button"
-                                        onClick={() => setLocalFormData({ ...formData, type })}
+                                        onClick={() => setFieldValue("type", type)}
                                         className={cn(
-                                            "flex-1 md:flex-none px-6 py-3 rounded-xl border text-sm font-medium transition-all duration-300 text-center",
+                                            "w-full md:w-auto px-4 md:px-6 py-3 rounded-xl border text-sm font-medium transition-all duration-300 text-center whitespace-nowrap",
                                             formData.type === type
                                                 ? "bg-brand-primary border-brand-primary text-white"
                                                 : "bg-white/5 border-white/10 text-text-muted hover:border-white/20 hover:text-white"
@@ -251,10 +347,17 @@ export default function ContactForm({
                                 required
                                 type="text"
                                 value={formData.subject}
-                                onChange={(e) => setLocalFormData({ ...formData, subject: e.target.value })}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white focus:outline-none focus:border-brand-primary/50 transition-colors"
+                                minLength={6}
+                                maxLength={120}
+                                onBlur={() => handleFieldBlur("subject")}
+                                onChange={(e) => setFieldValue("subject", e.target.value)}
+                                className={cn(
+                                    "w-full bg-white/5 border rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white focus:outline-none transition-colors",
+                                    errors.subject ? "border-red-400/60 focus:border-red-400" : "border-white/10 focus:border-brand-primary/50"
+                                )}
                                 placeholder="What is this regarding?"
                             />
+                            {errors.subject && <p className="text-red-400 text-xs ml-1">{errors.subject}</p>}
                         </div>
 
                         <div className="space-y-2">
@@ -263,10 +366,17 @@ export default function ContactForm({
                                 required
                                 rows={5}
                                 value={formData.message}
-                                onChange={(e) => setLocalFormData({ ...formData, message: e.target.value })}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white focus:outline-none focus:border-brand-primary/50 transition-colors resize-none"
+                                minLength={20}
+                                maxLength={2000}
+                                onBlur={() => handleFieldBlur("message")}
+                                onChange={(e) => setFieldValue("message", e.target.value)}
+                                className={cn(
+                                    "w-full bg-white/5 border rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white focus:outline-none transition-colors resize-none",
+                                    errors.message ? "border-red-400/60 focus:border-red-400" : "border-white/10 focus:border-brand-primary/50"
+                                )}
                                 placeholder="Tell me about your project or inquiry..."
                             />
+                            {errors.message && <p className="text-red-400 text-xs ml-1">{errors.message}</p>}
                         </div>
                         <button
                             type="submit"

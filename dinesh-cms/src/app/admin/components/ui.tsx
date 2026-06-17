@@ -164,8 +164,14 @@ export function Alert({ message, type = "error", className = "" }: { message: st
 
 // ── Image Upload ───────────────────────────────────────────────────────────────
 export function ImageUpload({
-  value, onChange, folder = "images", allowPdf = false,
-}: { value: string; onChange: (url: string) => void; folder?: string; allowPdf?: boolean }) {
+  value, onChange, folder = "images", allowPdf = false, previewImageClass = "h-40 object-cover",
+}: {
+  value: string;
+  onChange: (url: string) => void;
+  folder?: string;
+  allowPdf?: boolean;
+  previewImageClass?: string;
+}) {
   const [uploading, setUploading] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [mediaFiles, setMediaFiles] = useState<{url: string; name: string; fullPath: string}[]>([]);
@@ -222,7 +228,7 @@ export function ImageUpload({
               </a>
             </div>
           ) : (
-            <img src={value} alt="preview" className="w-full h-40 object-cover" />
+            <img src={value} alt="preview" className={`w-full ${previewImageClass}`} />
           )}
           <button type="button" onClick={() => onChange("")}
             className="absolute top-2 right-2 bg-black/50 hover:bg-black/80 rounded-full p-1 transition-colors">

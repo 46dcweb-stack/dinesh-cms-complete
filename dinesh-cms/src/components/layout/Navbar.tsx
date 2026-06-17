@@ -91,7 +91,7 @@ export default function Navbar() {
                         href="/"
                         className="group flex items-center h-full py-3 md:py-4"
                     >
-                        <div className="relative h-full w-auto min-w-[150px] md:min-w-[200px] flex items-center">
+                        <div className="relative h-full w-auto min-w-[120px] md:min-w-[160px] lg:min-w-[200px] flex items-center">
                             <Image
                                 src="/logo.png"
                                 alt="Dinesh Koyyalamudi"
@@ -112,7 +112,7 @@ export default function Navbar() {
                     </button>
 
                     {/* Desktop Nav */}
-                    <div className="hidden md:flex items-center">
+                    <div className="hidden md:flex flex-1 min-w-0 items-center justify-end pl-4">
                         <NavBar items={navItems} />
                     </div>
                 </div>

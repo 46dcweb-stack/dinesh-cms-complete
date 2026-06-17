@@ -163,7 +163,12 @@ export default function GalleryAdmin() {
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
               <Field label="Image" required>
-                <ImageUpload value={form.src} onChange={v => set("src", v)} folder="gallery" />
+                <ImageUpload
+                  value={form.src}
+                  onChange={v => set("src", v)}
+                  folder="gallery"
+                  previewImageClass="h-52 md:h-72 object-contain bg-black/20"
+                />
               </Field>
             </div>
             <Field label="Title">

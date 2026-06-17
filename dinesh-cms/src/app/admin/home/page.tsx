@@ -120,7 +120,12 @@ export default function HomeAdmin() {
           </div>
           <div className="mt-4">
             <Field label="Hero Background Image">
-              <ImageUpload value={form.heroBackground} onChange={v => set("heroBackground", v)} folder="hero" />
+              <ImageUpload
+                value={form.heroBackground}
+                onChange={v => set("heroBackground", v)}
+                folder="hero"
+                previewImageClass="h-52 md:h-72 object-contain bg-black/20"
+              />
             </Field>
           </div>
         </Card>
@@ -387,6 +392,7 @@ export default function HomeAdmin() {
                 value={(form as any).seoOgImage || ""}
                 onChange={v => set("seoOgImage" as any, v)}
                 folder="seo"
+                previewImageClass="h-52 md:h-72 object-contain bg-black/20"
               />
             </Field>
           </div>

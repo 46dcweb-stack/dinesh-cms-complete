@@ -24,7 +24,7 @@ export default function ManifestoTeaser({ data }: ManifestoTeaserProps) {
             <div className="absolute inset-0 z-0">
                 <img
                     src="/images/manifesto_bg.png"
-                    alt=""
+                    alt="Abstract background texture for manifesto section"
                     className="w-full h-full object-cover opacity-20"
                 />
                 <div className="absolute inset-0 bg-linear-to-b from-brand-dark via-transparent to-brand-dark" />

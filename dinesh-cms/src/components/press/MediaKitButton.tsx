@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, ExternalLink, AlertCircle } from "lucide-react";
+import { Download, ExternalLink } from "lucide-react";
 
 interface Props {
   url: string;
@@ -35,19 +35,13 @@ export default function MediaKitButton({ url, label = "Download Media Kit" }: Pr
   // No URL set in CMS yet
   if (!url || url === "#" || url === "") {
     return (
-      <div className="flex flex-col items-center gap-2">
-        <button
-          disabled
-          className="btn-premium px-12 opacity-40 cursor-not-allowed"
-        >
-          <Download size={16} className="inline mr-2" />
-          {label}
-        </button>
-        <p className="text-xs text-white/30">
-          Set the Media Kit URL in{" "}
-          <span className="font-mono text-white/50">Admin → Site Settings → Media Kit URL</span>
-        </p>
-      </div>
+      <button
+        disabled
+        className="btn-premium px-12 opacity-40 cursor-not-allowed inline-flex items-center gap-2"
+      >
+        <Download size={16} />
+        {label}
+      </button>
     );
   }
 

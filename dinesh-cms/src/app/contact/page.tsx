@@ -26,7 +26,7 @@ export default async function ContactPage() {
     const hours = settings?.contactHours || "Available 24/7";
 
     return (
-        <div className="pt-28 lg:pt-28 pb-24 px-6">
+        <div className="pt-36 md:pt-40 lg:pt-44 pb-24 px-6">
             <div className="max-w-7xl mx-auto">
                 <ContactForm 
                     title={title} 

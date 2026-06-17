@@ -120,8 +120,13 @@ export default function AboutAdmin() {
         {/* Profile Image */}
         <Card>
           <SectionTitle>Profile Image</SectionTitle>
-          <div className="max-w-xs">
-            <ImageUpload value={form.profileImage} onChange={v => setField("profileImage", v)} folder="about" />
+          <div className="max-w-2xl">
+            <ImageUpload
+              value={form.profileImage}
+              onChange={v => setField("profileImage", v)}
+              folder="about"
+              previewImageClass="h-52 md:h-72 object-contain bg-black/20"
+            />
           </div>
           <div className="mt-4">
             <Field label="Downloadable Bio PDF" hint="Upload PDF bio — shown as download button on About page">

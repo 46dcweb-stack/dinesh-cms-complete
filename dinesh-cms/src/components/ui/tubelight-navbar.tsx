@@ -20,46 +20,28 @@ interface NavBarProps {
 
 export function NavBar({ items, className }: NavBarProps) {
     const pathname = usePathname()
-    const [activeTab, setActiveTab] = useState(() => {
+    const resolveActiveTab = () => {
         const currentItem = items.find(item => item.url === pathname)
         if (currentItem) return currentItem.name
 
         // For sub-routes (e.g. /blog/post-1)
         const activeItem = items.find(item => item.url !== "/" && pathname?.startsWith(item.url))
-        return activeItem ? activeItem.name : items[0].name
-    })
-    const [isMobile, setIsMobile] = useState(false)
+        return activeItem ? activeItem.name : null
+    }
 
+    const [activeTab, setActiveTab] = useState<string | null>(resolveActiveTab)
     useEffect(() => {
-        const currentItem = items.find(item => item.url === pathname)
-        if (currentItem) {
-            setActiveTab(currentItem.name)
-        } else {
-            const activeItem = items.find(item => item.url !== "/" && pathname?.startsWith(item.url))
-            if (activeItem) {
-                setActiveTab(activeItem.name)
-            }
-        }
+        setActiveTab(resolveActiveTab())
     }, [pathname, items])
-
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth < 768)
-        }
-
-        handleResize()
-        window.addEventListener("resize", handleResize)
-        return () => window.removeEventListener("resize", handleResize)
-    }, [])
 
     return (
         <div
             className={cn(
-                "z-50",
+                "z-50 max-w-full",
                 className,
             )}
         >
-            <div className="flex items-center gap-3 bg-brand-dark/50 border border-white/10 backdrop-blur-lg py-1 px-1 rounded-full shadow-lg">
+            <div className="flex items-center gap-1 lg:gap-3 bg-brand-dark/50 border border-white/10 backdrop-blur-lg py-1 px-1 rounded-full shadow-lg max-w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {items.map((item) => {
                     const Icon = item.icon
                     const isActive = activeTab === item.name
@@ -70,12 +52,12 @@ export function NavBar({ items, className }: NavBarProps) {
                             href={item.url}
                             onClick={() => setActiveTab(item.name)}
                             className={cn(
-                                "relative cursor-pointer text-sm font-semibold px-6 py-2 rounded-full transition-colors",
+                                "relative shrink-0 whitespace-nowrap break-normal cursor-pointer text-xs lg:text-sm font-semibold px-4 lg:px-6 py-2 rounded-full transition-colors",
                                 "text-white/80 hover:text-brand-primary",
                                 isActive && "bg-white/5 text-brand-primary",
                             )}
                         >
-                            <span className="hidden md:inline">{item.name}</span>
+                            <span className="hidden md:inline whitespace-nowrap break-normal">{item.name}</span>
                             <span className="md:hidden">
                                 <Icon size={18} strokeWidth={2.5} />
                             </span>
