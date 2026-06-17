@@ -23,6 +23,7 @@ export default function PressLogos({ items = [] }: { items?: PressItem[] }) {
   const featuredItems = items.filter(i => i.showInFeaturedBar && i.outletLogo);
   const fallbackItems = items.filter(i => i.outletLogo);
   const displayItems  = featuredItems.length > 0 ? featuredItems : fallbackItems;
+  const hasSingleLogo = displayItems.length === 1;
 
   return (
     <section className="py-16 md:py-20 border-y border-white/5 relative overflow-hidden">
@@ -35,7 +36,7 @@ export default function PressLogos({ items = [] }: { items?: PressItem[] }) {
         >
           As Featured In
         </motion.p>
-        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20">
+        <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16 lg:gap-20">
           {displayItems.length > 0 ? (
             displayItems.map((item, i) => (
               <motion.a
@@ -47,9 +48,21 @@ export default function PressLogos({ items = [] }: { items?: PressItem[] }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="relative h-20 w-52 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+                className={[
+                  "relative",
+                  hasSingleLogo
+                    ? "h-24 w-64 sm:h-28 sm:w-72 md:h-32 md:w-80"
+                    : "h-16 w-40 sm:h-20 sm:w-52 md:h-24 md:w-64 lg:h-28 lg:w-72",
+                  "grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-500",
+                ].join(" ")}
               >
-                <Image src={item.outletLogo!} alt={item.outlet || "Press"} fill className="object-contain" />
+                <Image
+                  src={item.outletLogo!}
+                  alt={item.outlet || "Press"}
+                  fill
+                  sizes={hasSingleLogo ? "(max-width: 768px) 70vw, 320px" : "(max-width: 640px) 40vw, (max-width: 1024px) 260px, 288px"}
+                  className="object-contain p-1"
+                />
               </motion.a>
             ))
           ) : (

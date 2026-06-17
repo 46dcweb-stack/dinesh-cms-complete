@@ -105,7 +105,7 @@ export default function Newsletter({ buttonText = "Join the Conversation", varia
   // ── Shared form JSX ────────────────────────────────────────────────────────
   const formJSX = (
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 w-full">
-      <div className={variant === "form" ? "flex flex-col sm:flex-row gap-4" : ""}>
+      <div className={variant === "form" ? "flex flex-col sm:flex-row gap-4" : "space-y-4"}>
         <div className={variant === "form" ? "flex-1" : ""}>
           {variant === "box" && (
             <label className="text-xs font-mono uppercase tracking-[0.2em] text-text-muted block mb-2">First Name</label>
