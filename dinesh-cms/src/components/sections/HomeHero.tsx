@@ -229,7 +229,7 @@ function HomeHeroComponent({ data }: HomeHeroProps) {
 
 
   return (
-    <section className="relative min-h-screen flex items-center pt-28 pb-12 px-6 overflow-hidden bg-zinc-950">
+    <section className="relative min-h-screen flex items-center pt-32 md:pt-36 lg:pt-40 xl:pt-32 pb-12 px-6 overflow-hidden bg-zinc-950">
       <div className="max-w-7xl mx-auto w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* Left Column */}
