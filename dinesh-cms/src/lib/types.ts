@@ -351,3 +351,22 @@ export interface TeamMember {
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 }
+// ── ECOSYSTEM PAGE META ───────────────────────────────────────────────────────
+export interface EcosystemPageMeta {
+  id?: string;
+  eyebrow?: string;
+  heading?: string;
+  headingItalic?: string;
+  description?: string;
+  introTitle?: string;
+  introBody?: string;
+  stats?: { value: string; label: string }[];
+  ctaTitle?: string;
+  ctaDescription?: string;
+  ctaLabel?: string;
+  ctaUrl?: string;
+  seoMetaTitle?: string;
+  seoMetaDescription?: string;
+  seoOgImage?: string;
+  updatedAt?: Timestamp;
+}

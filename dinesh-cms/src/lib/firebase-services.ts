@@ -527,3 +527,17 @@ export const teamService = {
     await writeAudit("teamMembers", id, "delete", `Deleted team member ID: ${id}`);
   },
 };
+// ── ECOSYSTEM PAGE META ────────────────────────────────────────────────────────
+export const ecosystemPageService = {
+  async get(): Promise<import("./types").EcosystemPageMeta | null> {
+    const snap = await getDoc(doc(db, "ecosystemPageMeta", "main"));
+    if (!snap.exists()) return null;
+    return snap.data() as import("./types").EcosystemPageMeta;
+  },
+
+  async save(data: import("./types").EcosystemPageMeta): Promise<void> {
+    const prev = await fetchSnapshot("ecosystemPageMeta", "main");
+    await setDoc(doc(db, "ecosystemPageMeta", "main"), stripUndefined({ ...data, updatedAt: serverTimestamp() }));
+    await writeAudit("ecosystemPageMeta", "main", "update", "Updated Ecosystem page", undefined, prev);
+  },
+};

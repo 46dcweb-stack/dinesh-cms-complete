@@ -51,6 +51,7 @@ export default function AdvancedVentures({
         <h2 className="text-4xl font-display text-white leading-tight">
           {heading} <span className="text-gradient italic">{headingItalic}</span>
         </h2>
+        <EcosystemLink className="mt-8" />
       </div>
 
       <div className="flex flex-col md:flex-row">
@@ -91,7 +92,9 @@ export default function AdvancedVentures({
               </AnimatePresence>
             </div>
 
-            <div className="relative z-20" />
+            <div className="relative z-20">
+              <EcosystemLink />
+            </div>
           </div>
         </div>
 
@@ -105,6 +108,18 @@ export default function AdvancedVentures({
         </div>
       </div>
     </section>
+  );
+}
+
+function EcosystemLink({ className = "" }: { className?: string }) {
+  return (
+    <Link
+      href="/ecosystem"
+      className={`inline-flex items-center gap-3 py-3 px-6 border border-white/10 rounded-full hover:bg-brand-primary/5 hover:border-brand-primary/30 transition-all group/eco ${className}`}
+    >
+      <span className="text-xs font-bold uppercase tracking-[0.2em]">Explore the Ecosystem</span>
+      <ArrowUpRight size={16} className="group-hover/eco:translate-x-1 group-hover/eco:-translate-y-1 transition-transform" />
+    </Link>
   );
 }
 

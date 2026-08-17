@@ -5,7 +5,7 @@ import { getAdminDb } from "./firebase-admin";
 export {
   blogService, pressService, faqService, aboutService,
   homeService, ventureService, galleryService, settingsService,
-  manifestoService, subscriberService, contactService,
+  manifestoService, subscriberService, contactService, ecosystemPageService,
 } from "./firebase-services";
 
 const SHORT_REVALIDATE_SECONDS = 60;
@@ -147,4 +147,13 @@ export async function getPressPageMeta() {
       return s.exists ? serialize(s.data()) : null;
     }, ["pressPageMeta-main"], { revalidate: SHORT_REVALIDATE_SECONDS })();
   } catch (e) { console.error("[getPressPageMeta]", e); return null; }
+}
+export async function getEcosystemPageMeta() {
+  try {
+    return await unstable_cache(async () => {
+      const db = getAdminDb();
+      const s = await db.collection("ecosystemPageMeta").doc("main").get();
+      return s.exists ? serialize(s.data()) : null;
+    }, ["ecosystemPageMeta-main"], { revalidate: SHORT_REVALIDATE_SECONDS })();
+  } catch (e) { console.error("[getEcosystemPageMeta]", e); return null; }
 }
