@@ -1,7 +1,9 @@
 import Newsletter from "@/components/sections/Newsletter";
 
 export const metadata = {
-  title: "Subscribe",
+  alternates: { canonical: "/subscribe" },
+  openGraph: { title: "Subscribe — Founder Notes by 46DC", url: "/subscribe", type: "website" },
+  title: "Subscribe — Founder Notes by 46DC",
   description: "Thoughts when something's worth writing. Updates when something happens. No schedule, no noise — just the real story of building FourSix46® from the ground up.",
 };
 

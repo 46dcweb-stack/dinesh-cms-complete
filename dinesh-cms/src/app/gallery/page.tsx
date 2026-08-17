@@ -5,8 +5,11 @@ import { fbArr, fbStr } from "@/lib/fallback";
 
 export const revalidate = 60;
 export const metadata = {
-  title: "Gallery",
-  description: "A visual collection of ventures, moments, and architectures.",
+  alternates: { canonical: "/gallery" },
+  openGraph: { title: "Gallery — Dinesh Koyyalamudi (46DC)", url: "/gallery", type: "website" },
+  title: "Gallery — Dinesh Koyyalamudi (46DC)",
+  description:
+    "Moments from the founder journey behind FourSix46® — building Stack46, Cinevenn, Route46 Couriers and 46 Dogs, documented in frames.",
 };
 
 export default async function GalleryPage() {

@@ -40,7 +40,7 @@ import type { HomePage, BlogPost, PressMention } from "@/lib/types";
 //                                 <div className="flex -space-x-2">
 //                                     {[1, 2, 3].map((i) => (
 //                                         <div key={i} className="w-10 h-10 rounded-full border-2 border-black bg-zinc-800 overflow-hidden">
-//                                             <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="Client" className="w-full h-full object-cover" />
+//                                             <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="" aria-hidden="true" width={100} height={100} loading="lazy" decoding="async" className="w-full h-full object-cover" />
 //                                         </div>
 //                                     ))}
 //                                 </div>
@@ -368,4 +368,7 @@ function HomeHeroComponent({ data }: HomeHeroProps) {
   );
 }
 
-export default dynamic(() => Promise.resolve(HomeHeroComponent), { ssr: false });
+// Server-rendered on purpose: this is the LCP element and carries the page H1.
+// All window access is inside effects and the `mounted` flag gates motion, so
+// there is no hydration mismatch. Do not wrap this in dynamic({ ssr: false }).
+export default HomeHeroComponent;

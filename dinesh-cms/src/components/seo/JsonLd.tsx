@@ -9,10 +9,10 @@ export function PersonSchema() {
     const schema = {
         "@context": "https://schema.org",
         "@type": "Person",
-        "@id": "https://dineshkoyyalamudi.com/#person",
+        "@id": "https://www.46dc.com/#person",
         name: "Dinesh Koyyalamudi",
-        url: "https://dineshkoyyalamudi.com",
-        image: "https://dineshkoyyalamudi.com/og-image.jpg",
+        url: "https://www.46dc.com",
+        image: "https://www.46dc.com/og-image.jpg",
         jobTitle: "Founder & Strategic Visionary",
         description:
             "Founder of FourSix46, a premier venture studio dedicated to building high-impact startups at the intersection of technology and human scalability.",
@@ -56,7 +56,7 @@ export function OrganizationSchema() {
             "A premier venture studio dedicated to building high-impact startups at the intersection of technology and human scalability.",
         founder: {
             "@type": "Person",
-            "@id": "https://dineshkoyyalamudi.com/#person",
+            "@id": "https://www.46dc.com/#person",
             name: "Dinesh Koyyalamudi",
         },
         sameAs: ["https://foursix46.com"],
@@ -75,17 +75,17 @@ export function WebsiteSchema() {
     const schema = {
         "@context": "https://schema.org",
         "@type": "WebSite",
-        "@id": "https://dineshkoyyalamudi.com/#website",
-        url: "https://dineshkoyyalamudi.com",
+        "@id": "https://www.46dc.com/#website",
+        url: "https://www.46dc.com",
         name: "Dinesh Koyyalamudi",
         description:
             "Official platform of Dinesh Koyyalamudi — Founder, thinker, and leader focused on building resilient systems and visionary companies.",
         author: {
-            "@id": "https://dineshkoyyalamudi.com/#person",
+            "@id": "https://www.46dc.com/#person",
         },
         potentialAction: {
             "@type": "SearchAction",
-            target: "https://dineshkoyyalamudi.com/blog?q={search_term_string}",
+            target: "https://www.46dc.com/blog?q={search_term_string}",
             "query-input": "required name=search_term_string",
         },
     };
@@ -118,7 +118,7 @@ export function ArticleSchema({
     tags = [],
     author = "Dinesh Koyyalamudi",
 }: ArticleSchemaProps) {
-    const url = `https://dineshkoyyalamudi.com/blog/${slug}`;
+    const url = `https://www.46dc.com/blog/${slug}`;
     const schema = {
         "@context": "https://schema.org",
         "@type": "Article",
@@ -130,12 +130,12 @@ export function ArticleSchema({
         dateModified: publishDate,
         author: {
             "@type": "Person",
-            "@id": "https://dineshkoyyalamudi.com/#person",
+            "@id": "https://www.46dc.com/#person",
             name: author,
         },
         publisher: {
             "@type": "Person",
-            "@id": "https://dineshkoyyalamudi.com/#person",
+            "@id": "https://www.46dc.com/#person",
             name: "Dinesh Koyyalamudi",
         },
         mainEntityOfPage: {
@@ -174,6 +174,34 @@ export function BreadcrumbSchema({ items }: { items: BreadcrumbItem[] }) {
             position: index + 1,
             name: item.name,
             item: item.url,
+        })),
+    };
+
+    return (
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+    );
+}
+
+// ── FAQPage Schema ───────────────────────────────────────────────────────────
+// Requires the Q&A to be visible on the page (it is — see FAQGrid, which keeps
+// answers mounted). Unlocks FAQ rich snippets in search results.
+export function FaqSchema({ items }: { items: { q: string; a: string }[] }) {
+    if (!items || items.length === 0) return null;
+
+    const schema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "@id": "https://www.46dc.com/faq#faqpage",
+        mainEntity: items.map((item) => ({
+            "@type": "Question",
+            name: item.q,
+            acceptedAnswer: {
+                "@type": "Answer",
+                text: item.a,
+            },
         })),
     };
 

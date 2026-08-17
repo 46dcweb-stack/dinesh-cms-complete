@@ -8,10 +8,13 @@ import type { Metadata } from "next";
 export const revalidate = 10;
 
 export const metadata: Metadata = {
-  title: "Journal",
-  description: "Thought leadership, insights, and essays on venture building, strategy, and the future.",
+  alternates: { canonical: "/blog" },
+  title: "Blog — Founder Notes by 46DC | FourSix46®",
+  description:
+    "Founder notes from 46DC — building FourSix46® in public: parent brand strategy, venture building, and lessons from the journey.",
   openGraph: {
-    title: "Journal | Dinesh Koyyalamudi",
+    url: "/blog",
+    title: "Blog — Founder Notes by 46DC | FourSix46®",
     description: "Thought leadership, insights, and essays on venture building and the future.",
     type: "website",
   },
@@ -74,6 +77,7 @@ export default async function BlogListingPage() {
       <div className="px-6 mt-20 mb-8">
         <div className="max-w-6xl mx-auto rounded-3xl border border-white/10 bg-zinc-900/60 overflow-hidden p-5 md:p-10 lg:p-16">
           <ContactForm
+            headingLevel="h2"
             title={heroData.contactTitle}
             subtitle={heroData.contactSubtitle}
             description={heroData.contactDescription}

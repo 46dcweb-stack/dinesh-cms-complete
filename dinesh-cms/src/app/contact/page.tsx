@@ -8,8 +8,10 @@ export async function generateMetadata() {
     const settings = await getSiteSettings() as any;
     const title = settings?.contactTitle || contactPageData.title;
     return {
-        title: "Contact",
+        title: "Contact — Dinesh Koyyalamudi (46DC)",
         description: settings?.contactDescription || contactPageData.description,
+        alternates: { canonical: "/contact" },
+        openGraph: { title: "Contact — Dinesh Koyyalamudi (46DC)", url: "/contact", type: "website" as const },
     };
 }
 

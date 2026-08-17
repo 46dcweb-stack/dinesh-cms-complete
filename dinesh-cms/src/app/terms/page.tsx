@@ -1,8 +1,11 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Terms of Use',
-  description: 'Terms of Use for Dinesh Koyyalamudi',
+  alternates: { canonical: '/terms' },
+  openGraph: { title: 'Terms of Use — Dinesh Koyyalamudi (46DC)', url: '/terms', type: 'website' },
+  title: 'Terms of Use — Dinesh Koyyalamudi (46DC)',
+  description:
+    'The terms governing your use of 46dc.com, the website of Dinesh Koyyalamudi (46DC) and FourSix46® Global Ltd — content, intellectual property and liability.',
 };
 
 export default function TermsOfUsePage() {

@@ -37,7 +37,8 @@ export async function generateMetadata() {
     return {
         title,
         description,
-        openGraph: { title, description, url: "https://dineshkoyyalamudi.com/about", images: [{ url: ogImage, width: 1200, height: 630, alt: title }] },
+        alternates: { canonical: "/about" },
+        openGraph: { title, description, url: "https://www.46dc.com/about", images: [{ url: ogImage, width: 1200, height: 630, alt: title }] },
         twitter: { card: "summary_large_image" as const, title, description, images: [ogImage] },
     };
 }

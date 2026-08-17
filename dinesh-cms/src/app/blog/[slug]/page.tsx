@@ -30,11 +30,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const description = post.seoMetaDescription || post.excerpt || "";
     const ogImage     = post.featuredImage       || "/og-image.jpg";
     return {
-        title,
+        title: `${title} | 46DC`,
         description,
-        alternates: { canonical: post.canonicalUrl || `https://dineshkoyyalamudi.com/blog/${slug}` },
+        alternates: { canonical: post.canonicalUrl || `https://www.46dc.com/blog/${slug}` },
         openGraph: {
             type: "article" as const,
+            url: `/blog/${slug}`,
             title,
             description,
             publishedTime: post.publishDate,
@@ -77,9 +78,9 @@ export default async function BlogPostPage({
                 author={post.author}
             />
             <BreadcrumbSchema items={[
-                { name: "Home", url: "https://dineshkoyyalamudi.com" },
-                { name: "Blog", url: "https://dineshkoyyalamudi.com/blog" },
-                { name: post.title, url: `https://dineshkoyyalamudi.com/blog/${post.slug}` },
+                { name: "Home", url: "https://www.46dc.com" },
+                { name: "Blog", url: "https://www.46dc.com/blog" },
+                { name: post.title, url: `https://www.46dc.com/blog/${post.slug}` },
             ]} />
             <div className="max-w-3xl mx-auto">
                 <Link
@@ -121,7 +122,7 @@ export default async function BlogPostPage({
 
                         <ShareButton
                             title={post.title}
-                            url={`https://dineshkoyyalamudi.com/blog/${post.slug}`}
+                            url={`https://www.46dc.com/blog/${post.slug}`}
                         />
                     </div>
                 </div>

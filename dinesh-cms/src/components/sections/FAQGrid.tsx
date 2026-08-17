@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
 
 interface FAQItem {
@@ -20,6 +20,8 @@ export default function FAQGrid({ questions }: { questions: FAQItem[] }) {
           <div key={idx}>
             <button
               onClick={() => setOpenIndex(isOpen ? null : idx)}
+              aria-expanded={isOpen}
+              aria-controls={`faq-answer-${idx}`}
               className="w-full flex items-start justify-between gap-6 py-7 text-left group"
             >
               <span className={`text-lg md:text-xl font-display leading-snug transition-colors duration-300 ${isOpen ? "text-brand-primary" : "text-white group-hover:text-brand-primary"}`}>
@@ -30,21 +32,19 @@ export default function FAQGrid({ questions }: { questions: FAQItem[] }) {
               </span>
             </button>
 
-            <AnimatePresence initial={false}>
-              {isOpen && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                  className="overflow-hidden"
-                >
-                  <p className="text-text-secondary text-base md:text-lg leading-relaxed pb-7 max-w-3xl">
-                    {faq.a}
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Always mounted so the answer text ships in the server HTML for crawlers;
+                collapsed by animating height rather than unmounting. */}
+            <motion.div
+              id={`faq-answer-${idx}`}
+              initial={false}
+              animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              className="overflow-hidden"
+            >
+              <p className="text-text-secondary text-base md:text-lg leading-relaxed pb-7 max-w-3xl">
+                {faq.a}
+              </p>
+            </motion.div>
           </div>
         );
       })}

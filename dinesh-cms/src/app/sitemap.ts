@@ -4,8 +4,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { MetadataRoute } from "next";
 import { getPublishedBlogs } from "@/lib/firebase-data";
+import { SITE_URL } from "@/lib/site";
 
-const BASE_URL = "https://dineshkoyyalamudi.com";
+const BASE_URL = SITE_URL;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Static pages

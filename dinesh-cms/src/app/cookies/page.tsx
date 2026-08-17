@@ -1,8 +1,11 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Cookie Policy',
-  description: 'Cookie Policy for Dinesh Koyyalamudi',
+  alternates: { canonical: '/cookies' },
+  openGraph: { title: 'Cookie Policy — Dinesh Koyyalamudi (46DC)', url: '/cookies', type: 'website' },
+  title: 'Cookie Policy — Dinesh Koyyalamudi (46DC)',
+  description:
+    'How 46dc.com uses cookies and similar technologies, what each category does, and how you can manage or disable them in your browser at any time.',
 };
 
 export default function CookiePolicyPage() {

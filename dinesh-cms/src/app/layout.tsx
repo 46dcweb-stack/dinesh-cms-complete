@@ -13,8 +13,9 @@ import {
 } from "@/components/seo/JsonLd";
 
 import { getSiteSettings } from "@/lib/firebase-data";
+import { SITE_URL } from "@/lib/site";
 
-const BASE_URL = "https://46dc.com";
+const BASE_URL = SITE_URL;
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings() as any;
@@ -34,10 +35,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(BASE_URL),
 
-    title: {
-      default: title,
-      template: `%s | ${siteName}`,
-    },
+    // Plain string, not a template: pages set their own complete title. The previous
+    // `%s | ${siteName}` template appended the site name to titles that already
+    // contained it, producing ~100-char duplicates in search results.
+    title,
 
     description,
 
@@ -52,10 +53,6 @@ export async function generateMetadata(): Promise<Metadata> {
     authors: [{ name: "Dinesh Koyyalamudi" }],
 
     creator: "Dinesh Koyyalamudi",
-
-    alternates: {
-      canonical: BASE_URL,
-    },
 
     verification: {
       google: "TGvCTVYTY6xlh5pw2KA-vNWZUSiOaAtjP9AYRMj0fl0",

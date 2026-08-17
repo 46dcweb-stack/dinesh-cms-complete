@@ -15,7 +15,8 @@ export async function generateMetadata() {
   const ogImage     = meta?.seoOgImage     || "/og-image.jpg";
   return {
     title, description,
-    openGraph: { title, description, images: [{ url: ogImage }] },
+    alternates: { canonical: "/manifesto" },
+    openGraph: { title, description, url: "/manifesto", images: [{ url: ogImage }] },
   };
 }
 

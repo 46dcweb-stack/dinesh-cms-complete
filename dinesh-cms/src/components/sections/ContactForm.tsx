@@ -15,6 +15,7 @@ interface ContactInfo {
 }
 
 interface ContactFormProps {
+    headingLevel?: "h1" | "h2";
     title: string;
     subtitle: string;
     description: string;
@@ -40,8 +41,12 @@ export default function ContactForm({
     email = "dinesh@46dc.com",
     phone = "+44 02045188119",
     office = "London, England, United Kingdom",
-    hours = "Available 24/7"
+    hours = "Available 24/7",
+    // This block is the page's main heading only on /contact. On /blog and /press
+    // it is a secondary section, so it must not emit a second H1.
+    headingLevel = "h1",
 }: ContactFormProps) {
+    const Heading = motion[headingLevel];
     const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
     const [errors, setErrors] = useState<FormErrors>({});
     const [formData, setLocalFormData] = useState({
@@ -216,13 +221,13 @@ export default function ContactForm({
                 >
                     {subtitle}
                 </motion.span>
-                <motion.h1
+                <Heading
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-3xl md:text-5xl lg:text-7xl font-display leading-tight mb-6 md:mb-8 break-words"
                 >
                     {title.split(' ').slice(0, -1).join(' ')} <span className="text-gradient italic">{title.split(' ').slice(-1)}</span>
-                </motion.h1>
+                </Heading>
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}

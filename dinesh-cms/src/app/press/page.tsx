@@ -16,10 +16,11 @@ export async function generateMetadata() {
   return {
     title: hasCustomTitle ? { absolute: title } : title,
     description,
+    alternates: { canonical: "/press" },
     openGraph: {
       title: hasCustomTitle ? title : `${title} | Dinesh Koyyalamudi`,
       description,
-      url: "https://dineshkoyyalamudi.com/press",
+      url: "https://www.46dc.com/press",
       images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
       type: "website",
     },
@@ -92,6 +93,7 @@ export default async function PressPage() {
       <div className="px-6 mt-20 mb-8">
         <div className="max-w-6xl mx-auto rounded-3xl border border-white/10 bg-zinc-900/60 overflow-hidden p-5 md:p-10 lg:p-16">
           <ContactForm
+            headingLevel="h2"
             title={contactTitle}
             subtitle={contactSubtitle}
             description={contactDescription}

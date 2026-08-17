@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
             value: "dineshkoyyalamudi.com",
           },
         ],
-        destination: "https://46dc.com/:path*",
+        destination: "https://www.46dc.com/:path*",
         permanent: true,
       },
       {
@@ -32,7 +32,7 @@ const nextConfig: NextConfig = {
             value: "www.dineshkoyyalamudi.com",
           },
         ],
-        destination: "https://46dc.com/:path*",
+        destination: "https://www.46dc.com/:path*",
         permanent: true,
       },
     ];

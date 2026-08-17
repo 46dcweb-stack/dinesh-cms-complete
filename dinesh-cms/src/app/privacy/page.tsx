@@ -1,8 +1,11 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy',
-  description: 'Privacy Policy for Dinesh Koyyalamudi',
+  alternates: { canonical: '/privacy' },
+  openGraph: { title: 'Privacy Policy — Dinesh Koyyalamudi (46DC)', url: '/privacy', type: 'website' },
+  title: 'Privacy Policy — Dinesh Koyyalamudi (46DC)',
+  description:
+    'How Dinesh Koyyalamudi (46DC) and FourSix46® Global Ltd collect, use and protect your personal data across 46dc.com, including your rights and contact details.',
 };
 
 export default function PrivacyPolicyPage() {

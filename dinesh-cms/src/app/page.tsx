@@ -23,7 +23,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImage     = fbVal(homeData?.seoOgImage,     fbVal(settings?.seoOgImage,            "/og-image.jpg"));
   return {
     title, description,
-    openGraph: { title, description, images: [{ url: ogImage, width: 1200, height: 630 }], type: "website" },
+    alternates: { canonical: "/" },
+    openGraph: { title, description, url: "/", images: [{ url: ogImage, width: 1200, height: 630 }], type: "website" },
     twitter: { card: "summary_large_image", title, description, images: [ogImage] },
   };
 }
