@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { homeService } from "@/lib/firebase-services";
 import type { HomePage } from "@/lib/types";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Globe, ArrowRight } from "lucide-react";
 import {
   AdminPageHeader, Field, Input, Textarea, SaveButton,
   Alert, Card, SectionTitle, ImageUpload, Toggle,
@@ -338,19 +339,23 @@ export default function HomeAdmin() {
           </div>
         </Card>
 
-        {/* Ventures Section Text */}
+        {/* Ecosystem Section — managed from the Ecosystem Page admin */}
         <Card>
-          <SectionTitle>Ventures Section</SectionTitle>
-          <div className="space-y-3">
-            <Field label="Eyebrow Label" hint="Small text above heading e.g. Portfolio Showcase">
-              <Input value={(form as any).venturesEyebrow || ""} onChange={e => set("venturesEyebrow" as any, e.target.value)} placeholder="Portfolio Showcase" />
-            </Field>
-            <Field label="Heading" hint="Main heading e.g. Building the">
-              <Input value={(form as any).venturesHeading || ""} onChange={e => set("venturesHeading" as any, e.target.value)} placeholder="Building the" />
-            </Field>
-            <Field label="Heading Italic Part" hint="Styled part e.g. Invisible">
-              <Input value={(form as any).venturesHeadingItalic || ""} onChange={e => set("venturesHeadingItalic" as any, e.target.value)} placeholder="Invisible" />
-            </Field>
+          <SectionTitle>Ecosystem Section</SectionTitle>
+          <div className="flex items-start gap-3">
+            <Globe size={16} className="text-[#E22D2D] mt-0.5 flex-shrink-0" />
+            <div className="space-y-3">
+              <p className="text-sm text-white/50 leading-relaxed">
+                The Ecosystem section heading, its visibility, and the venture cards are all managed
+                in one place, so the home section and the <code className="text-white/70">/ecosystem</code>{" "}
+                page always match.
+              </p>
+              <Link href="/admin/ecosystem"
+                className="inline-flex items-center gap-2 text-sm text-white hover:text-[#E22D2D] transition-colors underline underline-offset-4"
+              >
+                Edit the Ecosystem <ArrowRight size={14} />
+              </Link>
+            </div>
           </div>
         </Card>
 
@@ -358,7 +363,6 @@ export default function HomeAdmin() {
         <Card>
           <SectionTitle>Section Visibility Toggles</SectionTitle>
           <div className="grid grid-cols-2 gap-4">
-            <Toggle checked={form.showVentures} onChange={v => set("showVentures", v)} label="Show Ventures Section" />
             <Toggle checked={form.showBlog} onChange={v => set("showBlog", v)} label="Show Blog Section" />
             <Toggle checked={form.showPress} onChange={v => set("showPress", v)} label="Show Press Logos" />
             <Toggle checked={form.showManifestoTeaser} onChange={v => set("showManifestoTeaser", v)} label="Show Manifesto Teaser" />

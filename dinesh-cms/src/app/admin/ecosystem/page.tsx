@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ecosystemPageService } from "@/lib/firebase-services";
+import { ecosystemPageService, homeService } from "@/lib/firebase-services";
 import type { EcosystemPageMeta } from "@/lib/types";
 import { Plus, Trash2, ExternalLink, Layers } from "lucide-react";
 import {
-  AdminPageHeader, Field, Input, Textarea,
+  AdminPageHeader, Field, Input, Textarea, Toggle,
   SaveButton, ImageUpload, Alert, Card, SectionTitle,
 } from "../components/ui";
 
@@ -23,6 +23,7 @@ const DEFAULTS: EcosystemPageMeta = {
   ctaDescription: "Whether you are founding, funding, or partnering — the conversation starts here.",
   ctaLabel: "Start a Conversation",
   ctaUrl: "/contact",
+  showOnHome: true,
   seoMetaTitle: "",
   seoMetaDescription: "",
   seoOgImage: "",
@@ -34,6 +35,7 @@ export default function EcosystemAdmin() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  const [seeded, setSeeded] = useState(false);
 
   useEffect(() => { load(); }, []);
 
@@ -41,7 +43,24 @@ export default function EcosystemAdmin() {
     setLoading(true);
     try {
       const data = await ecosystemPageService.get();
-      if (data) setForm({ ...DEFAULTS, ...data, stats: data.stats ?? [] });
+      if (data) {
+        setForm({ ...DEFAULTS, ...data, stats: data.stats ?? [] });
+      } else {
+        // First time here — carry over the heading currently live on the home page
+        // so saving does not silently replace it with the generic defaults.
+        const home = await homeService.get().catch(() => null);
+        if (home) {
+          const h = home as any;
+          setForm(f => ({
+            ...f,
+            eyebrow:       h.venturesEyebrow       || f.eyebrow,
+            heading:       h.venturesHeading       || f.heading,
+            headingItalic: h.venturesHeadingItalic || f.headingItalic,
+            showOnHome:    h.showVentures ?? true,
+          }));
+          setSeeded(true);
+        }
+      }
     } catch (err: any) { setError(err.message); }
     setLoading(false);
   }
@@ -89,7 +108,7 @@ export default function EcosystemAdmin() {
     <div className="p-8">
       <AdminPageHeader
         title="Ecosystem Page"
-        subtitle="Edit the content of the public /ecosystem page"
+        subtitle="Single source of truth for the Ecosystem — the /ecosystem page and the home page section"
         action={
           <div className="flex items-center gap-3">
             <Link href="/ecosystem" target="_blank"
@@ -104,38 +123,55 @@ export default function EcosystemAdmin() {
 
       {error && <Alert message={error} className="mb-6" />}
 
+      {seeded && (
+        <Alert
+          type="success"
+          className="mb-6"
+          message="Pre-filled from the heading currently live on your home page. Review it, then Save to make this the single source for both surfaces."
+        />
+      )}
+
       {/* ── Where the venture cards come from ───────────────────── */}
       <Card className="mb-8">
         <div className="flex items-start gap-3">
           <Layers size={16} className="text-[#E22D2D] mt-0.5 flex-shrink-0" />
           <p className="text-sm text-white/50 leading-relaxed">
-            The venture cards on this page are pulled from the shared{" "}
+            Everything about the Ecosystem is edited here. The heading below appears on{" "}
+            <strong className="text-white/80">both</strong> the <code className="text-white/70">/ecosystem</code> page
+            and the Ecosystem section on the home page, so the two can never drift apart. The venture
+            cards themselves come from the shared{" "}
             <Link href="/admin/ventures" className="text-white underline underline-offset-4 hover:text-[#E22D2D] transition-colors">
               Ventures
             </Link>{" "}
-            list — the same ventures shown in the Ecosystem section on the home page. Add, edit,
-            reorder, or hide ventures there. The fields below only control this page&apos;s own copy.
+            list — add, edit, reorder or hide ventures there and both surfaces update together.
           </p>
         </div>
       </Card>
 
       {/* ── Header ──────────────────────────────────────────────── */}
       <Card className="mb-8">
-        <SectionTitle>Page Header</SectionTitle>
+        <SectionTitle>Heading — shown on the home section AND the /ecosystem page</SectionTitle>
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Eyebrow" hint="Small uppercase label above the title">
+          <Field label="Eyebrow" hint="Small uppercase label above the title — both surfaces">
             <Input value={form.eyebrow ?? ""} onChange={e => set("eyebrow", e.target.value)} placeholder="The Ecosystem" />
           </Field>
-          <Field label="Heading" hint="Main heading text">
+          <Field label="Heading" hint="Main heading text — both surfaces">
             <Input value={form.heading ?? ""} onChange={e => set("heading", e.target.value)} placeholder="Building the" />
           </Field>
-          <Field label="Heading Italic Suffix" hint="Italic gradient portion at the end of the heading">
+          <Field label="Heading Italic Suffix" hint="Italic gradient portion — both surfaces">
             <Input value={form.headingItalic ?? ""} onChange={e => set("headingItalic", e.target.value)} placeholder="Invisible." />
           </Field>
           <div className="col-span-2">
-            <Field label="Description" hint="Short paragraph shown under the heading">
+            <Field label="Description" hint="Short paragraph under the heading — /ecosystem page only">
               <Textarea value={form.description ?? ""} onChange={e => set("description", e.target.value)} rows={3} />
             </Field>
+          </div>
+          <div className="col-span-2 pt-2 border-t border-white/5">
+            <Toggle
+              checked={form.showOnHome ?? true}
+              onChange={v => set("showOnHome", v)}
+              label="Show the Ecosystem section on the home page"
+            />
           </div>
         </div>
       </Card>
@@ -143,7 +179,7 @@ export default function EcosystemAdmin() {
       {/* ── Stats ───────────────────────────────────────────────── */}
       <Card className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <SectionTitle>Stats Bar</SectionTitle>
+          <SectionTitle>Stats Bar — /ecosystem page only</SectionTitle>
           <button onClick={addStat}
             className="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors"
           >
@@ -181,7 +217,7 @@ export default function EcosystemAdmin() {
 
       {/* ── Intro ───────────────────────────────────────────────── */}
       <Card className="mb-8">
-        <SectionTitle>Intro Block</SectionTitle>
+        <SectionTitle>Intro Block — /ecosystem page only</SectionTitle>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Intro Title" hint="Leave both fields empty to hide this block">
             <Input value={form.introTitle ?? ""} onChange={e => set("introTitle", e.target.value)} placeholder="One parent brand. Many frontiers." />
@@ -194,7 +230,7 @@ export default function EcosystemAdmin() {
 
       {/* ── CTA ─────────────────────────────────────────────────── */}
       <Card className="mb-8">
-        <SectionTitle>Bottom CTA</SectionTitle>
+        <SectionTitle>Bottom CTA — /ecosystem page only</SectionTitle>
         <div className="grid grid-cols-2 gap-4">
           <Field label="CTA Title" hint="Leave empty to hide the CTA block">
             <Input value={form.ctaTitle ?? ""} onChange={e => set("ctaTitle", e.target.value)} placeholder="Want to build with us?" />
@@ -213,7 +249,7 @@ export default function EcosystemAdmin() {
 
       {/* ── SEO ─────────────────────────────────────────────────── */}
       <Card className="mb-8">
-        <SectionTitle>SEO</SectionTitle>
+        <SectionTitle>SEO — /ecosystem page only</SectionTitle>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Meta Title">
             <Input value={form.seoMetaTitle ?? ""} onChange={e => set("seoMetaTitle", e.target.value)} placeholder="The Ecosystem | FourSix46 Ventures" />

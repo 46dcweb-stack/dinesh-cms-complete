@@ -9,7 +9,7 @@ import PressLogos from "@/components/sections/PressLogos";
 import ManifestoTeaser from "@/components/sections/ManifestoTeaser";
 import Newsletter from "@/components/sections/Newsletter";
 import FAQSection from "@/components/sections/FAQSection";
-import { getHomePage, getPublishedBlogs, getPublishedFaq, getVentures, getPublishedPress, getSiteSettings } from "@/lib/firebase-data";
+import { getHomePage, getPublishedBlogs, getPublishedFaq, getVentures, getPublishedPress, getSiteSettings, getEcosystemPageMeta } from "@/lib/firebase-data";
 import { homePageData, blogPosts, faqGroups } from "@/lib/data";
 import { fbStr, fbArr, fbVal } from "@/lib/fallback";
 import type { Metadata } from "next";
@@ -29,8 +29,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const [fbHome, fbBlogs, fbFaq, fbVentures, fbPress] = await Promise.all([
+  const [fbHome, fbBlogs, fbFaq, fbVentures, fbPress, fbEcosystem] = await Promise.all([
     getHomePage(), getPublishedBlogs(), getPublishedFaq(), getVentures(), getPublishedPress(),
+    getEcosystemPageMeta(),
   ]);
 
   const static_home = homePageData as any;
@@ -61,6 +62,15 @@ export default async function Home() {
   const blogs    = fbArr(fbBlogs,    blogPosts as any[]);
   const press    = fbArr(fbPress,    []);
 
+  // ── Ecosystem section — managed in /admin/ecosystem so the home section and the
+  //    /ecosystem page always show the same copy. Legacy homePage fields are the fallback.
+  const eco = (fbEcosystem ?? {}) as any;
+  const ecosystem = {
+    eyebrow:       fbStr(eco.eyebrow,       fbStr(homeData.venturesEyebrow,       "Portfolio Showcase")),
+    heading:       fbStr(eco.heading,       fbStr(homeData.venturesHeading,       "Building the")),
+    headingItalic: fbStr(eco.headingItalic, fbStr(homeData.venturesHeadingItalic, "Invisible")),
+  };
+
 
 // After (no type issues
   const ventures = (fbVentures.length > 0 ? fbVentures : (static_home.ventures ?? []));
@@ -83,7 +93,7 @@ export default async function Home() {
     : faqGroups.flatMap((g) => g.questions) as any[];
 
   const show = {
-    ventures:        fbVal(homeData.showVentures,        true),
+    ventures:        fbVal(eco.showOnHome, fbVal(homeData.showVentures, true)),
     blog:            fbVal(homeData.showBlog,            true),
     press:           fbVal(homeData.showPress,           true),
     manifestoTeaser: fbVal(homeData.showManifestoTeaser, true),
@@ -107,9 +117,9 @@ export default async function Home() {
       <EthosSection data={homeData.ethos} />
       {show.ventures        && <AdvancedVentures
         data={ventures}
-        eyebrow={homeData.venturesEyebrow}
-        heading={homeData.venturesHeading}
-        headingItalic={homeData.venturesHeadingItalic}
+        eyebrow={ecosystem.eyebrow}
+        heading={ecosystem.heading}
+        headingItalic={ecosystem.headingItalic}
       />}
       {show.blog            && <HorizontalNewsroom
         posts={blogs.slice(0, 6) as any}

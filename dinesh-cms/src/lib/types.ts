@@ -354,6 +354,7 @@ export interface TeamMember {
 // ── ECOSYSTEM PAGE META ───────────────────────────────────────────────────────
 export interface EcosystemPageMeta {
   id?: string;
+  // Heading fields drive BOTH the home page Ecosystem section and the /ecosystem page
   eyebrow?: string;
   heading?: string;
   headingItalic?: string;
@@ -365,6 +366,8 @@ export interface EcosystemPageMeta {
   ctaDescription?: string;
   ctaLabel?: string;
   ctaUrl?: string;
+  // Controls whether the Ecosystem section renders on the home page
+  showOnHome?: boolean;
   seoMetaTitle?: string;
   seoMetaDescription?: string;
   seoOgImage?: string;
