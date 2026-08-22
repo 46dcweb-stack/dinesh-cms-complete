@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageSchema } from "@/components/seo/JsonLd";
 import { getPublishedBlogs, getVentures } from "@/lib/firebase-data";
+import { SECTION_ORDER, routesBySection } from "@/lib/routes";
 
 export const revalidate = 60;
 
@@ -15,42 +16,24 @@ export const metadata: Metadata = {
 
 type Entry = { label: string; href: string; note?: string; external?: boolean };
 
-const SECTIONS: { title: string; links: Entry[] }[] = [
-  {
-    title: "Main",
-    links: [
-      { label: "Home",      href: "/",          note: "Overview of 46DC and the FourSix46 ecosystem" },
-      { label: "About",     href: "/about",     note: "Biography, background and current focus" },
-      { label: "Ecosystem", href: "/ecosystem", note: "Every venture built under FourSix46" },
-      { label: "Manifesto", href: "/manifesto", note: "Operating principles and long-term philosophy" },
-    ],
-  },
-  {
-    title: "Content",
-    links: [
-      { label: "Blog",    href: "/blog",    note: "Founder notes, written in public" },
-      { label: "Press",   href: "/press",   note: "Media coverage and press assets" },
-      { label: "Gallery", href: "/gallery", note: "Moments from the founder journey" },
-      { label: "FAQ",     href: "/faq",     note: "Direct answers about 46DC and FourSix46" },
-    ],
-  },
-  {
-    title: "Connect",
-    links: [
-      { label: "Contact",   href: "/contact",   note: "Enquiries and collaboration" },
-      { label: "Subscribe", href: "/subscribe", note: "Get founder notes by email" },
-    ],
-  },
-  {
-    title: "Legal",
-    links: [
-      { label: "Privacy Policy", href: "/privacy" },
-      { label: "Terms of Use",   href: "/terms" },
-      { label: "Cookie Policy",  href: "/cookies" },
-      { label: "XML Sitemap",    href: "/sitemap.xml", note: "Machine-readable version for search engines", external: true },
-    ],
-  },
-];
+// Sections come from the shared route list, so this page and /sitemap.xml can
+// never disagree about which pages exist.
+const SECTIONS: { title: string; links: Entry[] }[] = SECTION_ORDER.map(section => ({
+  title: section,
+  links: routesBySection(section).map(r => ({
+    label: r.label,
+    href: r.path,
+    note: r.description,
+  })),
+}));
+
+// The XML sitemap is not a page, so it is appended to Legal by hand.
+SECTIONS[SECTIONS.length - 1].links.push({
+  label: "XML Sitemap",
+  href: "/sitemap.xml",
+  note: "Machine-readable version for search engines",
+  external: true,
+});
 
 export default async function SitemapPage() {
   const [posts, ventures] = await Promise.all([

@@ -7,32 +7,16 @@
 import { MetadataRoute } from "next";
 import { getPublishedBlogs } from "@/lib/firebase-data";
 import { SITE_URL } from "@/lib/site";
+import { SITE_ROUTES } from "@/lib/routes";
 
 const BASE_URL = SITE_URL;
-
-// Keep this in sync when a new static route is added under src/app.
-const STATIC_ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[0]["changeFrequency"]; priority: number }[] = [
-    { path: "",           changeFrequency: "weekly",  priority: 1.0 },
-    { path: "/about",     changeFrequency: "monthly", priority: 0.9 },
-    { path: "/ecosystem", changeFrequency: "weekly",  priority: 0.9 },
-    { path: "/manifesto", changeFrequency: "monthly", priority: 0.9 },
-    { path: "/blog",      changeFrequency: "daily",   priority: 0.8 },
-    { path: "/press",     changeFrequency: "weekly",  priority: 0.7 },
-    { path: "/gallery",   changeFrequency: "weekly",  priority: 0.6 },
-    { path: "/faq",       changeFrequency: "monthly", priority: 0.6 },
-    { path: "/contact",   changeFrequency: "yearly",  priority: 0.5 },
-    { path: "/subscribe", changeFrequency: "yearly",  priority: 0.5 },
-    { path: "/privacy",   changeFrequency: "yearly",  priority: 0.3 },
-    { path: "/terms",     changeFrequency: "yearly",  priority: 0.3 },
-    { path: "/cookies",   changeFrequency: "yearly",  priority: 0.3 },
-    { path: "/sitemap",   changeFrequency: "weekly",  priority: 0.3 },
-];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const now = new Date();
 
-    const staticPages: MetadataRoute.Sitemap = STATIC_ROUTES.map(r => ({
-        url: `${BASE_URL}${r.path}`,
+    const staticPages: MetadataRoute.Sitemap = SITE_ROUTES.map(r => ({
+        // "/" must not become a trailing-slash URL
+        url: `${BASE_URL}${r.path === "/" ? "" : r.path}`,
         lastModified: now,
         changeFrequency: r.changeFrequency,
         priority: r.priority,
