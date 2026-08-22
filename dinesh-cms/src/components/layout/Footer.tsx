@@ -28,6 +28,14 @@ const DEFAULTS = {
   ],
 };
 
+const SOCIAL_LABELS: Record<string, string> = {
+  linkedin:  "LinkedIn",
+  twitter:   "X (Twitter)",
+  instagram: "Instagram",
+  youtube:   "YouTube",
+  facebook:  "Facebook",
+};
+
 const SOCIAL_ICONS: Record<string, React.ReactNode> = {
   linkedin:  <Linkedin size={18} />,
   twitter:   <Twitter size={18} />,
@@ -89,9 +97,9 @@ export default function Footer() {
               Founder, entrepreneur, and the mind behind FourSix46 Ventures. Building products that matter and telling stories that resonate.
             </p>
             {activeSocials.length > 0 && (
-              <div className="flex flex-nowrap gap-3">
+              <div className="relative z-20 flex flex-wrap gap-3">
                 {activeSocials.map(key => (
-                  <SocialLink key={key} href={(social as any)[key]} icon={SOCIAL_ICONS[key]} />
+                  <SocialLink key={key} href={(social as any)[key]} icon={SOCIAL_ICONS[key]} label={SOCIAL_LABELS[key]} />
                 ))}
               </div>
             )}
@@ -187,15 +195,16 @@ export default function Footer() {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function SocialLink({ href, icon }: { href: string; icon: React.ReactNode }) {
+function SocialLink({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) {
   return (
     <motion.a
       href={href}
       whileHover={{ scale: 1.2, rotate: 5, boxShadow: "0 0 15px rgba(255, 90, 0, 0.3)", borderColor: "rgba(255, 90, 0, 0.4)" }}
       whileTap={{ scale: 0.9 }}
-      className="w-12 h-12 min-w-12 min-h-12 aspect-square shrink-0 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-text-muted hover:text-brand-primary transition-all duration-300"
+      className="relative z-20 w-12 h-12 min-w-12 min-h-12 aspect-square shrink-0 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-text-muted hover:text-brand-primary transition-all duration-300"
       target="_blank"
       rel="noopener noreferrer"
+      aria-label={label}
     >
       {icon}
     </motion.a>

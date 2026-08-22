@@ -263,6 +263,7 @@ export interface SiteSettings {
     twitter?: string;
     instagram?: string;
     youtube?: string;
+    facebook?: string;
   };
   footerEmail?: string;
   footerCopyright: string;
