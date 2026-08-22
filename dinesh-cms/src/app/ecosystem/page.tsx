@@ -5,6 +5,7 @@ import { getVentures, getEcosystemPageMeta, getSiteSettings } from "@/lib/fireba
 import { homePageData } from "@/lib/data";
 import { fbArr, fbStr } from "@/lib/fallback";
 import type { Metadata } from "next";
+import { PageSchema } from "@/components/seo/JsonLd";
 
 export const revalidate = 60;
 
@@ -62,6 +63,7 @@ export default async function EcosystemPage() {
 
   return (
     <div className="pt-48 lg:pt-48 pb-24 bg-brand-dark min-h-screen">
+      <PageSchema name="The Ecosystem" description="Every venture built under the FourSix46 parent brand." path="/ecosystem" type="CollectionPage" breadcrumb="Ecosystem" />
       <div className="px-6">
         <div className="max-w-7xl mx-auto">
 

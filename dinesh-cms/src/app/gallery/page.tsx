@@ -2,6 +2,7 @@ import GalleryGrid from "@/components/sections/GalleryGrid";
 import { getGallery } from "@/lib/firebase-data";
 import { galleryImages, galleryPageData } from "@/lib/data";
 import { fbArr, fbStr } from "@/lib/fallback";
+import { PageSchema } from "@/components/seo/JsonLd";
 
 export const revalidate = 60;
 export const metadata = {
@@ -34,6 +35,7 @@ export default async function GalleryPage() {
 
   return (
     <div className="pt-48 lg:pt-48 pb-24 bg-brand-dark min-h-screen">
+      <PageSchema name="Gallery" description="Moments from the founder journey behind FourSix46." path="/gallery" type="CollectionPage" />
       <div className="px-6">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-3xl mb-24">

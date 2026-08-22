@@ -6,7 +6,8 @@ import ShareButton from "@/components/blog/ShareButton";
 import BlogContentWrapper from "@/components/blog/BlogContentWrapper";
 import { blogPosts } from "@/lib/data";
 import { getBlogBySlug, getPublishedBlogs } from "@/lib/firebase-data";
-import { ArticleSchema, BreadcrumbSchema } from "@/components/seo/JsonLd";
+import { BlogPostingSchema, BreadcrumbSchema, FaqSchema } from "@/components/seo/JsonLd";
+import { getPostFaqs } from "@/lib/post-faqs";
 import type { BlogPost } from "@/lib/types";
 
 export const revalidate = 60;
@@ -68,7 +69,7 @@ export default async function BlogPostPage({
     return (
         <article className="pt-36 pb-24 px-6">
             {/* SEO: Article schema + Breadcrumb for Google */}
-            <ArticleSchema
+            <BlogPostingSchema
                 title={post.title}
                 excerpt={post.excerpt || ""}
                 slug={post.slug}
@@ -76,6 +77,12 @@ export default async function BlogPostPage({
                 featuredImage={post.featuredImage}
                 tags={post.tags}
                 author={post.author}
+                dateModified={post.updatedAt || post.publishDate}
+            />
+            {/* Only emitted for posts whose body actually shows these Q&As. */}
+            <FaqSchema
+                items={getPostFaqs(post.slug)}
+                pageUrl={`https://www.46dc.com/blog/${post.slug}`}
             />
             <BreadcrumbSchema items={[
                 { name: "Home", url: "https://www.46dc.com" },

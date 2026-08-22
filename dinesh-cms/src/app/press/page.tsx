@@ -4,6 +4,7 @@ import MediaKitButton from "@/components/press/MediaKitButton";
 import ContactForm from "@/components/sections/ContactForm";
 import { getPublishedPress, getSiteSettings, getPressPageMeta } from "@/lib/firebase-data";
 import { pressMentions, pressPageData } from "@/lib/data";
+import { PageSchema } from "@/components/seo/JsonLd";
 
 export const revalidate = 10;
 
@@ -73,6 +74,7 @@ export default async function PressPage() {
 
   return (
     <div className="pb-24">
+      <PageSchema name="Press & Media" description="Media coverage, features and press assets for Dinesh Koyyalamudi (46DC) and FourSix46 Global Ltd." path="/press" type="CollectionPage" breadcrumb="Press" />
       <PressHeader data={headerData} />
 
       <div className="max-w-7xl mx-auto px-6">

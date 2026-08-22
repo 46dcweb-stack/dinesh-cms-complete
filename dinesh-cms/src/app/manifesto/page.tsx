@@ -4,6 +4,7 @@ import ManifestoCTA from "@/components/manifesto/ManifestoCTA";
 import { getManifesto } from "@/lib/firebase-data";
 import { manifestoData } from "@/lib/data";
 import { fbStr } from "@/lib/fallback";
+import { PageSchema } from "@/components/seo/JsonLd";
 
 export const revalidate = 60;
 
@@ -37,6 +38,7 @@ export default async function ManifestoPage() {
 
   return (
     <div className="pt-28 lg:pt-28 pb-48 bg-brand-dark min-h-screen">
+      <PageSchema name="Manifesto" description="The operating principles and long-term philosophy behind FourSix46." path="/manifesto" />
       <div className="max-w-7xl mx-auto px-6">
         <ManifestoHeader title={title} subtitle={subtitle} eyebrow={eyebrow} introLabel={introLabel} introStats={introStats} versionTag={versionTag} globeMarkers={globeMarkers} globeConnections={globeConnections} />
         <ManifestoContent blocks={blocks as any} />

@@ -4,6 +4,7 @@ import { getPublishedBlogs } from "@/lib/firebase-data";
 import { getAdminDb } from "@/lib/firebase-admin";
 import { blogPosts } from "@/lib/data";
 import type { Metadata } from "next";
+import { PageSchema } from "@/components/seo/JsonLd";
 
 export const revalidate = 10;
 
@@ -67,6 +68,7 @@ export default async function BlogListingPage() {
 
   return (
     <div className="pb-24">
+      <PageSchema name="Blog" description="Founder notes from 46DC, building FourSix46 in public." path="/blog" type="CollectionPage" />
       <BlogClientWrapper
         initialPosts={posts as any}
         initialFeaturedPost={null}

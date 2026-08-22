@@ -4,6 +4,7 @@ import StoryTimeline from "@/components/sections/StoryTimeline";
 import LeadershipTeam from "@/components/sections/LeadershipTeam";
 import { getAboutPage, getTeamMembers } from "@/lib/firebase-data";
 import { aboutData } from "@/lib/data";
+import { PageSchema } from "@/components/seo/JsonLd";
 
 export const revalidate = 10;
 
@@ -71,6 +72,7 @@ export default async function AboutPage() {
 
     return (
         <div className="pt-36 lg:pt-36 pb-24">
+            <PageSchema name="About 46DC" description="Biography, background and current focus of Dinesh Koyyalamudi (46DC), founder of FourSix46 Global Ltd." path="/about" type="AboutPage" breadcrumb="About" />
             <div className="px-6">
                 <div className="max-w-7xl mx-auto">
                     <div className="max-w-3xl mb-24">

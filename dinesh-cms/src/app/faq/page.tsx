@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import FaqContent, { type FaqGroup } from "@/components/sections/FaqContent";
-import { FaqSchema } from "@/components/seo/JsonLd";
+import { FaqSchema, PageSchema } from "@/components/seo/JsonLd";
 import { getPublishedFaq, getFaqPageSettings } from "@/lib/firebase-data";
 import { faqGroups } from "@/lib/data";
 import { fbStr } from "@/lib/fallback";
@@ -64,6 +64,7 @@ export default async function FAQPage() {
 
   return (
     <div className="pt-48 lg:pt-48 pb-24">
+      <PageSchema name="FAQ" description="Direct answers about Dinesh Koyyalamudi (46DC) and FourSix46 Global Ltd." path="/faq" />
       <FaqSchema items={allItems} />
       <div className="px-6">
         <div className="max-w-7xl mx-auto">

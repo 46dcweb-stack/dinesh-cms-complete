@@ -1,6 +1,7 @@
 import ContactForm from "@/components/sections/ContactForm";
 import { getSiteSettings } from "@/lib/firebase-data";
 import { contactPageData } from "@/lib/data";
+import { PageSchema } from "@/components/seo/JsonLd";
 
 export const revalidate = 60;
 
@@ -29,6 +30,7 @@ export default async function ContactPage() {
 
     return (
         <div className="pt-36 md:pt-40 lg:pt-44 pb-24 px-6">
+      <PageSchema name="Contact" description="Enquiries and collaboration with Dinesh Koyyalamudi (46DC)." path="/contact" type="ContactPage" />
             <div className="max-w-7xl mx-auto">
                 <ContactForm 
                     title={title} 
