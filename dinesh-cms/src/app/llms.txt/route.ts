@@ -51,6 +51,7 @@ Key facts, stated plainly for retrieval:
 - [Press](${SITE_URL}/press): Media coverage and press assets.
 - [FAQ](${SITE_URL}/faq): Direct answers about 46DC and FourSix46.
 - [Contact](${SITE_URL}/contact): Enquiries and collaboration.
+- [Sitemap](${SITE_URL}/sitemap): Complete index of every page.
 
 ## Blog posts
 

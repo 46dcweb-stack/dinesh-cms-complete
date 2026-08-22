@@ -134,7 +134,7 @@ export default function Footer() {
               <FooterLink href="/privacy" label="Privacy" />
               <FooterLink href="/terms" label="Terms of Use" />
               <FooterLink href="/cookies" label="Cookie Policy" />
-              <FooterLink href="/sitemap.xml" label="Sitemap" />
+              <FooterLink href="/sitemap" label="Sitemap" />
             </ul>
           </div>
 
