@@ -97,7 +97,7 @@ export default function Footer() {
               Founder, entrepreneur, and the mind behind FourSix46 Ventures. Building products that matter and telling stories that resonate.
             </p>
             {activeSocials.length > 0 && (
-              <div className="relative z-20 flex flex-wrap gap-3">
+              <div className="relative z-20 flex flex-nowrap gap-3">
                 {activeSocials.map(key => (
                   <SocialLink key={key} href={(social as any)[key]} icon={SOCIAL_ICONS[key]} label={SOCIAL_LABELS[key]} />
                 ))}
