@@ -215,7 +215,7 @@ export default function SettingsAdmin() {
               <Input
                 value={form.footerEmail || ""}
                 onChange={e => set("footerEmail", e.target.value)}
-                placeholder="dinesh@foursix46.com"
+                placeholder="dinesh@46dc.com"
                 type="email"
               />
             </Field>

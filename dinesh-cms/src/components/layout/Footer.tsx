@@ -12,9 +12,9 @@ import type { SiteSettings } from "@/lib/types";
 const DEFAULTS = {
   socialLinks: { linkedin: "", twitter: "", instagram: "", youtube: "", facebook: "" },
   footerCopyright: `© ${new Date().getFullYear()} Dinesh Koyyalamudi. All rights reserved.`,
-  footerEmail: "dinesh@foursix46.com",
-  footerLocation: "Global Base",
-  footerQuote: "The best companies are built not just on ideas, but on conviction.",
+  footerEmail: "dinesh@46dc.com",
+  footerLocation: "London, UK",
+  footerQuote: "Long-term is the only foundation worth building on.",
   navItems: [
     { label: "About", url: "/about", order: 1 },
     { label: "Ecosystem", url: "/ecosystem", order: 2 },
