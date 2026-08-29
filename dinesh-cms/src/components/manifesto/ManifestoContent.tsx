@@ -8,7 +8,10 @@ import Image from "next/image";
 type ManifestoBlock = {
     type?: "text" | "principle" | "quote" | "vision_grid" | "statement" | "essay";
     text?: string;
+    /** Static fallback data (lib/data.ts) uses `author`; the CMS saves
+     *  `authorAttr`. Both are read so either source renders. */
     author?: string;
+    authorAttr?: string;
     principles?: { title: string; description: string }[];
     items?: { icon: string; title: string; text: string }[];
     isVisible?: boolean;
@@ -106,11 +109,11 @@ function ManifestoBlock({ block }: { block: ManifestoBlock }) {
                     <blockquote className="text-4xl md:text-6xl font-display text-white text-center leading-[1.1] tracking-tighter">
                         <span className="text-gradient italic">&ldquo;{block.text}&rdquo;</span>
                     </blockquote>
-                    {block.author && (
+                    {(block.authorAttr || block.author) && (
                         <div className="mt-12 text-center">
                             <div className="w-12 h-[1px] bg-brand-primary/50 mx-auto mb-6" />
                             <cite className="text-brand-primary font-mono text-[10px] uppercase tracking-[0.5em] not-italic">
-                                {block.author}
+                                {block.authorAttr || block.author}
                             </cite>
                         </div>
                     )}

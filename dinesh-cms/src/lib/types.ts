@@ -58,7 +58,7 @@ export interface ManifestoSection {
   // Legacy values ("Principle", "Statement", "Vision") remain valid so existing
   // documents stay editable until they are migrated.
   sectionType:
-    | "Principle 46" | "Statement 46" | "Rule 46" | "Reason 46"
+    | "Principle 46" | "Statement 46" | "Vision 46" | "Rule 46" | "Reason 46"
     | "Suggestion 46" | "Lesson 46" | "Note 46" | "Essay"
     | "Principle" | "Statement" | "Vision";
   order: number;

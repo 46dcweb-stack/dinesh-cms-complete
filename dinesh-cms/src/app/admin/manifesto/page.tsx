@@ -134,6 +134,7 @@ function ManualCityEntry({ onAdd }: { onAdd: (city: { lat: number; lng: number; 
 const SECTION_TYPES = [
   "Principle 46",
   "Statement 46",
+  "Vision 46",
   "Rule 46",
   "Reason 46",
   "Suggestion 46",
