@@ -7,7 +7,7 @@ import {
   AdminPageHeader, Field, Input, Textarea, Select, Toggle,
   SaveButton, DeleteButton, ImageUpload, TagsInput, Alert, Card, SectionTitle,
 } from "../../components/ui";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 const EMPTY: Omit<BlogPost, "id"> = {
@@ -17,7 +17,10 @@ const EMPTY: Omit<BlogPost, "id"> = {
   status: "draft", readingTime: 5, canonicalUrl: "",
   language: "en", series: "",
   seoMetaTitle: "", seoMetaDescription: "", author: "Dinesh Koyyalamudi",
+  faqs: [],
 };
+
+type Faq = { question: string; answer: string };
 
 function slugify(s: string) {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -47,6 +50,26 @@ export default function BlogEditor() {
     }
   }, [id, isNew]);
 
+  // ── FAQ helpers ───────────────────────────────────────────────────────────
+  const faqs: Faq[] = form.faqs ?? [];
+
+  function setFaq(index: number, key: keyof Faq, val: string) {
+    const next = faqs.map((f, i) => (i === index ? { ...f, [key]: val } : f));
+    set("faqs", next);
+  }
+
+  function addFaq() { set("faqs", [...faqs, { question: "", answer: "" }]); }
+
+  function removeFaq(index: number) { set("faqs", faqs.filter((_, i) => i !== index)); }
+
+  function moveFaq(index: number, dir: -1 | 1) {
+    const target = index + dir;
+    if (target < 0 || target >= faqs.length) return;
+    const next = [...faqs];
+    [next[index], next[target]] = [next[target], next[index]];
+    set("faqs", next);
+  }
+
   function set(key: keyof typeof form, val: any) {
     if (key === "title" && isNew) {
       setForm(f => ({ ...f, title: val, slug: slugify(val) }));
@@ -65,11 +88,17 @@ export default function BlogEditor() {
     setSaving(true);
     setError("");
     try {
+      // Blank FAQ rows would render as empty accordion items and produce
+      // invalid FAQPage entries, so strip them before writing.
+      const cleaned = {
+        ...form,
+        faqs: (form.faqs ?? []).filter(f => f.question.trim() && f.answer.trim()),
+      };
       if (isNew) {
-        const newId = await blogService.create(form);
+        const newId = await blogService.create(cleaned);
         router.replace(`/admin/blog/${newId}`);
       } else {
-        await blogService.update(id, form);
+        await blogService.update(id, cleaned);
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
       }
@@ -162,6 +191,63 @@ export default function BlogEditor() {
                   />
                 </Field>
               </div>
+            </Card>
+
+            <Card>
+              <div className="flex items-center justify-between mb-4">
+                <SectionTitle>FAQs</SectionTitle>
+                <button type="button" onClick={addFaq}
+                  className="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors"
+                >
+                  <Plus size={14} /> Add FAQ
+                </button>
+              </div>
+              <p className="text-xs text-white/30 mb-5 leading-relaxed">
+                Shown as an FAQ section at the end of this post and published as
+                FAQPage structured data, which can earn an expandable result in Google.
+                Google requires these to be visible on the page &mdash; that happens
+                automatically. Leave empty for no FAQ section.
+              </p>
+
+              {faqs.length === 0 ? (
+                <p className="text-sm text-white/30">No FAQs for this post.</p>
+              ) : (
+                <div className="space-y-5">
+                  {faqs.map((f, i) => (
+                    <div key={i} className="rounded-xl border border-white/10 bg-white/5 p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/40">
+                          FAQ {i + 1}
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <button type="button" onClick={() => moveFaq(i, -1)} disabled={i === 0}
+                            className="p-1.5 rounded-lg text-white/30 hover:text-white hover:bg-white/10 disabled:opacity-20 transition-colors">
+                            <ChevronUp size={14} />
+                          </button>
+                          <button type="button" onClick={() => moveFaq(i, 1)} disabled={i === faqs.length - 1}
+                            className="p-1.5 rounded-lg text-white/30 hover:text-white hover:bg-white/10 disabled:opacity-20 transition-colors">
+                            <ChevronDown size={14} />
+                          </button>
+                          <button type="button" onClick={() => removeFaq(i)}
+                            className="p-1.5 rounded-lg text-white/30 hover:text-red-400 hover:bg-red-400/10 transition-colors">
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <Field label="Question">
+                          <Input value={f.question} onChange={e => setFaq(i, "question", e.target.value)}
+                            placeholder="What does 46DC stand for?" />
+                        </Field>
+                        <Field label="Answer">
+                          <Textarea value={f.answer} onChange={e => setFaq(i, "answer", e.target.value)}
+                            rows={3} placeholder="Answer in full sentences — this is what Google shows." />
+                        </Field>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </Card>
 
             <Card>

@@ -7,7 +7,7 @@ import BlogContentWrapper from "@/components/blog/BlogContentWrapper";
 import { blogPosts } from "@/lib/data";
 import { getBlogBySlug, getPublishedBlogs } from "@/lib/firebase-data";
 import { BlogPostingSchema, BreadcrumbSchema, FaqSchema } from "@/components/seo/JsonLd";
-import { getPostFaqs } from "@/lib/post-faqs";
+import PostFaq from "@/components/blog/PostFaq";
 import type { BlogPost } from "@/lib/types";
 
 export const revalidate = 60;
@@ -56,6 +56,11 @@ export default async function BlogPostPage({
     const { slug } = await params;
     const fbPost = await getBlogBySlug(slug).catch(() => null) as BlogPost | null;
     const post = fbPost ?? (blogPosts.find((p) => p.slug === slug) as any);
+    // Managed per post in /admin/blog/[id]; drives both the visible FAQ section
+    // and the FAQPage schema, so the two can never disagree.
+    const postFaqs: { question: string; answer: string }[] = Array.isArray(post?.faqs)
+        ? post.faqs.filter((f: any) => f?.question?.trim() && f?.answer?.trim())
+        : [];
 
     if (!post) notFound();
 
@@ -79,9 +84,9 @@ export default async function BlogPostPage({
                 author={post.author}
                 dateModified={post.updatedAt || post.publishDate}
             />
-            {/* Only emitted for posts whose body actually shows these Q&As. */}
+            {/* Emitted only alongside the visible FAQ section rendered below. */}
             <FaqSchema
-                items={getPostFaqs(post.slug)}
+                items={postFaqs.map((f: any) => ({ q: f.question, a: f.answer }))}
                 pageUrl={`https://www.46dc.com/blog/${post.slug}`}
             />
             <BreadcrumbSchema items={[
@@ -135,6 +140,8 @@ export default async function BlogPostPage({
                 </div>
 
                 <BlogContentWrapper content={post.content} />
+
+                <PostFaq items={postFaqs} />
 
                 <div className="mt-20 p-12 glass-card text-center relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/5 rounded-full blur-[80px] -z-10" />

@@ -25,6 +25,10 @@ export interface BlogPost {
   seoMetaTitle?: string;
   seoMetaDescription?: string;
   author: string;
+  /** Per-post FAQs. Rendered visibly on the post AND emitted as FAQPage
+   *  schema — Google requires the Q&A to be visible, so the two are tied
+   *  together deliberately. */
+  faqs?: { question: string; answer: string }[];
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
   createdBy?: string;
