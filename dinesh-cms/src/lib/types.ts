@@ -54,7 +54,13 @@ export interface PressMention {
 // ── MANIFESTO SECTIONS ───────────────────────────────────────────────────────
 export interface ManifestoSection {
   id?: string;
-  sectionType: "Principle" | "Essay" | "Statement" | "Vision";
+  // Rendered verbatim as the public label above each manifesto section.
+  // Legacy values ("Principle", "Statement", "Vision") remain valid so existing
+  // documents stay editable until they are migrated.
+  sectionType:
+    | "Principle 46" | "Statement 46" | "Rule 46" | "Reason 46"
+    | "Suggestion 46" | "Lesson 46" | "Note 46" | "Essay"
+    | "Principle" | "Statement" | "Vision";
   order: number;
   type: "text" | "quote" | "principle" | "vision_grid";
   // text type

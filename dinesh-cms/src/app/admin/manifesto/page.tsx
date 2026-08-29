@@ -128,6 +128,20 @@ function ManualCityEntry({ onAdd }: { onAdd: (city: { lat: number; lng: number; 
   );
 }
 
+// Section types offered in the admin dropdown. The stored value is rendered
+// verbatim as the label above each section on the public /manifesto page, so
+// these strings are user-facing copy, not internal keys.
+const SECTION_TYPES = [
+  "Principle 46",
+  "Statement 46",
+  "Rule 46",
+  "Reason 46",
+  "Suggestion 46",
+  "Lesson 46",
+  "Note 46",
+  "Essay",
+] as const;
+
 export default function ManifestoAdmin() {
   const [meta, setMeta] = useState<Omit<ManifestoMeta, "id">>(EMPTY_META);
   const [sections, setSections] = useState<ManifestoSection[]>([]);
@@ -404,10 +418,12 @@ export default function ManifestoAdmin() {
           <div className="grid grid-cols-2 gap-4">
             <Field label="Section Type">
               <Select value={sectionForm.sectionType} onChange={e => setS("sectionType", e.target.value)}>
-                <option value="Essay">Essay</option>
-                <option value="Principle">Principle</option>
-                <option value="Statement">Statement</option>
-                <option value="Vision">Vision</option>
+                {SECTION_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                {/* A section saved under an older type keeps its value instead of
+                    silently snapping to the first option when it is edited. */}
+                {sectionForm.sectionType && !(SECTION_TYPES as readonly string[]).includes(sectionForm.sectionType) && (
+                  <option value={sectionForm.sectionType}>{sectionForm.sectionType} (existing)</option>
+                )}
               </Select>
             </Field>
             <Field label="Display Type">
