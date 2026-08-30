@@ -1,7 +1,7 @@
 "use client";
 import type { HomePage } from "@/lib/types";
 
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 
@@ -105,13 +105,14 @@ export default function EthosSection({ data }: { data?: HomePage["ethos"] }) {
                 const end = start + 1 / words.length;
 
                 return (
-                  <Word
-                    key={i}
-                    progress={scrollYProgress}
-                    range={[0.1 + start * 0.4, 0.1 + end * 0.4]}
-                  >
-                    {word}
-                  </Word>
+                  <Fragment key={i}>
+                    <Word
+                      progress={scrollYProgress}
+                      range={[0.1 + start * 0.4, 0.1 + end * 0.4]}
+                    >
+                      {word}
+                    </Word>{" "}
+                  </Fragment>
                 );
               })}
             </p>
@@ -204,11 +205,15 @@ function Word({
   progress: ReturnType<typeof import('framer-motion').useScroll>['scrollYProgress'];
   range: [number, number];
 }) {
-  const opacity = useTransform(progress, range, [0.15, 1]);
+  // Single text node. There used to be a second, absolutely-positioned copy at
+  // opacity-15 behind this one, which meant crawlers and screen readers read
+  // every word of the mission statement twice ("There's There's no no rush").
+  // 0.28 is the composite of the two stacked 0.15 layers, so the resting
+  // appearance is unchanged.
+  const opacity = useTransform(progress, range, [0.28, 1]);
 
   return (
     <span className="relative mr-3 mt-3">
-      <span className="absolute opacity-15">{children}</span>
       <motion.span style={{ opacity }}>{children}</motion.span>
     </span>
   );

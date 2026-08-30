@@ -49,12 +49,14 @@ export default function PersonalIntro({ data }: { data?: PersonalIntroData }) {
                                     delay: i * 0.03,
                                     ease: "linear"
                                 }}
-                                className={`inline-block mr-[0.2em] ${word.toLowerCase() === "what" || word.toLowerCase() === "if?" ? "text-gradient italic" : ""
+                                className={`inline-block ${word.toLowerCase() === "what" || word.toLowerCase() === "if?" ? "text-gradient italic" : ""
                                     }`}
                             >
                                 {word}
                             </motion.span>
-                        ))}
+                        )).reduce((acc: React.ReactNode[], el, i) => (
+                            i === 0 ? [el] : [...acc, " ", el]
+                        ), [])}
                     </h2>
 
                     <motion.div
