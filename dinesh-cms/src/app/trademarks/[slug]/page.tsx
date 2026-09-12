@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ExternalLink, ChevronRight, Check, X } from "lucide-react";
 import MarkSpecimen from "@/components/trademarks/MarkSpecimen";
 import StatusPill from "@/components/trademarks/StatusPill";
+import MarkStamp from "@/components/trademarks/MarkStamp";
 import TrademarkSchema from "@/components/trademarks/TrademarkSchema";
 import FAQGrid from "@/components/sections/FAQGrid";
 import { BreadcrumbSchema, FaqSchema } from "@/components/seo/JsonLd";
@@ -123,12 +124,17 @@ export default async function TrademarkDetail({ params }: { params: Promise<{ sl
                 <p className="text-text-secondary text-lg mt-7 max-w-2xl leading-relaxed">{mark.summary}</p>
               )}
 
-              <div className="flex flex-wrap items-center gap-4 mt-8">
+              <div className="flex flex-wrap items-center gap-5 mt-8">
                 <StatusPill status={mark.status} />
                 <span className="text-text-muted text-sm">
                   {t(meta.labelFiled)} {formatMarkDate(mark.filingDate)}
                   {mark.statusNote ? ` · ${mark.statusNote}` : ""}
                 </span>
+                <MarkStamp
+                  status={mark.status}
+                  label={t(meta.stampLabel)}
+                  sublabel={t(meta.stampSublabel).replace("{country}", jurisdiction?.countryName ?? "")}
+                />
               </div>
             </div>
 

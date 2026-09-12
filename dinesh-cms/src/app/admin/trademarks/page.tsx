@@ -862,6 +862,24 @@ function PageSettings({ page, setPage, onSave, saving, saved }: {
             </div>
           </div>
         </div>
+
+        <div className="mt-8 pt-6 border-t border-white/10">
+          <SectionTitle>Registered stamp</SectionTitle>
+          <div className="flex items-start gap-3 rounded-lg border border-amber-400/25 bg-amber-400/5 p-3 mb-4">
+            <Lock size={14} className="text-amber-400 shrink-0 mt-0.5" />
+            <p className="text-xs text-amber-200/70 leading-relaxed">
+              The wording below is yours to change. Whether the stamp appears is not — it shows only on
+              marks the registry has confirmed as registered, for the same reason the ® symbol is derived.
+              Marks still in examination never carry it.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Stamp text"><Input value={page.stampLabel ?? ""} onChange={e => set("stampLabel", e.target.value)} /></Field>
+            <Field label="Stamp second line" hint="{country} is replaced with the registry's country">
+              <Input value={page.stampSublabel ?? ""} onChange={e => set("stampSublabel", e.target.value)} />
+            </Field>
+          </div>
+        </div>
       </Card>
 
       <Card className="mb-6">

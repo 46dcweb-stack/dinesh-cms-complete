@@ -117,6 +117,8 @@ export const TRADEMARK_PAGE_DEFAULTS: TrademarkPageMeta = {
   countMany: "marks",
   specificationFallbackSuffix: "Open the registry record above to read it in full.",
   markTitlePattern: "{mark}{symbol} Trademark — {country} — 46DC",
+  stampLabel: "Registered",
+  stampSublabel: "{country}",
 
   crossSiteHeading: "The company register",
   crossSiteBody: "The same marks are listed on the parent brand's own register, written from the company's side rather than mine.",

@@ -638,6 +638,10 @@ export interface TrademarkPageMeta {
   /** Title pattern for a mark with no meta title of its own.
    *  {mark}, {symbol} and {country} are substituted. */
   markTitlePattern?: string;
+  /** Wording on the "registered" stamp. Whether it shows is derived from the
+   *  mark's status, never from a setting. */
+  stampLabel?: string;
+  stampSublabel?: string;
   seoTitle?: string;
   seoDescription?: string;
   updatedAt?: Timestamp;

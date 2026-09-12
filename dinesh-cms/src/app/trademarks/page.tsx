@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ExternalLink, Check, X, ShieldCheck } from "lucide-react";
 import StatusPill from "@/components/trademarks/StatusPill";
+import MarkStamp from "@/components/trademarks/MarkStamp";
 import MarkSpecimen from "@/components/trademarks/MarkSpecimen";
 import RegisterGroups from "@/components/trademarks/RegisterGroups";
 import FAQGrid from "@/components/sections/FAQGrid";
@@ -106,8 +107,13 @@ export default async function TrademarksPage() {
                   <Row label={t(p.labelClasses)} value={classList(primary)} />
                 </dl>
 
-                <div className="mt-6 pt-5 border-t border-white/10">
+                <div className="mt-6 pt-5 border-t border-white/10 flex items-center justify-between gap-4">
                   <StatusPill status={primary.status} />
+                  <MarkStamp
+                    status={primary.status}
+                    label={t(p.stampLabel)}
+                    sublabel={t(p.stampSublabel).replace("{country}", primaryOffice?.countryName ?? "")}
+                  />
                 </div>
               </div>
             )}
