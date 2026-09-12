@@ -541,3 +541,19 @@ export const ecosystemPageService = {
     await writeAudit("ecosystemPageMeta", "main", "update", "Updated Ecosystem page", undefined, prev);
   },
 };
+
+// ── LEGAL PAGES ────────────────────────────────────────────────────────────────
+// One document per page in `legalPages`, keyed by slug: terms | privacy | cookies
+export const legalPageService = {
+  async get(slug: string): Promise<import("./types").LegalPage | null> {
+    const snap = await getDoc(doc(db, "legalPages", slug));
+    if (!snap.exists()) return null;
+    return { id: snap.id, ...snap.data() } as import("./types").LegalPage;
+  },
+
+  async save(slug: string, data: import("./types").LegalPage): Promise<void> {
+    const prev = await fetchSnapshot("legalPages", slug);
+    await setDoc(doc(db, "legalPages", slug), stripUndefined({ ...data, updatedAt: serverTimestamp() }));
+    await writeAudit("legalPages", slug, "update", `Updated legal page: ${slug}`, undefined, prev);
+  },
+};

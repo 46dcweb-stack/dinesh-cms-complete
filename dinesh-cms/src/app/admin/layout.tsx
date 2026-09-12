@@ -8,7 +8,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import {
   LayoutDashboard, FileText, Newspaper, BookOpen, HelpCircle,
   User, Home, Image, Settings, Users, Mail, LogOut, Layers,
-  ClipboardList, Shield, UserCheck, FolderOpen, Menu, X, Globe,
+  ClipboardList, Shield, UserCheck, FolderOpen, Menu, X, Globe, Scale,
 } from "lucide-react";
 
 const NAV = [
@@ -23,6 +23,7 @@ const NAV = [
   { href: "/admin/ecosystem",   label: "Ecosystem Page",    icon: Globe,           roles: ["admin","editor"] },
   { href: "/admin/faq",         label: "FAQ",               icon: HelpCircle,      roles: ["admin","editor"] },
   { href: "/admin/gallery",     label: "Gallery",           icon: Image,           roles: ["admin","editor"] },
+  { href: "/admin/legal",       label: "Legal Pages",       icon: Scale,           roles: ["admin","editor"] },
   { href: "/admin/media",       label: "Media Library",     icon: FolderOpen,      roles: ["admin","editor","author"] },
   { href: "/admin/subscribers", label: "Subscribers",       icon: Mail,            roles: ["admin","editor"] },
   { href: "/admin/contacts",    label: "Contact Inbox",     icon: ClipboardList,   roles: ["admin","editor"] },

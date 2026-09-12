@@ -178,6 +178,10 @@ export default function Footer() {
               &copy; {new Date().getFullYear()} {copyright.replace(/^©\s*\d{4}\s*/i, "")}
             </p>
           </div>
+
+          <p className="text-text-muted text-[10px] uppercase font-mono tracking-[0.12em] sm:tracking-[0.2em] text-center relative z-10">
+            UK GDPR &middot; ICO Registered &middot; ZC243765
+          </p>
         </div>
 
         <div className="mt-8 text-center space-y-2">

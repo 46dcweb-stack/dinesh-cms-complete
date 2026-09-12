@@ -108,6 +108,12 @@ service cloud.firestore {
       allow write: if isEditorOrAbove();
     }
 
+    // Legal pages (terms / privacy / cookies) — public read
+    match /legalPages/{docId} {
+      allow read: if true;
+      allow write: if isEditorOrAbove();
+    }
+
     // ── Private collections (admin only) ──────────────────────────────────────
 
     // Subscribers — write public (for signup), read admin only

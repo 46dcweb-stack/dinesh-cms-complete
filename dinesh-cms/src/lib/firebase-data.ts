@@ -6,6 +6,7 @@ export {
   blogService, pressService, faqService, aboutService,
   homeService, ventureService, galleryService, settingsService,
   manifestoService, subscriberService, contactService, ecosystemPageService,
+  legalPageService,
 } from "./firebase-services";
 
 const SHORT_REVALIDATE_SECONDS = 60;
@@ -156,4 +157,14 @@ export async function getEcosystemPageMeta() {
       return s.exists ? serialize(s.data()) : null;
     }, ["ecosystemPageMeta-main"], { revalidate: SHORT_REVALIDATE_SECONDS })();
   } catch (e) { console.error("[getEcosystemPageMeta]", e); return null; }
+}
+
+export async function getLegalPage(slug: string) {
+  try {
+    return await unstable_cache(async () => {
+      const db = getAdminDb();
+      const s = await db.collection("legalPages").doc(slug).get();
+      return s.exists ? serialize(s.data()) : null;
+    }, ["legalPage", slug], { revalidate: SHORT_REVALIDATE_SECONDS })();
+  } catch (e) { console.error("[getLegalPage]", slug, e); return null; }
 }

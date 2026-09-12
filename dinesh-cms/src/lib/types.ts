@@ -384,3 +384,18 @@ export interface EcosystemPageMeta {
   seoOgImage?: string;
   updatedAt?: Timestamp;
 }
+
+// ── LEGAL PAGES (/terms, /privacy, /cookies) ─────────────────────────────────
+export interface LegalPage {
+  id?: string;              // "terms" | "privacy" | "cookies"
+  eyebrow?: string;
+  title?: string;
+  titleItalic?: string;
+  entityName?: string;
+  lastUpdated?: string;
+  /** Rich HTML, or plain text where blank lines become paragraphs. */
+  content?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  updatedAt?: Timestamp;
+}
