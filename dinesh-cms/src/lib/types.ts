@@ -399,3 +399,172 @@ export interface LegalPage {
   seoDescription?: string;
   updatedAt?: Timestamp;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TRADEMARKS
+//
+// Model notes (from the trademarks CMS specification):
+//  • `symbol` is DERIVED, never stored or editable. Using ® on an unregistered
+//    mark is an offence under s.107 of India's Trade Marks Act 1999 and s.95 of
+//    the UK Trade Marks Act 1994, so it must not be a field an editor can set.
+//    See markSymbol() in lib/trademarks.ts.
+//  • `filingType` decides where the application number lives: at mark level for
+//    single/multi-class filings, at class level when each class was filed
+//    separately (Cinevenn: 7573210–7573213).
+//  • `classNumber` stores the real Nice class (9, 35, 41…), never 99 — that is
+//    a filing code, not a class.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** The legally recorded owner. Separate from the mark so a mark can be
+ *  reassigned without rewriting its record. */
+export interface Proprietor {
+  id?: string;
+  /** EXACTLY as recorded at the registry, e.g. "KOYYALAMUDI DINESH CHANDRA". */
+  legalName: string;
+  /** Readable form used in prose, e.g. "Dinesh Koyyalamudi". */
+  displayName: string;
+  entityType: "Company" | "Individual" | "Charity" | "Trust";
+  registrationNumber?: string;
+  registeredCountry?: string;
+  verifyUrl?: string;
+  bioShort?: string;
+  sortOrder?: number;
+  updatedAt?: Timestamp;
+}
+
+/** A registry office. Adding a country later is one row here. */
+export interface Jurisdiction {
+  id?: string;
+  countryName: string;
+  /** ISO alpha-2 — GB, IN */
+  countryCode: string;
+  officeName: string;
+  /** Short form used on buttons, e.g. "UK IPO". */
+  officeShort: string;
+  officeUrl: string;
+  /** e.g. "https://…/{application_number}" — builds a direct verify link. */
+  recordUrlPattern?: string;
+  /** FALSE for IP India: their search is session-based, so the button must
+   *  point at the search page with the number shown for manual entry. */
+  deepLinkSupported: boolean;
+  symbolRuleNote?: string;
+  sortOrder: number;
+  updatedAt?: Timestamp;
+}
+
+export type TrademarkStatus =
+  | "Filed"
+  | "Formalities check passed"
+  | "Ready for examination"
+  | "Vienna codification"
+  | "Under examination"
+  | "Objected"
+  | "Published"
+  | "Opposed"
+  | "Registered"
+  | "Lapsed"
+  | "Withdrawn"
+  | "Refused";
+
+export type TrademarkFilingType =
+  | "Single-class"
+  | "Multi-class"
+  | "Separate applications per class";
+
+/** One Nice class covered by a mark. */
+export interface TrademarkClass {
+  /** 1–45. Never 99. */
+  classNumber: number;
+  /** Official Nice heading. */
+  classHeading: string;
+  /** The EXACT wording as filed. Never paraphrase or tidy — this is a legal
+   *  instrument and defines what the page claims is protected. */
+  specification: string;
+  /** Required only when filingType is "Separate applications per class". */
+  applicationNumber?: string;
+  classStatus?: TrademarkStatus | "";
+}
+
+export interface Trademark {
+  id?: string;
+  // ── Identity
+  markName: string;
+  slug: string;
+  markType: "Word mark" | "Device mark" | "Combined mark" | "Series mark";
+  /** Required for Device/Combined: the artwork exactly as filed, not a current
+   *  logo variant. Word marks need no image — the specimen renders the name. */
+  markImage?: string;
+  markImageBg?: "Light" | "Dark" | "Transparent";
+  ventureName?: string;
+  ventureUrl?: string;
+
+  // ── Registry particulars
+  jurisdictionId: string;
+  proprietorId: string;
+  filingType: TrademarkFilingType;
+  /** Mark-level number. Empty when filingType is per-class. */
+  applicationNumber?: string;
+  registrationNumber?: string;
+  filingDate: string;
+  registrationDate?: string;
+  /** Internal only — never rendered. */
+  renewalDue?: string;
+  officialRecordUrl?: string;
+  journalUrl?: string;
+
+  // ── Status
+  status: TrademarkStatus;
+  statusUpdated: string;
+  statusNote?: string;
+
+  classes: TrademarkClass[];
+
+  // ── Narrative (this site's voice)
+  summary?: string;
+  story?: string;
+  classNote?: string;
+  usageEnabled?: boolean;
+  usageIntro?: string;
+  usageCorrect?: string;
+  usageIncorrect?: string;
+  faqs?: { question: string; answer: string }[];
+
+  // ── SEO + display
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: string;
+  isPrimary?: boolean;
+  sortOrder: number;
+  showOnSite?: boolean;
+
+  createdAt?: Timestamp;
+  updatedAt?: Timestamp;
+}
+
+/** Singleton copy for the /trademarks index page. */
+export interface TrademarkPageMeta {
+  id?: string;
+  eyebrow?: string;
+  heading?: string;
+  headingItalic?: string;
+  lede?: string;
+  lede2?: string;
+  whyHeading?: string;
+  whyIntro?: string;
+  whyColumns?: { heading: string; body: string }[];
+  registerHeading?: string;
+  registerIntro?: string;
+  registerFootnote?: string;
+  usageHeading?: string;
+  usageIntro?: string;
+  usageRules?: { lead: string; body: string }[];
+  usageCorrect?: string[];
+  usageIncorrect?: string[];
+  pageFaqs?: { question: string; answer: string }[];
+  crossSiteHeading?: string;
+  crossSiteBody?: string;
+  crossSiteUrl?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  updatedAt?: Timestamp;
+}

@@ -5,7 +5,7 @@
 // revalidate window with no code change or redeploy.
 // ─────────────────────────────────────────────────────────────────────────────
 import { MetadataRoute } from "next";
-import { getPublishedBlogs } from "@/lib/firebase-data";
+import { getPublishedBlogs, getTrademarks } from "@/lib/firebase-data";
 import { SITE_URL } from "@/lib/site";
 import { SITE_ROUTES } from "@/lib/routes";
 
@@ -43,5 +43,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         console.error("[sitemap] Could not fetch blog posts:", e);
     }
 
-    return [...staticPages, ...blogPages];
+    // Trademark sub-pages, with lastmod from each mark's status date
+    let markPages: MetadataRoute.Sitemap = [];
+    try {
+        const marks = await getTrademarks();
+        markPages = (marks as any[])
+            .filter(m => m?.slug)
+            .map(m => ({
+                url: `${BASE_URL}/trademarks/${m.slug}`,
+                lastModified: m.statusUpdated ? new Date(m.statusUpdated) : now,
+                changeFrequency: "monthly" as const,
+                priority: 0.7,
+            }));
+    } catch (e) {
+        console.error("[sitemap] Could not fetch trademarks:", e);
+    }
+
+    return [...staticPages, ...blogPages, ...markPages];
 }

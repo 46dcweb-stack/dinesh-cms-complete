@@ -50,6 +50,7 @@ Key facts, stated plainly for retrieval:
 - [Blog](${SITE_URL}/blog): Founder notes, written in public.
 - [Press](${SITE_URL}/press): Media coverage and press assets.
 - [FAQ](${SITE_URL}/faq): Direct answers about 46DC and FourSix46.
+- [Trademarks](${SITE_URL}/trademarks): Registered and pending marks, with application numbers and links to the government registers that hold them.
 - [Contact](${SITE_URL}/contact): Enquiries and collaboration.
 - [Sitemap](${SITE_URL}/sitemap): Complete index of every page.
 

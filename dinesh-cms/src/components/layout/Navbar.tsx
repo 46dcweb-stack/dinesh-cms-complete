@@ -15,7 +15,8 @@ import {
     Menu,
     X,
     ChevronRight,
-    Image as GalleryIcon
+    Image as GalleryIcon,
+    BadgeCheck
 } from "lucide-react";
 
 import { NavBar } from "@/components/ui/tubelight-navbar";
@@ -27,6 +28,7 @@ const navItems = [
     { name: 'Gallery', url: '/gallery', icon: GalleryIcon },
     { name: 'Blog', url: '/blog', icon: FileText },
     { name: 'Press', url: '/press', icon: Newspaper },
+    { name: 'Trademarks', url: '/trademarks', icon: BadgeCheck },
     { name: 'Manifesto', url: '/manifesto', icon: Lightbulb },
     { name: 'Contact', url: '/contact', icon: Send }
 ];

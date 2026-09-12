@@ -32,6 +32,7 @@ export const SITE_ROUTES: SiteRoute[] = [
   { path: "/press",      label: "Press",          section: "Content", changeFrequency: "weekly",  priority: 0.7, description: "Media coverage and press assets" },
   { path: "/gallery",    label: "Gallery",        section: "Content", changeFrequency: "weekly",  priority: 0.6, description: "Moments from the founder journey" },
   { path: "/faq",        label: "FAQ",            section: "Content", changeFrequency: "monthly", priority: 0.6, description: "Direct answers about 46DC and FourSix46" },
+  { path: "/trademarks", label: "Trademarks",     section: "Content", changeFrequency: "monthly", priority: 0.8, description: "The full register of marks, with numbers you can verify" },
 
   // ── Connect ───────────────────────────────────────────────────────────────
   { path: "/contact",    label: "Contact",        section: "Connect", changeFrequency: "yearly",  priority: 0.5, description: "Enquiries and collaboration" },

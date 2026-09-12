@@ -6,7 +6,8 @@ export {
   blogService, pressService, faqService, aboutService,
   homeService, ventureService, galleryService, settingsService,
   manifestoService, subscriberService, contactService, ecosystemPageService,
-  legalPageService,
+  legalPageService, trademarkService, trademarkPageService,
+  proprietorService, jurisdictionService,
 } from "./firebase-services";
 
 const SHORT_REVALIDATE_SECONDS = 60;
@@ -167,4 +168,45 @@ export async function getLegalPage(slug: string) {
       return s.exists ? serialize(s.data()) : null;
     }, ["legalPage", slug], { revalidate: SHORT_REVALIDATE_SECONDS, tags: [`legalPage-${slug}`] })();
   } catch (e) { console.error("[getLegalPage]", slug, e); return null; }
+}
+
+export async function getTrademarks() {
+  try {
+    return await unstable_cache(async () => {
+      const db = getAdminDb();
+      const s = await db.collection("trademarks").get();
+      return s.docs
+        .map(d => serialize({ id: d.id, ...d.data() }))
+        .filter((t: any) => t.showOnSite !== false)
+        .sort((a: any, b: any) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+    }, ["trademarks-all"], { revalidate: SHORT_REVALIDATE_SECONDS, tags: ["trademarks"] })();
+  } catch (e) { console.error("[getTrademarks]", e); return []; }
+}
+
+export async function getTrademarkRefs() {
+  try {
+    return await unstable_cache(async () => {
+      const db = getAdminDb();
+      const [p, j] = await Promise.all([
+        db.collection("proprietors").get(),
+        db.collection("jurisdictions").get(),
+      ]);
+      return {
+        proprietors: p.docs.map(d => serialize({ id: d.id, ...d.data() })),
+        jurisdictions: j.docs
+          .map(d => serialize({ id: d.id, ...d.data() }))
+          .sort((a: any, b: any) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)),
+      };
+    }, ["trademark-refs"], { revalidate: SHORT_REVALIDATE_SECONDS, tags: ["trademarks"] })();
+  } catch (e) { console.error("[getTrademarkRefs]", e); return { proprietors: [], jurisdictions: [] }; }
+}
+
+export async function getTrademarkPageMeta() {
+  try {
+    return await unstable_cache(async () => {
+      const db = getAdminDb();
+      const s = await db.collection("trademarkPageMeta").doc("main").get();
+      return s.exists ? serialize(s.data()) : null;
+    }, ["trademarkPageMeta-main"], { revalidate: SHORT_REVALIDATE_SECONDS, tags: ["trademarks"] })();
+  } catch (e) { console.error("[getTrademarkPageMeta]", e); return null; }
 }

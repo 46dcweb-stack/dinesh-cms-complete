@@ -114,6 +114,24 @@ service cloud.firestore {
       allow write: if isEditorOrAbove();
     }
 
+    // Trademarks — public read, editor write
+    match /trademarks/{docId} {
+      allow read: if true;
+      allow write: if isEditorOrAbove();
+    }
+    match /proprietors/{docId} {
+      allow read: if true;
+      allow write: if isEditorOrAbove();
+    }
+    match /jurisdictions/{docId} {
+      allow read: if true;
+      allow write: if isEditorOrAbove();
+    }
+    match /trademarkPageMeta/{docId} {
+      allow read: if true;
+      allow write: if isEditorOrAbove();
+    }
+
     // ── Private collections (admin only) ──────────────────────────────────────
 
     // Subscribers — write public (for signup), read admin only

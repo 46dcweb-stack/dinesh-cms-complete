@@ -557,3 +557,92 @@ export const legalPageService = {
     await writeAudit("legalPages", slug, "update", `Updated legal page: ${slug}`, undefined, prev);
   },
 };
+
+// ── TRADEMARKS ────────────────────────────────────────────────────────────────
+import type {
+  Trademark, TrademarkPageMeta, Proprietor, Jurisdiction,
+} from "./types";
+
+export const proprietorService = {
+  async getAll(): Promise<Proprietor[]> {
+    const snap = await getDocs(collection(db, "proprietors"));
+    return snap.docs
+      .map(d => ({ id: d.id, ...d.data() } as Proprietor))
+      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+  },
+  async save(id: string, data: Proprietor): Promise<void> {
+    const prev = await fetchSnapshot("proprietors", id);
+    await setDoc(doc(db, "proprietors", id), stripUndefined({ ...data, updatedAt: serverTimestamp() }));
+    await writeAudit("proprietors", id, "update", `Updated proprietor: ${data.displayName}`, undefined, prev);
+  },
+  async delete(id: string): Promise<void> {
+    await deleteDoc(doc(db, "proprietors", id));
+    await writeAudit("proprietors", id, "delete", `Deleted proprietor ID: ${id}`);
+  },
+};
+
+export const jurisdictionService = {
+  async getAll(): Promise<Jurisdiction[]> {
+    const snap = await getDocs(collection(db, "jurisdictions"));
+    return snap.docs
+      .map(d => ({ id: d.id, ...d.data() } as Jurisdiction))
+      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+  },
+  async save(id: string, data: Jurisdiction): Promise<void> {
+    const prev = await fetchSnapshot("jurisdictions", id);
+    await setDoc(doc(db, "jurisdictions", id), stripUndefined({ ...data, updatedAt: serverTimestamp() }));
+    await writeAudit("jurisdictions", id, "update", `Updated jurisdiction: ${data.countryName}`, undefined, prev);
+  },
+  async delete(id: string): Promise<void> {
+    await deleteDoc(doc(db, "jurisdictions", id));
+    await writeAudit("jurisdictions", id, "delete", `Deleted jurisdiction ID: ${id}`);
+  },
+};
+
+export const trademarkService = {
+  async getAll(): Promise<Trademark[]> {
+    const snap = await getDocs(collection(db, "trademarks"));
+    return snap.docs
+      .map(d => ({ id: d.id, ...d.data() } as Trademark))
+      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+  },
+
+  async getById(id: string): Promise<Trademark | null> {
+    const snap = await getDoc(doc(db, "trademarks", id));
+    if (!snap.exists()) return null;
+    return { id: snap.id, ...snap.data() } as Trademark;
+  },
+
+  async create(data: Omit<Trademark, "id">): Promise<string> {
+    const ref = await addDoc(collection(db, "trademarks"),
+      stripUndefined({ ...data, createdAt: serverTimestamp(), updatedAt: serverTimestamp() }));
+    await writeAudit("trademarks", ref.id, "create", `Created trademark: "${data.markName}"`);
+    return ref.id;
+  },
+
+  async update(id: string, data: Partial<Trademark>): Promise<void> {
+    const prev = await fetchSnapshot("trademarks", id);
+    await updateDoc(doc(db, "trademarks", id),
+      stripUndefined({ ...data, updatedAt: serverTimestamp() }));
+    await writeAudit("trademarks", id, "update", `Updated trademark: "${data.markName || id}"`, undefined, prev);
+  },
+
+  async delete(id: string): Promise<void> {
+    await deleteDoc(doc(db, "trademarks", id));
+    await writeAudit("trademarks", id, "delete", `Deleted trademark ID: ${id}`);
+  },
+};
+
+export const trademarkPageService = {
+  async get(): Promise<TrademarkPageMeta | null> {
+    const snap = await getDoc(doc(db, "trademarkPageMeta", "main"));
+    if (!snap.exists()) return null;
+    return { id: snap.id, ...snap.data() } as TrademarkPageMeta;
+  },
+  async save(data: TrademarkPageMeta): Promise<void> {
+    const prev = await fetchSnapshot("trademarkPageMeta", "main");
+    await setDoc(doc(db, "trademarkPageMeta", "main"),
+      stripUndefined({ ...data, updatedAt: serverTimestamp() }));
+    await writeAudit("trademarkPageMeta", "main", "update", "Updated Trademarks page", undefined, prev);
+  },
+};

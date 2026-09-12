@@ -23,8 +23,9 @@ const DEFAULTS = {
     { label: "Gallery", url: "/gallery", order: 5 },
     { label: "FAQs", url: "/faq", order: 6 },
     { label: "Manifesto", url: "/manifesto", order: 7 },
-    { label: "Subscribe", url: "/subscribe", order: 8 },
-    { label: "Contact", url: "/contact", order: 9 },
+    { label: "Trademarks", url: "/trademarks", order: 8 },
+    { label: "Subscribe", url: "/subscribe", order: 9 },
+    { label: "Contact", url: "/contact", order: 10 },
   ],
 };
 
