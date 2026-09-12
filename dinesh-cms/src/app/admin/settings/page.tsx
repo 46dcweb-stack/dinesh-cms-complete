@@ -7,6 +7,7 @@ import {
   AdminPageHeader, Field, Input, Textarea, SaveButton, ImageUpload,
   Alert, Card, SectionTitle,
 } from "../components/ui";
+import { publish, publishNote } from "@/lib/cms-publish";
 
 const DEFAULT: Omit<SiteSettings, "id"> = {
   siteName: "Dinesh Koyyalamudi",
@@ -50,6 +51,7 @@ export default function SettingsAdmin() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [liveNote, setLiveNote] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -67,8 +69,11 @@ export default function SettingsAdmin() {
   async function handleSave() {
     setSaving(true);
     setError("");
+    setLiveNote("");
     try {
       await settingsService.save(form);
+      // Settings feed the root layout, so every page has to be dropped.
+      setLiveNote(publishNote(await publish("settings")));
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err: any) { setError(err.message); }
@@ -85,6 +90,7 @@ export default function SettingsAdmin() {
         action={<SaveButton loading={saving} saved={saved} onClick={handleSave} />}
       />
       {error && <Alert message={error} className="mb-6" />}
+      {liveNote && <Alert type="success" message={liveNote} className="mb-6" />}
 
       <div className="space-y-6">
         {/* General */}

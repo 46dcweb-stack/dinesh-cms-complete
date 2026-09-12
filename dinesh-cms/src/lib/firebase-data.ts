@@ -34,7 +34,7 @@ export async function getHomePage() {
       const db = getAdminDb();
       const s = await db.collection("homePage").doc("main").get();
       return s.exists ? serialize(s.data()) : null;
-    }, ["homePage-main"], { revalidate: SHORT_REVALIDATE_SECONDS })();
+    }, ["homePage-main"], { revalidate: SHORT_REVALIDATE_SECONDS, tags: ["homePage"] })();
   } catch (e) { console.error("[getHomePage]", e); return null; }
 }
 export async function getAboutPage() {
@@ -43,7 +43,7 @@ export async function getAboutPage() {
       const db = getAdminDb();
       const s = await db.collection("aboutPage").doc("main").get();
       return s.exists ? serialize(s.data()) : null;
-    }, ["aboutPage-main"], { revalidate: MEDIUM_REVALIDATE_SECONDS })();
+    }, ["aboutPage-main"], { revalidate: MEDIUM_REVALIDATE_SECONDS, tags: ["aboutPage"] })();
   } catch (e) { console.error("[getAboutPage]", e); return null; }
 }
 export async function getPublishedBlogs() {
@@ -52,7 +52,7 @@ export async function getPublishedBlogs() {
       const db = getAdminDb();
       const s = await db.collection("blogPosts").where("status","==","published").orderBy("publishDate","desc").get();
       return s.docs.map(d => serialize({ id: d.id, ...d.data() }));
-    }, ["blogPosts-published"], { revalidate: SHORT_REVALIDATE_SECONDS })();
+    }, ["blogPosts-published"], { revalidate: SHORT_REVALIDATE_SECONDS, tags: ["blogPosts"] })();
   } catch (e) { console.error("[getPublishedBlogs]", e); return []; }
 }
 export async function getBlogBySlug(slug: string) {
@@ -62,7 +62,7 @@ export async function getBlogBySlug(slug: string) {
       const s = await db.collection("blogPosts").where("slug","==",slug).where("status","==","published").limit(1).get();
       if (s.empty) return null;
       return serialize({ id: s.docs[0].id, ...s.docs[0].data() });
-    }, ["blogPost-bySlug", slug], { revalidate: SHORT_REVALIDATE_SECONDS })();
+    }, ["blogPost-bySlug", slug], { revalidate: SHORT_REVALIDATE_SECONDS, tags: ["blogPosts"] })();
   } catch (e) { console.error("[getBlogBySlug]", e); return null; }
 }
 export async function getPublishedPress() {
@@ -71,7 +71,7 @@ export async function getPublishedPress() {
       const db = getAdminDb();
       const s = await db.collection("pressMentions").where("status","==","published").orderBy("sortOrder","asc").get();
       return s.docs.map(d => serialize({ id: d.id, ...d.data() }));
-    }, ["pressMentions-published"], { revalidate: SHORT_REVALIDATE_SECONDS })();
+    }, ["pressMentions-published"], { revalidate: SHORT_REVALIDATE_SECONDS, tags: ["pressMentions"] })();
   } catch (e) { console.error("[getPublishedPress]", e); return []; }
 }
 export async function getPublishedFaq() {
@@ -80,7 +80,7 @@ export async function getPublishedFaq() {
       const db = getAdminDb();
       const s = await db.collection("faqItems").where("status","==","published").orderBy("sortOrder","asc").get();
       return s.docs.map(d => serialize({ id: d.id, ...d.data() }));
-    }, ["faqItems-published"], { revalidate: SHORT_REVALIDATE_SECONDS })();
+    }, ["faqItems-published"], { revalidate: SHORT_REVALIDATE_SECONDS, tags: ["faqItems"] })();
   } catch (e) { console.error("[getPublishedFaq]", e); return []; }
 }
 export async function getVentures() {
@@ -90,7 +90,7 @@ export async function getVentures() {
       const s = await db.collection("ventures").where("status","!=","inactive").orderBy("status","asc").get();
       const sorted = s.docs.map(d => serialize({ id: d.id, ...d.data() })).sort((a:any,b:any) => (a.sortOrder||0)-(b.sortOrder||0));
       return sorted;
-    }, ["ventures-active"], { revalidate: SHORT_REVALIDATE_SECONDS })();
+    }, ["ventures-active"], { revalidate: SHORT_REVALIDATE_SECONDS, tags: ["ventures"] })();
   } catch (e) { console.error("[getVentures]", e); return []; }
 }
 export async function getGallery() {
@@ -99,7 +99,7 @@ export async function getGallery() {
       const db = getAdminDb();
       const s = await db.collection("galleryImages").where("status","==","active").orderBy("sortOrder","asc").get();
       return s.docs.map(d => serialize({ id: d.id, ...d.data() }));
-    }, ["galleryImages-active"], { revalidate: SHORT_REVALIDATE_SECONDS })();
+    }, ["galleryImages-active"], { revalidate: SHORT_REVALIDATE_SECONDS, tags: ["galleryImages"] })();
   } catch (e) { console.error("[getGallery]", e); return []; }
 }
 export async function getManifesto() {
@@ -111,7 +111,7 @@ export async function getManifesto() {
         db.collection("manifestoSections").orderBy("order","asc").get(),
       ]);
       return { meta: m.exists ? serialize(m.data()) : null, sections: s.docs.map(d => serialize({ id: d.id, ...d.data() })) };
-    }, ["manifesto-data"], { revalidate: SHORT_REVALIDATE_SECONDS })();
+    }, ["manifesto-data"], { revalidate: SHORT_REVALIDATE_SECONDS, tags: ["manifesto"] })();
   } catch (e) { console.error("[getManifesto]", e); return { meta: null, sections: [] }; }
 }
 export async function getSiteSettings() {
@@ -120,7 +120,7 @@ export async function getSiteSettings() {
       const db = getAdminDb();
       const s = await db.collection("siteSettings").doc("main").get();
       return s.exists ? serialize(s.data()) : null;
-    }, ["siteSettings-main"], { revalidate: MEDIUM_REVALIDATE_SECONDS })();
+    }, ["siteSettings-main"], { revalidate: MEDIUM_REVALIDATE_SECONDS, tags: ["siteSettings"] })();
   } catch (e) { console.error("[getSiteSettings]", e); return null; }
 }
 export async function getFaqPageSettings() {
@@ -129,7 +129,7 @@ export async function getFaqPageSettings() {
       const db = getAdminDb();
       const s = await db.collection("faqPageMeta").doc("main").get();
       return s.exists ? serialize(s.data()) : null;
-    }, ["faqPageMeta-main"], { revalidate: MEDIUM_REVALIDATE_SECONDS })();
+    }, ["faqPageMeta-main"], { revalidate: MEDIUM_REVALIDATE_SECONDS, tags: ["faqItems"] })();
   } catch (e) { console.error("[getFaqPageSettings]", e); return null; }
 }
 export async function getTeamMembers() {
@@ -138,7 +138,7 @@ export async function getTeamMembers() {
       const db = getAdminDb();
       const s = await db.collection("teamMembers").where("status","==","active").orderBy("sortOrder","asc").get();
       return s.docs.map(d => serialize({ id: d.id, ...d.data() }));
-    }, ["teamMembers-active"], { revalidate: SHORT_REVALIDATE_SECONDS })();
+    }, ["teamMembers-active"], { revalidate: SHORT_REVALIDATE_SECONDS, tags: ["teamMembers"] })();
   } catch (e) { console.error("[getTeamMembers]", e); return []; }
 }
 export async function getPressPageMeta() {
@@ -147,7 +147,7 @@ export async function getPressPageMeta() {
       const db = getAdminDb();
       const s = await db.collection("pressPageMeta").doc("main").get();
       return s.exists ? serialize(s.data()) : null;
-    }, ["pressPageMeta-main"], { revalidate: SHORT_REVALIDATE_SECONDS })();
+    }, ["pressPageMeta-main"], { revalidate: SHORT_REVALIDATE_SECONDS, tags: ["pressMentions"] })();
   } catch (e) { console.error("[getPressPageMeta]", e); return null; }
 }
 export async function getEcosystemPageMeta() {
@@ -156,7 +156,7 @@ export async function getEcosystemPageMeta() {
       const db = getAdminDb();
       const s = await db.collection("ecosystemPageMeta").doc("main").get();
       return s.exists ? serialize(s.data()) : null;
-    }, ["ecosystemPageMeta-main"], { revalidate: SHORT_REVALIDATE_SECONDS })();
+    }, ["ecosystemPageMeta-main"], { revalidate: SHORT_REVALIDATE_SECONDS, tags: ["ecosystemPage"] })();
   } catch (e) { console.error("[getEcosystemPageMeta]", e); return null; }
 }
 

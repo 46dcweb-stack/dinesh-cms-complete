@@ -448,6 +448,11 @@ export interface Jurisdiction {
    *  point at the search page with the number shown for manual entry. */
   deepLinkSupported: boolean;
   symbolRuleNote?: string;
+  /** The stage sequence this office runs an application through, in order.
+   *  `status` matches a Trademark.status value and marks the current position.
+   *  Held here rather than in code so a registry's process can be corrected
+   *  from the admin without a deploy. */
+  stages?: { status: string; title: string; description: string }[];
   sortOrder: number;
   updatedAt?: Timestamp;
 }
@@ -592,6 +597,47 @@ export interface TrademarkPageMeta {
   verifyProprietorTitle?: string;
   verifyProprietorBody?: string;
   manualSearchNote?: string;
+  // Register table column headings
+  colMark?: string;
+  colProprietor?: string;
+  colStatus?: string;
+  colApplication?: string;
+  colClasses?: string;
+  colAction?: string;
+  // Hero panel and counters
+  primaryPanelLabel?: string;
+  statMarksLabel?: string;
+  statRegisteredLabel?: string;
+  statOfficesLabel?: string;
+  usageExamplesLabel?: string;
+  // Field labels on the hero panel and the mark-page particulars panel
+  labelMark?: string;
+  labelType?: string;
+  labelNumber?: string;
+  labelOffice?: string;
+  labelClasses?: string;
+  labelStatus?: string;
+  labelRegistration?: string;
+  labelProprietor?: string;
+  labelFiled?: string;
+  // Mark page chrome
+  particularsLabel?: string;
+  specificationLabel?: string;
+  verifyButtonPrefix?: string;
+  openRegisterPrefix?: string;
+  visitVenturePrefix?: string;
+  proprietorCtaLabel?: string;
+  correctLabel?: string;
+  notPermittedLabel?: string;
+  breadcrumbHome?: string;
+  breadcrumbRegister?: string;
+  closedStageNote?: string;
+  countOne?: string;
+  countMany?: string;
+  specificationFallbackSuffix?: string;
+  /** Title pattern for a mark with no meta title of its own.
+   *  {mark}, {symbol} and {country} are substituted. */
+  markTitlePattern?: string;
   seoTitle?: string;
   seoDescription?: string;
   updatedAt?: Timestamp;

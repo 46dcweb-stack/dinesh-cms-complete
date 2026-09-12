@@ -8,6 +8,7 @@ import {
   AdminPageHeader, Field, Input, Textarea, Select, Toggle,
   SaveButton, ImageUpload, Alert, Card, SectionTitle, StatusBadge,
 } from "../components/ui";
+import { publish } from "@/lib/cms-publish";
 
 const MEDIA_TYPES = ["Article", "Interview", "Podcast", "Video", "Award", "Featured", "Profile"];
 
@@ -92,6 +93,7 @@ export default function PressAdmin() {
       } else {
         await pressService.create(form);
       }
+      await publish("press");
       setSaved(true);
       setShowForm(false);
       load();
@@ -104,6 +106,7 @@ export default function PressAdmin() {
   async function handleDelete(id: string) {
     if (!confirm("Delete this press item?")) return;
     await pressService.delete(id);
+    await publish("press");
     load();
   }
 
@@ -112,6 +115,7 @@ export default function PressAdmin() {
     setError("");
     try {
       await pressPageService.save(pageMeta as PressPageMeta);
+      await publish("press");
       setMetaSaved(true);
       setTimeout(() => setMetaSaved(false), 3000);
     } catch (err: any) {

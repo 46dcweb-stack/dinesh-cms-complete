@@ -27,15 +27,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Not an admin user" }, { status: 403 });
     }
 
-    const { paths = [], tags = [] } = (await req.json()) as {
+    const { paths = [], tags = [], layout = false } = (await req.json()) as {
       paths?: string[];
       tags?: string[];
+      layout?: boolean;
     };
 
     for (const t of tags) revalidateTag(t);
+    // Note: sitemap.xml and llms.txt are metadata routes. revalidatePath does
+    // not drop them, so they refresh on their own 60-second window instead.
     for (const p of paths) revalidatePath(p);
 
-    return NextResponse.json({ revalidated: true, paths, tags });
+    // Site settings feed the root layout (nav, footer, metadata), so a change
+    // there has to drop every page, not just the one being edited.
+    if (layout) revalidatePath("/", "layout");
+
+    return NextResponse.json({ revalidated: true, paths, tags, layout });
   } catch (err: any) {
     console.error("[revalidate]", err);
     return NextResponse.json({ error: err?.message ?? "Failed" }, { status: 500 });

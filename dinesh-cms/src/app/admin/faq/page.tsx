@@ -7,6 +7,7 @@ import {
   AdminPageHeader, Field, Input, Textarea, Select, Toggle,
   SaveButton, Alert, Card, SectionTitle, StatusBadge,
 } from "../components/ui";
+import { publish } from "@/lib/cms-publish";
 
 const CATEGORIES: FaqItem["category"][] = [
   "About Dinesh Koyyalamudi", "FourSix46 & Ventures", "Speaking & Media",
@@ -90,6 +91,7 @@ export default function FaqAdmin() {
       } else {
         await faqService.create(form);
       }
+      await publish("faq");
       setSaved(true);
       setShowForm(false);
       load();
@@ -102,6 +104,7 @@ export default function FaqAdmin() {
     setPageSettingsError("");
     try {
       await faqPageService.save(pageSettings);
+      await publish("faq");
       setPageSettingsSaved(true);
       setTimeout(() => setPageSettingsSaved(false), 3000);
     } catch (err: any) { setPageSettingsError(err.message); }
@@ -111,6 +114,7 @@ export default function FaqAdmin() {
   async function handleDelete(id: string) {
     if (!confirm("Delete this FAQ?")) return;
     await faqService.delete(id);
+    await publish("faq");
     load();
   }
 

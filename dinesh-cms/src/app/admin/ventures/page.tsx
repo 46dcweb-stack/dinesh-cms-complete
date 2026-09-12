@@ -7,6 +7,7 @@ import {
   AdminPageHeader, Field, Input, Textarea, Select, Toggle,
   SaveButton, ImageUpload, Alert, Card, SectionTitle, StatusBadge,
 } from "../components/ui";
+import { publish } from "@/lib/cms-publish";
 
 const EMPTY: Omit<Venture, "id"> = {
   name: "", role: "", description: "", image: "", color: "#E22D2D",
@@ -59,6 +60,7 @@ export default function VenturesAdmin() {
       } else {
         await ventureService.create(form);
       }
+      await publish("ventures");
       setSaved(true);
       setShowForm(false);
       load();
@@ -69,6 +71,7 @@ export default function VenturesAdmin() {
   async function handleDelete(id: string) {
     if (!confirm("Delete this venture?")) return;
     await ventureService.delete(id);
+    await publish("ventures");
     load();
   }
 
@@ -80,6 +83,7 @@ export default function VenturesAdmin() {
     for (let i = 0; i < arr.length; i++) {
       await ventureService.update(arr[i].id!, { sortOrder: i });
     }
+    await publish("ventures");
     load();
   }
 

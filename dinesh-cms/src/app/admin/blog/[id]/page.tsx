@@ -9,6 +9,7 @@ import {
 } from "../../components/ui";
 import { ArrowLeft, Plus, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 import Link from "next/link";
+import { publish } from "@/lib/cms-publish";
 
 const EMPTY: Omit<BlogPost, "id"> = {
   title: "", slug: "", excerpt: "", content: "",
@@ -96,9 +97,11 @@ export default function BlogEditor() {
       };
       if (isNew) {
         const newId = await blogService.create(cleaned);
+        await publish("blog", cleaned.slug ? [`/blog/${cleaned.slug}`] : []);
         router.replace(`/admin/blog/${newId}`);
       } else {
         await blogService.update(id, cleaned);
+        await publish("blog", cleaned.slug ? [`/blog/${cleaned.slug}`] : []);
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
       }
@@ -114,6 +117,7 @@ export default function BlogEditor() {
 
   async function handleDelete() {
     await blogService.delete(id);
+    await publish("blog", form.slug ? [`/blog/${form.slug}`] : []);
     router.replace("/admin/blog");
   }
 

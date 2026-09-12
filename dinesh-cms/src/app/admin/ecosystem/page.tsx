@@ -8,6 +8,7 @@ import {
   AdminPageHeader, Field, Input, Textarea, Toggle,
   SaveButton, ImageUpload, Alert, Card, SectionTitle,
 } from "../components/ui";
+import { publish } from "@/lib/cms-publish";
 
 const DEFAULTS: EcosystemPageMeta = {
   eyebrow: "The Ecosystem",
@@ -93,6 +94,7 @@ export default function EcosystemAdmin() {
         stats: stats.filter(s => (s.value ?? "").trim() || (s.label ?? "").trim()),
       };
       await ecosystemPageService.save(cleaned);
+      await publish("ecosystem");
       setForm(cleaned);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);

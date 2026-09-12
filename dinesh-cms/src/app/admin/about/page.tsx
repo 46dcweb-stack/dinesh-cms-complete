@@ -7,6 +7,7 @@ import {
   AdminPageHeader, Field, Input, Textarea, SaveButton,
   Alert, Card, SectionTitle, ImageUpload,
 } from "../components/ui";
+import { publish } from "@/lib/cms-publish";
 
 const DEFAULT: Omit<AboutPage, "id"> = {
   heroEyebrow: "Behind the Vision",
@@ -48,6 +49,7 @@ export default function AboutAdmin() {
     setError("");
     try {
       await aboutService.save(form);
+      await publish("about");
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err: any) { setError(err.message); }

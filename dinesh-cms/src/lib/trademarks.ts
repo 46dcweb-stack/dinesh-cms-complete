@@ -147,6 +147,13 @@ export const MARK_TYPES = ["Word mark", "Device mark", "Combined mark", "Series 
 // registry has a fixed stage sequence and the current status marks the
 // position, so nobody has to maintain six timelines by hand.
 
+/** One stage as stored on a jurisdiction record. */
+export type TimelineStageDef = {
+  status: string;
+  title: string;
+  description: string;
+};
+
 export type TimelineStage = {
   title: string;
   description: string;
@@ -154,23 +161,26 @@ export type TimelineStage = {
   date: string;
 };
 
-const STAGES_IN: { key: TrademarkStatus; title: string; description: string }[] = [
-  { key: "Filed", title: "Application filed", description: "Form TM-A submitted to the Trade Marks Registry with the mark and its specification." },
-  { key: "Formalities check passed", title: "Formalities check passed", description: "The registry confirmed the application is complete and correctly filed." },
-  { key: "Vienna codification", title: "Vienna codification", description: "Device marks are assigned Vienna classification codes describing their visual elements, so the registry can search them against existing figurative marks." },
-  { key: "Ready for examination", title: "Ready for examination", description: "The application is queued for substantive review by an examiner." },
-  { key: "Under examination", title: "Examination", description: "The registry reviews the mark for distinctiveness and conflicts with earlier marks, then issues an examination report." },
-  { key: "Published", title: "Publication in the Trade Marks Journal", description: "Once accepted, the mark is published for public inspection." },
-  { key: "Opposed", title: "Opposition period", description: "A four-month window in which any third party may oppose registration." },
-  { key: "Registered", title: "Registration", description: "If unopposed, the certificate issues and the mark may carry ® in India." },
+/** Seed stage sequences. The live site reads `jurisdiction.stages` from the
+ *  database — these exist so a registry can be seeded or restored from a known
+ *  good sequence, and are not consulted at render time. */
+export const SEED_STAGES_IN: TimelineStageDef[] = [
+  { status: "Filed", title: "Application filed", description: "Form TM-A submitted to the Trade Marks Registry with the mark and its specification." },
+  { status: "Formalities check passed", title: "Formalities check passed", description: "The registry confirmed the application is complete and correctly filed." },
+  { status: "Vienna codification", title: "Vienna codification", description: "Device marks are assigned Vienna classification codes describing their visual elements, so the registry can search them against existing figurative marks." },
+  { status: "Ready for examination", title: "Ready for examination", description: "The application is queued for substantive review by an examiner." },
+  { status: "Under examination", title: "Examination", description: "The registry reviews the mark for distinctiveness and conflicts with earlier marks, then issues an examination report." },
+  { status: "Published", title: "Publication in the Trade Marks Journal", description: "Once accepted, the mark is published for public inspection." },
+  { status: "Opposed", title: "Opposition period", description: "A four-month window in which any third party may oppose registration." },
+  { status: "Registered", title: "Registration", description: "If unopposed, the certificate issues and the mark may carry ® in India." },
 ];
 
-const STAGES_GB: { key: TrademarkStatus; title: string; description: string }[] = [
-  { key: "Filed", title: "Application filed", description: "Application submitted to the Intellectual Property Office with the mark and its specification." },
-  { key: "Under examination", title: "Examination", description: "The IPO examines the mark for distinctiveness and searches for conflicting earlier rights." },
-  { key: "Published", title: "Publication in the Trade Marks Journal", description: "The mark is published for two months so third parties can review it." },
-  { key: "Opposed", title: "Opposition period", description: "A two-month window, extendable to three, in which anyone may oppose registration." },
-  { key: "Registered", title: "Registration", description: "The certificate issues and the mark may carry ® in the United Kingdom." },
+export const SEED_STAGES_GB: TimelineStageDef[] = [
+  { status: "Filed", title: "Application filed", description: "Application submitted to the Intellectual Property Office with the mark and its specification." },
+  { status: "Under examination", title: "Examination", description: "The IPO examines the mark for distinctiveness and searches for conflicting earlier rights." },
+  { status: "Published", title: "Publication in the Trade Marks Journal", description: "The mark is published for two months so third parties can review it." },
+  { status: "Opposed", title: "Opposition period", description: "A two-month window, extendable to three, in which anyone may oppose registration." },
+  { status: "Registered", title: "Registration", description: "The certificate issues and the mark may carry ® in the United Kingdom." },
 ];
 
 function formatDate(iso?: string): string {
@@ -180,26 +190,32 @@ function formatDate(iso?: string): string {
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 }
 
+/**
+ * Place a mark on its registry's stage sequence.
+ *
+ * `stages` comes from the jurisdiction record, so correcting a registry's
+ * process is a CMS edit. Vienna codification is dropped for anything that is
+ * not a device or combined mark, because it only applies to figurative marks.
+ */
 export function buildTimeline(
   mark: Pick<Trademark, "status" | "filingDate" | "registrationDate" | "markType">,
-  countryCode?: string
+  stageDefs: TimelineStageDef[] = [],
+  closedNote = ""
 ): TimelineStage[] {
-  const seq = countryCode === "GB" ? STAGES_GB : STAGES_IN;
-
-  // Vienna codification only applies to device/combined marks.
-  const stages = seq.filter(
-    s => s.key !== "Vienna codification" || /Device|Combined/.test(mark.markType ?? "")
+  const stages = stageDefs.filter(
+    s => s.status !== "Vienna codification" || /Device|Combined/.test(mark.markType ?? "")
   );
+  if (stages.length === 0) return [];
 
   // A terminal status replaces the remaining sequence.
   if (isClosed(mark.status)) {
     return [
-      { title: "Application filed", description: stages[0].description, state: "done", date: formatDate(mark.filingDate) },
-      { title: mark.status, description: "This application is no longer proceeding.", state: "now", date: "Current" },
+      { title: stages[0].title, description: stages[0].description, state: "done", date: formatDate(mark.filingDate) },
+      { title: mark.status, description: closedNote, state: "now", date: "Current" },
     ];
   }
 
-  const idx = stages.findIndex(s => s.key === mark.status);
+  const idx = stages.findIndex(s => s.status === mark.status);
   const current = idx < 0 ? 0 : idx;
 
   return stages.map((s, i) => {
@@ -208,7 +224,7 @@ export function buildTimeline(
     if (i === 0) date = formatDate(mark.filingDate);
     else if (state === "now") date = "Current";
     else if (state === "done") date = "";
-    if (s.key === "Registered" && mark.registrationDate) date = formatDate(mark.registrationDate);
+    if (s.status === "Registered" && mark.registrationDate) date = formatDate(mark.registrationDate);
     return { title: s.title, description: s.description, state, date };
   });
 }

@@ -4,16 +4,17 @@ import Link from "next/link";
 import {
   trademarkService, trademarkPageService, proprietorService, jurisdictionService,
 } from "@/lib/firebase-services";
-import { revalidate as pushLive } from "@/lib/revalidate";
+import { publish, publishNote } from "@/lib/cms-publish";
 import type {
   Trademark, TrademarkClass, TrademarkPageMeta, Proprietor, Jurisdiction,
 } from "@/lib/types";
 import {
   markSymbol, TRADEMARK_STATUSES, FILING_TYPES, MARK_TYPES, applicationLabel,
+  SEED_STAGES_GB, SEED_STAGES_IN,
 } from "@/lib/trademarks";
 import { TRADEMARK_PAGE_DEFAULTS } from "@/lib/trademark-defaults";
 import {
-  Plus, Pencil, Trash2, ChevronUp, ChevronDown, ExternalLink, Lock, AlertTriangle,
+  Plus, Pencil, Trash2, ChevronUp, ChevronDown, ExternalLink, Lock, AlertTriangle, RotateCcw,
 } from "lucide-react";
 import {
   AdminPageHeader, Field, Input, Textarea, Select, Toggle,
@@ -163,10 +164,7 @@ export default function TrademarksAdmin() {
       if (editing?.id) await trademarkService.update(editing.id, clean);
       else await trademarkService.create(clean);
 
-      const pushed = await pushLive({
-        paths: ["/trademarks", `/trademarks/${clean.slug}`], tags: ["trademarks"],
-      });
-      setNote(pushed ? "Saved and published." : "Saved. The live pages update within about two minutes.");
+      setNote(publishNote(await publish("trademarks", [`/trademarks/${clean.slug}`])));
       setSaved(true); setShowForm(false);
       load();
     } catch (err: any) { setError(err.message); }
@@ -175,8 +173,9 @@ export default function TrademarksAdmin() {
 
   async function handleDelete(id: string) {
     if (!confirm("Delete this trademark record? This cannot be undone.")) return;
+    const gone = items.find(m => m.id === id)?.slug;
     await trademarkService.delete(id);
-    await pushLive({ paths: ["/trademarks"], tags: ["trademarks"] });
+    await publish("trademarks", gone ? [`/trademarks/${gone}`] : []);
     load();
   }
 
@@ -186,7 +185,7 @@ export default function TrademarksAdmin() {
     if (t < 0 || t >= arr.length) return;
     [arr[index], arr[t]] = [arr[t], arr[index]];
     for (let i = 0; i < arr.length; i++) await trademarkService.update(arr[i].id!, { sortOrder: i });
-    await pushLive({ paths: ["/trademarks"], tags: ["trademarks"] });
+    await publish("trademarks", markPaths);
     load();
   }
 
@@ -194,11 +193,15 @@ export default function TrademarksAdmin() {
     setPageSaving(true); setError("");
     try {
       await trademarkPageService.save(page);
-      await pushLive({ paths: ["/trademarks"], tags: ["trademarks"] });
+      await publish("trademarks", markPaths);
       setPageSaved(true); setTimeout(() => setPageSaved(false), 3000);
     } catch (err: any) { setError(err.message); }
     setPageSaving(false);
   }
+
+  // Every published mark page. Page settings, ordering and reference data all
+  // change what these render, so they are dropped alongside the index.
+  const markPaths = items.filter(m => m.slug).map(m => `/trademarks/${m.slug}`);
 
   const jName = (id: string) => juris.find(j => j.id === id)?.countryName ?? "—";
   const pName = (id: string) => props.find(p => p.id === id)?.legalName ?? "—";
@@ -578,7 +581,7 @@ export default function TrademarksAdmin() {
       ) : tab === "page" ? (
         <PageSettings page={page} setPage={setPage} onSave={savePage} saving={pageSaving} saved={pageSaved} />
       ) : (
-        <RefData props={props} juris={juris} reload={load} />
+        <RefData props={props} juris={juris} markPaths={markPaths} reload={load} />
       )}
     </div>
   );
@@ -796,6 +799,71 @@ function PageSettings({ page, setPage, onSave, saving, saved }: {
         </div>
       </Card>
 
+      {/* Short labels. Nothing on the public pages is hardcoded, so these are
+          the words on the register table, the panels and the buttons. */}
+      <Card className="mb-6">
+        <SectionTitle>Register table &amp; panel labels</SectionTitle>
+        <p className="text-xs text-white/30 mb-4 leading-relaxed">
+          Column headings on the register, and the field labels used on the summary panels.
+        </p>
+        <div className="grid grid-cols-3 gap-4">
+          <Field label="Column: mark"><Input value={page.colMark ?? ""} onChange={e => set("colMark", e.target.value)} /></Field>
+          <Field label="Column: proprietor"><Input value={page.colProprietor ?? ""} onChange={e => set("colProprietor", e.target.value)} /></Field>
+          <Field label="Column: status"><Input value={page.colStatus ?? ""} onChange={e => set("colStatus", e.target.value)} /></Field>
+          <Field label="Column: application"><Input value={page.colApplication ?? ""} onChange={e => set("colApplication", e.target.value)} /></Field>
+          <Field label="Column: classes"><Input value={page.colClasses ?? ""} onChange={e => set("colClasses", e.target.value)} /></Field>
+          <Field label="Row action button"><Input value={page.colAction ?? ""} onChange={e => set("colAction", e.target.value)} /></Field>
+          <Field label="Count word (one)"><Input value={page.countOne ?? ""} onChange={e => set("countOne", e.target.value)} /></Field>
+          <Field label="Count word (many)"><Input value={page.countMany ?? ""} onChange={e => set("countMany", e.target.value)} /></Field>
+          <Field label="Primary panel label"><Input value={page.primaryPanelLabel ?? ""} onChange={e => set("primaryPanelLabel", e.target.value)} /></Field>
+          <Field label="Counter: total marks"><Input value={page.statMarksLabel ?? ""} onChange={e => set("statMarksLabel", e.target.value)} /></Field>
+          <Field label="Counter: registered"><Input value={page.statRegisteredLabel ?? ""} onChange={e => set("statRegisteredLabel", e.target.value)} /></Field>
+          <Field label="Counter: offices"><Input value={page.statOfficesLabel ?? ""} onChange={e => set("statOfficesLabel", e.target.value)} /></Field>
+          <Field label="Usage examples label"><Input value={page.usageExamplesLabel ?? ""} onChange={e => set("usageExamplesLabel", e.target.value)} /></Field>
+          <Field label="Particulars panel label"><Input value={page.particularsLabel ?? ""} onChange={e => set("particularsLabel", e.target.value)} /></Field>
+          <Field label="Specification label"><Input value={page.specificationLabel ?? ""} onChange={e => set("specificationLabel", e.target.value)} /></Field>
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-white/10">
+          <SectionTitle>Field labels</SectionTitle>
+          <div className="grid grid-cols-3 gap-4">
+            <Field label="Mark"><Input value={page.labelMark ?? ""} onChange={e => set("labelMark", e.target.value)} /></Field>
+            <Field label="Type"><Input value={page.labelType ?? ""} onChange={e => set("labelType", e.target.value)} /></Field>
+            <Field label="Number"><Input value={page.labelNumber ?? ""} onChange={e => set("labelNumber", e.target.value)} /></Field>
+            <Field label="Office"><Input value={page.labelOffice ?? ""} onChange={e => set("labelOffice", e.target.value)} /></Field>
+            <Field label="Classes"><Input value={page.labelClasses ?? ""} onChange={e => set("labelClasses", e.target.value)} /></Field>
+            <Field label="Status"><Input value={page.labelStatus ?? ""} onChange={e => set("labelStatus", e.target.value)} /></Field>
+            <Field label="Registration"><Input value={page.labelRegistration ?? ""} onChange={e => set("labelRegistration", e.target.value)} /></Field>
+            <Field label="Proprietor"><Input value={page.labelProprietor ?? ""} onChange={e => set("labelProprietor", e.target.value)} /></Field>
+            <Field label="Filed"><Input value={page.labelFiled ?? ""} onChange={e => set("labelFiled", e.target.value)} /></Field>
+          </div>
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-white/10">
+          <SectionTitle>Mark page buttons &amp; breadcrumb</SectionTitle>
+          <div className="grid grid-cols-3 gap-4">
+            <Field label="Verify button prefix" hint="Followed by the office short name">
+              <Input value={page.verifyButtonPrefix ?? ""} onChange={e => set("verifyButtonPrefix", e.target.value)} />
+            </Field>
+            <Field label="Open register prefix"><Input value={page.openRegisterPrefix ?? ""} onChange={e => set("openRegisterPrefix", e.target.value)} /></Field>
+            <Field label="Visit venture prefix"><Input value={page.visitVenturePrefix ?? ""} onChange={e => set("visitVenturePrefix", e.target.value)} /></Field>
+            <Field label="Proprietor button"><Input value={page.proprietorCtaLabel ?? ""} onChange={e => set("proprietorCtaLabel", e.target.value)} /></Field>
+            <Field label="Correct heading"><Input value={page.correctLabel ?? ""} onChange={e => set("correctLabel", e.target.value)} /></Field>
+            <Field label="Not-permitted heading"><Input value={page.notPermittedLabel ?? ""} onChange={e => set("notPermittedLabel", e.target.value)} /></Field>
+            <Field label="Breadcrumb: home"><Input value={page.breadcrumbHome ?? ""} onChange={e => set("breadcrumbHome", e.target.value)} /></Field>
+            <Field label="Breadcrumb: register"><Input value={page.breadcrumbRegister ?? ""} onChange={e => set("breadcrumbRegister", e.target.value)} /></Field>
+            <Field label="Closed-application note" hint="Shown on the timeline for a lapsed, withdrawn or refused mark">
+              <Input value={page.closedStageNote ?? ""} onChange={e => set("closedStageNote", e.target.value)} />
+            </Field>
+            <div className="col-span-3">
+              <Field label="Specification fallback suffix" hint="Appended when a registry link exists">
+                <Input value={page.specificationFallbackSuffix ?? ""} onChange={e => set("specificationFallbackSuffix", e.target.value)} />
+              </Field>
+            </div>
+          </div>
+        </div>
+      </Card>
+
       <Card className="mb-6">
         <SectionTitle>Cross-site &amp; SEO</SectionTitle>
         <div className="grid grid-cols-2 gap-4">
@@ -808,6 +876,11 @@ function PageSettings({ page, setPage, onSave, saving, saved }: {
           </div>
           <Field label="Meta title"><Input value={page.seoTitle ?? ""} onChange={e => set("seoTitle", e.target.value)} /></Field>
           <Field label="Meta description"><Input value={page.seoDescription ?? ""} onChange={e => set("seoDescription", e.target.value)} /></Field>
+          <div className="col-span-2">
+            <Field label="Mark page title pattern" hint="Used when a mark has no meta title of its own. {mark}, {symbol} and {country} are substituted.">
+              <Input value={page.markTitlePattern ?? ""} onChange={e => set("markTitlePattern", e.target.value)} />
+            </Field>
+          </div>
         </div>
       </Card>
 
@@ -817,8 +890,8 @@ function PageSettings({ page, setPage, onSave, saving, saved }: {
 }
 
 // ── Reference data tab ───────────────────────────────────────────────────────
-function RefData({ props, juris, reload }: {
-  props: Proprietor[]; juris: Jurisdiction[]; reload: () => void;
+function RefData({ props, juris, markPaths, reload }: {
+  props: Proprietor[]; juris: Jurisdiction[]; markPaths: string[]; reload: () => void;
 }) {
   const [busy, setBusy] = useState(false);
   const [pForm, setPForm] = useState<Proprietor | null>(null);
@@ -828,14 +901,14 @@ function RefData({ props, juris, reload }: {
     if (!pForm) return;
     setBusy(true);
     await proprietorService.save(pForm.id || slugify(pForm.displayName), pForm);
-    await pushLive({ paths: ["/trademarks"], tags: ["trademarks"] });
+    await publish("trademarks", markPaths);
     setPForm(null); setBusy(false); reload();
   }
   async function saveJ() {
     if (!jForm) return;
     setBusy(true);
     await jurisdictionService.save(jForm.id || jForm.countryCode.toLowerCase(), jForm);
-    await pushLive({ paths: ["/trademarks"], tags: ["trademarks"] });
+    await publish("trademarks", markPaths);
     setJForm(null); setBusy(false); reload();
   }
 
@@ -930,7 +1003,70 @@ function RefData({ props, juris, reload }: {
                 </p>
               </div>
             </div>
-            <div className="flex gap-3 mt-4">
+
+            {/* Stage sequence — this is what the timeline on every mark page is
+                built from. Each stage's status must match a status option on a
+                mark, which is how the current position is found. */}
+            <div className="mt-8 pt-6 border-t border-white/10">
+              <div className="flex items-center justify-between mb-3">
+                <SectionTitle>Application stages</SectionTitle>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => setJForm({ ...jForm, stages: jForm.countryCode === "GB" ? [...SEED_STAGES_GB] : [...SEED_STAGES_IN] })}
+                    className="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors">
+                    <RotateCcw size={14} /> Load standard sequence
+                  </button>
+                  <button
+                    onClick={() => setJForm({ ...jForm, stages: [...(jForm.stages ?? []), { status: "Filed", title: "", description: "" }] })}
+                    className="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors">
+                    <Plus size={14} /> Add stage
+                  </button>
+                </div>
+              </div>
+              <p className="text-xs text-white/30 mb-4 leading-relaxed">
+                In order, earliest first. A mark sits at the stage matching its status; everything
+                before is shown complete and everything after is shown as expected. Vienna
+                codification is skipped automatically for anything that is not a device or combined mark.
+              </p>
+              <div className="space-y-3">
+                {(jForm.stages ?? []).map((st, i) => (
+                  <div key={i} className="rounded-lg border border-white/10 bg-white/5 p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/40">Stage {i + 1}</span>
+                      <button
+                        onClick={() => setJForm({ ...jForm, stages: (jForm.stages ?? []).filter((_, ix) => ix !== i) })}
+                        className="p-1.5 rounded-lg text-white/30 hover:text-red-400 hover:bg-red-400/10 transition-colors"><Trash2 size={14} /></button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Field label="Status it maps to">
+                        <Select value={st.status}
+                          onChange={e => setJForm({ ...jForm, stages: (jForm.stages ?? []).map((x, ix) => ix === i ? { ...x, status: e.target.value } : x) })}>
+                          {TRADEMARK_STATUSES.map(o => <option key={o} value={o}>{o}</option>)}
+                        </Select>
+                      </Field>
+                      <Field label="Stage title">
+                        <Input value={st.title}
+                          onChange={e => setJForm({ ...jForm, stages: (jForm.stages ?? []).map((x, ix) => ix === i ? { ...x, title: e.target.value } : x) })} />
+                      </Field>
+                      <div className="col-span-2">
+                        <Field label="What happens at this stage">
+                          <Textarea rows={2} value={st.description}
+                            onChange={e => setJForm({ ...jForm, stages: (jForm.stages ?? []).map((x, ix) => ix === i ? { ...x, description: e.target.value } : x) })} />
+                        </Field>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {(jForm.stages ?? []).length === 0 && (
+                  <p className="text-white/30 text-sm py-4">
+                    No stages yet — mark pages for this office will show no timeline.
+                    Use &ldquo;Load standard sequence&rdquo; to start from the published process.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
               <SaveButton loading={busy} saved={false} onClick={saveJ} />
               <button onClick={() => setJForm(null)} className="text-sm text-white/40 hover:text-white">Cancel</button>
             </div>
@@ -943,7 +1079,7 @@ function RefData({ props, juris, reload }: {
               <div className="flex-1">
                 <div className="text-white text-sm">{j.countryName} <span className="text-white/30 font-mono text-xs">{j.countryCode}</span></div>
                 <div className="text-white/40 text-xs mt-0.5">
-                  {j.officeName} · {j.deepLinkSupported ? "direct links" : "manual search"}
+                  {j.officeName} · {j.deepLinkSupported ? "direct links" : "manual search"} · {(j.stages ?? []).length} stages
                 </div>
               </div>
               <button onClick={() => setJForm(j)} className="p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/10"><Pencil size={14} /></button>

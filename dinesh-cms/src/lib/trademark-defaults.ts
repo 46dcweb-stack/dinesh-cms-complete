@@ -1,4 +1,10 @@
-// Default copy for /trademarks. Overridden by trademarkPageMeta in the CMS.
+// Seed copy for /trademarks.
+//
+// The public pages do NOT read this file — every string they render comes from
+// the `trademarkPageMeta` document. This is the wording the admin offers when a
+// field has never been filled in, and the source the seed script writes from,
+// so there is one place to restore known-good copy from and exactly one place
+// the live site reads.
 import type { TrademarkPageMeta } from "./types";
 
 export const TRADEMARK_PAGE_DEFAULTS: TrademarkPageMeta = {
@@ -68,6 +74,49 @@ export const TRADEMARK_PAGE_DEFAULTS: TrademarkPageMeta = {
   verifyProprietorTitle: "The proprietor",
   verifyProprietorBody: "{proprietor}, as recorded on the application.",
   manualSearchNote: "This registry's search is session-based and cannot be linked to directly. Search for {number} once the page opens.",
+
+  // Register table
+  colMark: "Mark",
+  colProprietor: "Proprietor",
+  colStatus: "Status",
+  colApplication: "Application",
+  colClasses: "Classes",
+  colAction: "View record",
+
+  // Hero panel and counters
+  primaryPanelLabel: "Primary mark",
+  statMarksLabel: "Marks on record",
+  statRegisteredLabel: "Registered",
+  statOfficesLabel: "Registry offices",
+  usageExamplesLabel: "In running text",
+
+  // Field labels
+  labelMark: "Mark",
+  labelType: "Type",
+  labelNumber: "Number",
+  labelOffice: "Office",
+  labelClasses: "Classes",
+  labelStatus: "Status",
+  labelRegistration: "Registration",
+  labelProprietor: "Proprietor",
+  labelFiled: "Filed",
+
+  // Mark page chrome
+  particularsLabel: "Registry particulars",
+  specificationLabel: "Specification as filed",
+  verifyButtonPrefix: "Verify on",
+  openRegisterPrefix: "Open",
+  visitVenturePrefix: "Visit",
+  proprietorCtaLabel: "About the proprietor",
+  correctLabel: "Correct",
+  notPermittedLabel: "Not permitted",
+  breadcrumbHome: "Home",
+  breadcrumbRegister: "Trademarks",
+  closedStageNote: "This application is no longer proceeding.",
+  countOne: "mark",
+  countMany: "marks",
+  specificationFallbackSuffix: "Open the registry record above to read it in full.",
+  markTitlePattern: "{mark}{symbol} Trademark — {country} — 46DC",
 
   crossSiteHeading: "The company register",
   crossSiteBody: "The same marks are listed on the parent brand's own register, written from the company's side rather than mine.",

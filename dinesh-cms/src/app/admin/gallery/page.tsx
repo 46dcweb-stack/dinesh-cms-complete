@@ -7,6 +7,7 @@ import {
   AdminPageHeader, Field, Input, Textarea, Select, Toggle,
   SaveButton, ImageUpload, Alert, Card, SectionTitle, StatusBadge,
 } from "../components/ui";
+import { publish } from "@/lib/cms-publish";
 
 const EMPTY: Omit<GalleryImage, "id"> = {
   src: "", title: "", category: "Speaking", span: "col-span-1", altText: "",
@@ -90,6 +91,7 @@ export default function GalleryAdmin() {
       } else {
         await galleryService.create(form);
       }
+      await publish("gallery");
       setSaved(true);
       setShowForm(false);
       load();
@@ -100,6 +102,7 @@ export default function GalleryAdmin() {
   async function handleDelete(id: string) {
     if (!confirm("Delete this image?")) return;
     await galleryService.delete(id);
+    await publish("gallery");
     load();
   }
 

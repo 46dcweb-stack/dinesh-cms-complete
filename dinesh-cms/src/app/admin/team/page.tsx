@@ -7,6 +7,7 @@ import {
   AdminPageHeader, Field, Input, Textarea, Select, Toggle,
   SaveButton, ImageUpload, Alert, Card, SectionTitle, StatusBadge,
 } from "../components/ui";
+import { publish } from "@/lib/cms-publish";
 
 const EMPTY: Omit<TeamMember, "id"> = {
   name: "", role: "", bio: "", image: "",
@@ -86,6 +87,7 @@ export default function TeamAdmin() {
     try {
       if (editing?.id) { await teamService.update(editing.id, payload); }
       else { await teamService.create(payload); }
+      await publish("team");
       setSaved(true); setShowForm(false); load();
     } catch (err: any) { setError(err.message); }
     setSaving(false);
@@ -93,7 +95,9 @@ export default function TeamAdmin() {
 
   async function handleDelete(id: string) {
     if (!confirm("Remove this team member?")) return;
-    await teamService.delete(id); load();
+    await teamService.delete(id);
+    await publish("team");
+    load();
   }
 
   async function move(index: number, dir: "up" | "down") {
@@ -102,6 +106,7 @@ export default function TeamAdmin() {
     if (target < 0 || target >= arr.length) return;
     [arr[index], arr[target]] = [arr[target], arr[index]];
     for (let i = 0; i < arr.length; i++) await teamService.update(arr[i].id!, { sortOrder: i });
+    await publish("team");
     load();
   }
 

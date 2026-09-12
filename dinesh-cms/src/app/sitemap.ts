@@ -11,6 +11,11 @@ import { SITE_ROUTES } from "@/lib/routes";
 
 const BASE_URL = SITE_URL;
 
+// Without this, a metadata route is prerendered once at build time and never
+// regenerates — a page created in the CMS would stay out of sitemap.xml until
+// the next deploy, and revalidatePath("/sitemap.xml") would have nothing to drop.
+export const revalidate = 60;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const now = new Date();
 

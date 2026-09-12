@@ -8,6 +8,7 @@ import {
   AdminPageHeader, Field, Input, Textarea, SaveButton,
   Alert, Card, SectionTitle, ImageUpload, Toggle,
 } from "../components/ui";
+import { publish } from "@/lib/cms-publish";
 
 const DEFAULT: Omit<HomePage, "id"> = {
   heroTitle: "IT'S ME", heroName: "Dinesh Koyyalamudi",
@@ -73,6 +74,7 @@ export default function HomeAdmin() {
     setError("");
     try {
       await homeService.save(form);
+      await publish("home");
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err: any) { setError(err.message); }

@@ -4,7 +4,7 @@
 // like it failed — the page still updates on its own within ~2 minutes.
 import { auth } from "./firebase";
 
-export async function revalidate(opts: { paths?: string[]; tags?: string[] }): Promise<boolean> {
+export async function revalidate(opts: { paths?: string[]; tags?: string[]; layout?: boolean }): Promise<boolean> {
   try {
     const user = auth.currentUser;
     if (!user) return false;
@@ -12,7 +12,7 @@ export async function revalidate(opts: { paths?: string[]; tags?: string[] }): P
     const res = await fetch("/api/revalidate", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ paths: opts.paths ?? [], tags: opts.tags ?? [] }),
+      body: JSON.stringify({ paths: opts.paths ?? [], tags: opts.tags ?? [], layout: opts.layout ?? false }),
     });
     return res.ok;
   } catch {

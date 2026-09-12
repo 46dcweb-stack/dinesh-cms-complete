@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { legalPageService } from "@/lib/firebase-services";
-import { revalidate } from "@/lib/revalidate";
+import { publishLegal, publishNote } from "@/lib/cms-publish";
 import { formatHtml } from "@/lib/format-html";
 import type { LegalPage } from "@/lib/types";
 import { LEGAL_DEFAULTS, LEGAL_SLUGS, type LegalSlug } from "@/lib/legal-defaults";
@@ -83,10 +83,7 @@ export default function LegalAdmin() {
     try {
       await legalPageService.save(slug, form);
       // Push the change live now rather than waiting for the ISR window.
-      const pushed = await revalidate({ paths: [`/${slug}`], tags: [`legalPage-${slug}`] });
-      setLiveNote(pushed
-        ? "Saved and published — refresh the live page to see it."
-        : "Saved. The live page will update within about two minutes.");
+      setLiveNote(publishNote(await publishLegal(slug)));
       setSaved(true);
       setFromDefaults(false);
       setTimeout(() => setSaved(false), 3000);

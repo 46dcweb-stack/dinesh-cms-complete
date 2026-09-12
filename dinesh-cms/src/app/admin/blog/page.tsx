@@ -9,6 +9,7 @@ import type { BlogPost } from "@/lib/types";
 import { formatDistanceToNow } from "date-fns";
 import { Plus, Search, Eye, Pencil, Trash2, Globe, FileText } from "lucide-react";
 import { AdminPageHeader, StatusBadge, Card, SectionTitle, Field, Input, Textarea, SaveButton, Alert } from "../components/ui";
+import { publish } from "@/lib/cms-publish";
 
 const HERO_DEFAULTS = {
   subtitle:      "Thought Leadership & Insights",
@@ -86,6 +87,7 @@ export default function BlogAdmin() {
   async function handleDelete(id: string) {
     if (!confirm("Delete this post? This cannot be undone.")) return;
     await blogService.delete(id);
+    await publish("blog");
     load();
   }
 
@@ -95,6 +97,8 @@ export default function BlogAdmin() {
     } else {
       await blogService.publish(id);
     }
+    // Publishing or unpublishing changes /blog and the sitemap, not just the post.
+    await publish("blog");
     load();
   }
 

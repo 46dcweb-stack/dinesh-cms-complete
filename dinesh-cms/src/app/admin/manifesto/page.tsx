@@ -7,6 +7,7 @@ import {
   AdminPageHeader, Field, Input, Textarea, Select, SaveButton, ImageUpload,
   Alert, Card, SectionTitle, Toggle,
 } from "../components/ui";
+import { publish } from "@/lib/cms-publish";
 
 // ── Built-in city coordinate lookup (no API needed) ─────────────────────────
 const CITY_DB: { name: string; lat: number; lng: number }[] = [
@@ -175,6 +176,7 @@ export default function ManifestoAdmin() {
   async function saveMeta() {
     setSavingMeta(true);
     await manifestoService.saveMeta(meta);
+    await publish("manifesto");
     setMetaSaved(true);
     setTimeout(() => setMetaSaved(false), 3000);
     setSavingMeta(false);
@@ -192,6 +194,7 @@ export default function ManifestoAdmin() {
       } else {
         await manifestoService.createSection({ ...sectionForm, order: sections.length });
       }
+      await publish("manifesto");
       setShowSectionForm(false);
       setEditingSection(null);
       load();
@@ -201,6 +204,7 @@ export default function ManifestoAdmin() {
   async function deleteSection(id: string) {
     if (!confirm("Delete this section?")) return;
     await manifestoService.deleteSection(id);
+    await publish("manifesto");
     load();
   }
 
@@ -211,6 +215,7 @@ export default function ManifestoAdmin() {
     [newSections[index], newSections[swapWith]] = [newSections[swapWith], newSections[index]];
     const reordered = newSections.map((s, i) => ({ id: s.id!, order: i }));
     await manifestoService.reorderSections(reordered);
+    await publish("manifesto");
     load();
   }
 
