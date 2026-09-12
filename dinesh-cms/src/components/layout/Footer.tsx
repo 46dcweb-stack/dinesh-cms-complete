@@ -104,13 +104,12 @@ export default function Footer() {
               </div>
             )}
 
-            {/* Compliance badge — the brand column is narrow, so the line breaks
-                are set deliberately rather than left to wrap raggedly. */}
-            <div className="relative z-20 mt-6 flex items-start gap-2">
-              <ShieldCheck size={15} className="text-emerald-500 shrink-0 mt-[2px]" />
-              <span className="text-text-secondary text-[10px] uppercase font-mono tracking-[0.08em] leading-[1.7]">
-                <span className="whitespace-nowrap">UK GDPR &middot; ICO Registered</span>
-                <span className="block text-text-muted">ZC243765</span>
+            {/* Compliance badge — kept on a single line; the tracking is tuned so
+                the full string fits the narrow brand column without wrapping. */}
+            <div className="relative z-20 mt-6 flex items-center gap-2">
+              <ShieldCheck size={15} className="text-emerald-500 shrink-0" />
+              <span className="text-text-secondary text-[10px] uppercase font-mono tracking-[0.04em] whitespace-nowrap leading-tight">
+                UK GDPR &middot; ICO Registered &middot; ZC243765
               </span>
             </div>
           </div>
