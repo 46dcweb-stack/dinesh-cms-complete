@@ -561,9 +561,37 @@ export interface TrademarkPageMeta {
   usageCorrect?: string[];
   usageIncorrect?: string[];
   pageFaqs?: { question: string; answer: string }[];
+  faqHeading?: string;
   crossSiteHeading?: string;
   crossSiteBody?: string;
   crossSiteUrl?: string;
+  crossSiteCta?: string;
+  registerEmpty?: string;
+  lastUpdatedLabel?: string;
+  // Labels shared by every /trademarks/{slug} page. They live here rather than
+  // on each mark so the wording stays consistent across the register.
+  markStoryHeading?: string;
+  markClassesHeading?: string;
+  markClassesIntro?: string;
+  markTimelineHeading?: string;
+  markTimelineIntro?: string;
+  markUsageHeading?: string;
+  markVerifyHeading?: string;
+  markVerifyIntro?: string;
+  markRelatedHeading?: string;
+  markFaqHeading?: string;
+  wordMarkNote?: string;
+  deviceMarkNote?: string;
+  specificationFallback?: string;
+  // Verification cards. {office}, {venture} and {proprietor} are substituted
+  // with the values on the mark being viewed.
+  verifyRegisterTitle?: string;
+  verifyRegisterBody?: string;
+  verifyVentureTitle?: string;
+  verifyVentureBody?: string;
+  verifyProprietorTitle?: string;
+  verifyProprietorBody?: string;
+  manualSearchNote?: string;
   seoTitle?: string;
   seoDescription?: string;
   updatedAt?: Timestamp;

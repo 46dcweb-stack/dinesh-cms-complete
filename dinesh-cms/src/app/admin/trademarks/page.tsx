@@ -652,6 +652,8 @@ function PageSettings({ page, setPage, onSave, saving, saved }: {
             <Field label="Heading"><Input value={page.registerHeading ?? ""} onChange={e => set("registerHeading", e.target.value)} /></Field>
             <Field label="Intro"><Textarea rows={2} value={page.registerIntro ?? ""} onChange={e => set("registerIntro", e.target.value)} /></Field>
           </div>
+          <Field label="Empty-state text" hint="Shown when no marks are published"><Input value={page.registerEmpty ?? ""} onChange={e => set("registerEmpty", e.target.value)} /></Field>
+          <Field label="Last-updated label" hint="Precedes the date under the register"><Input value={page.lastUpdatedLabel ?? ""} onChange={e => set("lastUpdatedLabel", e.target.value)} /></Field>
           <Field label="Footnote" hint="The ™ / ® legal note shown under the register">
             <Textarea rows={3} value={page.registerFootnote ?? ""} onChange={e => set("registerFootnote", e.target.value)} />
           </Field>
@@ -699,7 +701,8 @@ function PageSettings({ page, setPage, onSave, saving, saved }: {
       </Card>
 
       <Card className="mb-6">
-        <div className="flex items-center justify-between mb-4">
+        <Field label="FAQ section heading"><Input value={page.faqHeading ?? ""} onChange={e => set("faqHeading", e.target.value)} /></Field>
+        <div className="flex items-center justify-between mb-4 mt-6">
           <SectionTitle>Register-wide FAQs</SectionTitle>
           <button onClick={() => set("pageFaqs", [...faqs, { question: "", answer: "" }])}
             className="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors">
@@ -727,11 +730,79 @@ function PageSettings({ page, setPage, onSave, saving, saved }: {
         </div>
       </Card>
 
+      {/* Shared wording for every /trademarks/{slug} page. Kept here rather than
+          on each mark so the headings stay identical across the register. */}
+      <Card className="mb-6">
+        <SectionTitle>Individual mark pages</SectionTitle>
+        <p className="text-xs text-white/30 mb-4 leading-relaxed">
+          Section headings used on every mark page. Leave a field empty to keep the built-in wording.
+        </p>
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Story heading"><Input value={page.markStoryHeading ?? ""} onChange={e => set("markStoryHeading", e.target.value)} /></Field>
+          <Field label="Classes heading"><Input value={page.markClassesHeading ?? ""} onChange={e => set("markClassesHeading", e.target.value)} /></Field>
+          <div className="col-span-2">
+            <Field label="Classes intro"><Textarea rows={2} value={page.markClassesIntro ?? ""} onChange={e => set("markClassesIntro", e.target.value)} /></Field>
+          </div>
+          <Field label="Timeline heading"><Input value={page.markTimelineHeading ?? ""} onChange={e => set("markTimelineHeading", e.target.value)} /></Field>
+          <Field label="Usage heading"><Input value={page.markUsageHeading ?? ""} onChange={e => set("markUsageHeading", e.target.value)} /></Field>
+          <div className="col-span-2">
+            <Field label="Timeline intro"><Textarea rows={2} value={page.markTimelineIntro ?? ""} onChange={e => set("markTimelineIntro", e.target.value)} /></Field>
+          </div>
+          <Field label="Verification heading"><Input value={page.markVerifyHeading ?? ""} onChange={e => set("markVerifyHeading", e.target.value)} /></Field>
+          <Field label="Related-marks heading"><Input value={page.markRelatedHeading ?? ""} onChange={e => set("markRelatedHeading", e.target.value)} /></Field>
+          <div className="col-span-2">
+            <Field label="Verification intro"><Textarea rows={2} value={page.markVerifyIntro ?? ""} onChange={e => set("markVerifyIntro", e.target.value)} /></Field>
+          </div>
+          <Field label="Mark FAQ heading"><Input value={page.markFaqHeading ?? ""} onChange={e => set("markFaqHeading", e.target.value)} /></Field>
+          <div />
+          <div className="col-span-2">
+            <Field label="Word mark caption" hint="Shown under the specimen on word marks">
+              <Textarea rows={2} value={page.wordMarkNote ?? ""} onChange={e => set("wordMarkNote", e.target.value)} />
+            </Field>
+          </div>
+          <div className="col-span-2">
+            <Field label="Device mark caption" hint="Shown under the specimen on device and combined marks">
+              <Textarea rows={2} value={page.deviceMarkNote ?? ""} onChange={e => set("deviceMarkNote", e.target.value)} />
+            </Field>
+          </div>
+          <div className="col-span-2">
+            <Field label="Missing specification note" hint="Shown for a class whose filed wording has not been entered yet">
+              <Textarea rows={2} value={page.specificationFallback ?? ""} onChange={e => set("specificationFallback", e.target.value)} />
+            </Field>
+          </div>
+          <div className="col-span-2">
+            <Field label="Manual-search note" hint="Registries without a direct link. {number} is replaced by the application number">
+              <Textarea rows={2} value={page.manualSearchNote ?? ""} onChange={e => set("manualSearchNote", e.target.value)} />
+            </Field>
+          </div>
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-white/10">
+          <SectionTitle>Verification cards</SectionTitle>
+          <p className="text-xs text-white/30 mb-4 leading-relaxed">
+            The three &ldquo;check this for yourself&rdquo; cards. Use{" "}
+            <code className="text-white/60">{"{office}"}</code>,{" "}
+            <code className="text-white/60">{"{venture}"}</code> and{" "}
+            <code className="text-white/60">{"{proprietor}"}</code> — each is replaced with the value on the mark being viewed.
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Register card title"><Input value={page.verifyRegisterTitle ?? ""} onChange={e => set("verifyRegisterTitle", e.target.value)} /></Field>
+            <Field label="Register card body"><Input value={page.verifyRegisterBody ?? ""} onChange={e => set("verifyRegisterBody", e.target.value)} /></Field>
+            <Field label="Venture card title"><Input value={page.verifyVentureTitle ?? ""} onChange={e => set("verifyVentureTitle", e.target.value)} /></Field>
+            <Field label="Venture card body"><Input value={page.verifyVentureBody ?? ""} onChange={e => set("verifyVentureBody", e.target.value)} /></Field>
+            <Field label="Proprietor card title"><Input value={page.verifyProprietorTitle ?? ""} onChange={e => set("verifyProprietorTitle", e.target.value)} /></Field>
+            <Field label="Proprietor card body"><Input value={page.verifyProprietorBody ?? ""} onChange={e => set("verifyProprietorBody", e.target.value)} /></Field>
+          </div>
+        </div>
+      </Card>
+
       <Card className="mb-6">
         <SectionTitle>Cross-site &amp; SEO</SectionTitle>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Cross-site heading"><Input value={page.crossSiteHeading ?? ""} onChange={e => set("crossSiteHeading", e.target.value)} /></Field>
           <Field label="Cross-site URL"><Input value={page.crossSiteUrl ?? ""} onChange={e => set("crossSiteUrl", e.target.value)} /></Field>
+          <Field label="Cross-site button label"><Input value={page.crossSiteCta ?? ""} onChange={e => set("crossSiteCta", e.target.value)} /></Field>
+          <div />
           <div className="col-span-2">
             <Field label="Cross-site body"><Textarea rows={2} value={page.crossSiteBody ?? ""} onChange={e => set("crossSiteBody", e.target.value)} /></Field>
           </div>

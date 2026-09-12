@@ -7,23 +7,29 @@ import StatusPill from "@/components/trademarks/StatusPill";
 import TrademarkSchema from "@/components/trademarks/TrademarkSchema";
 import FAQGrid from "@/components/sections/FAQGrid";
 import { BreadcrumbSchema, FaqSchema } from "@/components/seo/JsonLd";
-import { getTrademarks, getTrademarkRefs } from "@/lib/firebase-data";
+import { getTrademarks, getTrademarkRefs, getTrademarkPageMeta } from "@/lib/firebase-data";
 import {
   markSymbol, applicationLabel, classList, numberForClass,
   verifyLink, buildTimeline, formatMarkDate,
 } from "@/lib/trademarks";
+import { TRADEMARK_PAGE_DEFAULTS as D } from "@/lib/trademark-defaults";
+import { absoluteUrl } from "@/lib/site";
+import { fbStr } from "@/lib/fallback";
 import type { Trademark, Jurisdiction, Proprietor } from "@/lib/types";
 
 export const revalidate = 60;
 
 async function load(slug: string) {
-  const [marks, refs] = await Promise.all([getTrademarks(), getTrademarkRefs()]);
+  const [marks, refs, pageMeta] = await Promise.all([
+    getTrademarks(), getTrademarkRefs(), getTrademarkPageMeta(),
+  ]);
   const all = marks as unknown as Trademark[];
   const mark = all.find(m => m.slug === slug) ?? null;
   const jurisdictions = refs.jurisdictions as unknown as Jurisdiction[];
   const proprietors = refs.proprietors as unknown as Proprietor[];
   return {
     mark, all,
+    meta: (pageMeta ?? {}) as any,
     jurisdiction: mark ? jurisdictions.find(j => j.id === mark.jurisdictionId) ?? null : null,
     proprietor: mark ? proprietors.find(p => p.id === mark.proprietorId) ?? null : null,
   };
@@ -57,8 +63,38 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function TrademarkDetail({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const { mark, all, jurisdiction, proprietor } = await load(slug);
+  const { mark, all, meta, jurisdiction, proprietor } = await load(slug);
   if (!mark) notFound();
+
+  // Section headings are shared by every mark page and come from the CMS
+  // (Trademarks → Page settings → Mark page labels).
+  const L = {
+    story:        fbStr(meta.markStoryHeading, D.markStoryHeading!),
+    classes:      fbStr(meta.markClassesHeading, D.markClassesHeading!),
+    classesIntro: fbStr(meta.markClassesIntro, D.markClassesIntro!),
+    timeline:     fbStr(meta.markTimelineHeading, D.markTimelineHeading!),
+    timelineIntro:fbStr(meta.markTimelineIntro, D.markTimelineIntro!),
+    usage:        fbStr(meta.markUsageHeading, D.markUsageHeading!),
+    verify:       fbStr(meta.markVerifyHeading, D.markVerifyHeading!),
+    verifyIntro:  fbStr(meta.markVerifyIntro, D.markVerifyIntro!),
+    related:      fbStr(meta.markRelatedHeading, D.markRelatedHeading!),
+    faq:          fbStr(meta.markFaqHeading, D.markFaqHeading!),
+    wordNote:     fbStr(meta.wordMarkNote, D.wordMarkNote!),
+    deviceNote:   fbStr(meta.deviceMarkNote, D.deviceMarkNote!),
+    specFallback: fbStr(meta.specificationFallback, D.specificationFallback!),
+    verifyRegisterTitle:   fbStr(meta.verifyRegisterTitle, D.verifyRegisterTitle!),
+    verifyRegisterBody:    fbStr(meta.verifyRegisterBody, D.verifyRegisterBody!),
+    verifyVentureTitle:    fbStr(meta.verifyVentureTitle, D.verifyVentureTitle!),
+    verifyVentureBody:     fbStr(meta.verifyVentureBody, D.verifyVentureBody!),
+    verifyProprietorTitle: fbStr(meta.verifyProprietorTitle, D.verifyProprietorTitle!),
+    verifyProprietorBody:  fbStr(meta.verifyProprietorBody, D.verifyProprietorBody!),
+    manualSearchNote:      fbStr(meta.manualSearchNote, D.manualSearchNote!),
+  };
+
+  // CMS copy carries {office} / {venture} / {proprietor} / {number} placeholders
+  // so the editor never has to repeat a name that already lives on the record.
+  const fill = (tpl: string, vars: Record<string, string>) =>
+    tpl.replace(/\{(office|venture|proprietor|number)\}/g, (_, k) => vars[k] ?? "");
 
   const sym = markSymbol(mark.status);
   const verify = verifyLink(mark, jurisdiction);
@@ -71,12 +107,12 @@ export default async function TrademarkDetail({ params }: { params: Promise<{ sl
     <div className="pt-40 lg:pt-44 pb-24 bg-brand-dark min-h-screen">
       <TrademarkSchema mark={mark} jurisdiction={jurisdiction} proprietor={proprietor} />
       <BreadcrumbSchema items={[
-        { name: "Home", url: "https://www.46dc.com" },
-        { name: "Trademarks", url: "https://www.46dc.com/trademarks" },
-        { name: mark.markName, url: `https://www.46dc.com/trademarks/${mark.slug}` },
+        { name: "Home", url: absoluteUrl("/") },
+        { name: "Trademarks", url: absoluteUrl("/trademarks") },
+        { name: mark.markName, url: absoluteUrl(`/trademarks/${mark.slug}`) },
       ]} />
       <FaqSchema items={faqs.map(f => ({ q: f.question, a: f.answer }))}
-        pageUrl={`https://www.46dc.com/trademarks/${mark.slug}`} />
+        pageUrl={absoluteUrl(`/trademarks/${mark.slug}`)} />
 
       <div className="px-6">
         <div className="max-w-7xl mx-auto">
@@ -95,9 +131,7 @@ export default async function TrademarkDetail({ params }: { params: Promise<{ sl
               <MarkSpecimen name={mark.markName} image={mark.markImage} bg={mark.markImageBg}
                 className="w-[260px] h-[165px] mb-4" textClass="text-4xl" />
               <p className="text-text-muted text-xs mb-8 max-w-[320px] leading-relaxed">
-                {isDevice
-                  ? "The mark exactly as filed. A device mark protects this artwork, not the words inside it."
-                  : "A word mark protects the name itself, in any typeface — not the styling shown here."}
+                {isDevice ? L.deviceNote : L.wordNote}
               </p>
 
               <h1 className="text-4xl md:text-6xl font-display leading-[1.05] tracking-tight text-white">
@@ -146,8 +180,7 @@ export default async function TrademarkDetail({ params }: { params: Promise<{ sl
                   </Link>
                   {verify.manualEntry && (
                     <p className="text-text-muted text-[11px] mt-3 leading-relaxed">
-                      This registry&apos;s search is session-based and cannot be linked to directly.
-                      Search for <span className="text-white font-mono">{verify.number}</span> once the page opens.
+                      {fill(L.manualSearchNote, { number: verify.number })}
                     </p>
                   )}
                 </div>
@@ -158,7 +191,7 @@ export default async function TrademarkDetail({ params }: { params: Promise<{ sl
           {/* ── Story ────────────────────────────────────────── */}
           {mark.story && (
             <section className="mb-20 border-t border-white/5 pt-16">
-              <h2 className="text-3xl md:text-4xl font-display text-white mb-8">Why this mark exists</h2>
+              <h2 className="text-3xl md:text-4xl font-display text-white mb-8">{L.story}</h2>
               <div className="max-w-3xl space-y-5">
                 {mark.story.split("\n\n").filter(Boolean).map((para, i) => (
                   <p key={i} className="text-text-secondary text-base md:text-lg leading-relaxed">{para}</p>
@@ -169,11 +202,8 @@ export default async function TrademarkDetail({ params }: { params: Promise<{ sl
 
           {/* ── Classes ──────────────────────────────────────── */}
           <section className="mb-20 border-t border-white/5 pt-16">
-            <h2 className="text-3xl md:text-4xl font-display text-white mb-4">What this mark covers</h2>
-            <p className="text-text-secondary text-base max-w-3xl leading-relaxed">
-              The exact goods and services specification filed with the registry. This wording, not the
-              venture description, defines the legal scope of protection.
-            </p>
+            <h2 className="text-3xl md:text-4xl font-display text-white mb-4">{L.classes}</h2>
+            <p className="text-text-secondary text-base max-w-3xl leading-relaxed">{L.classesIntro}</p>
             {mark.classNote && (
               <p className="text-text-secondary text-base max-w-3xl leading-relaxed mt-3">{mark.classNote}</p>
             )}
@@ -198,7 +228,7 @@ export default async function TrademarkDetail({ params }: { params: Promise<{ sl
                       // Never invent this wording — it defines the legal scope of protection.
                       // Until the exact filed text is entered, point the reader at the register.
                       <p className="text-text-muted text-sm leading-relaxed max-w-4xl italic">
-                        The full specification for this class is held on the official register.
+                        {L.specFallback}
                         {verify.url ? " Open the registry record above to read it in full." : ""}
                       </p>
                     )}
@@ -210,10 +240,8 @@ export default async function TrademarkDetail({ params }: { params: Promise<{ sl
 
           {/* ── Timeline ─────────────────────────────────────── */}
           <section className="mb-20 border-t border-white/5 pt-16">
-            <h2 className="text-3xl md:text-4xl font-display text-white mb-4">Where this application stands</h2>
-            <p className="text-text-secondary text-base max-w-3xl leading-relaxed">
-              Applications move through fixed stages. This record updates as the registry advances it.
-            </p>
+            <h2 className="text-3xl md:text-4xl font-display text-white mb-4">{L.timeline}</h2>
+            <p className="text-text-secondary text-base max-w-3xl leading-relaxed">{L.timelineIntro}</p>
             <ol className="mt-10 border-l-2 border-white/10 max-w-3xl">
               {timeline.map((s, i) => (
                 <li key={i} className="relative pl-8 pb-8 last:pb-0">
@@ -234,7 +262,7 @@ export default async function TrademarkDetail({ params }: { params: Promise<{ sl
           {/* ── Usage (device marks) ─────────────────────────── */}
           {mark.usageEnabled && (
             <section className="mb-20 border-t border-white/5 pt-16">
-              <h2 className="text-3xl md:text-4xl font-display text-white mb-4">Using this mark</h2>
+              <h2 className="text-3xl md:text-4xl font-display text-white mb-4">{L.usage}</h2>
               {mark.usageIntro && (
                 <p className="text-text-secondary text-base max-w-3xl leading-relaxed">{mark.usageIntro}</p>
               )}
@@ -263,24 +291,22 @@ export default async function TrademarkDetail({ params }: { params: Promise<{ sl
 
           {/* ── Verify ───────────────────────────────────────── */}
           <section className="mb-20 border-t border-white/5 pt-16">
-            <h2 className="text-3xl md:text-4xl font-display text-white mb-4">Check this for yourself</h2>
-            <p className="text-text-secondary text-base max-w-3xl leading-relaxed">
-              Nothing on this page needs to be taken on trust. Every claim traces to a source you can open.
-            </p>
+            <h2 className="text-3xl md:text-4xl font-display text-white mb-4">{L.verify}</h2>
+            <p className="text-text-secondary text-base max-w-3xl leading-relaxed">{L.verifyIntro}</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
               {verify.url && (
-                <VCard title="Official register"
-                  body={`The application record held by ${jurisdiction?.officeName ?? "the registry"}, searchable by application number.`}
+                <VCard title={L.verifyRegisterTitle}
+                  body={fill(L.verifyRegisterBody, { office: jurisdiction?.officeName ?? "the registry" })}
                   href={verify.url} label={`Open ${jurisdiction?.officeShort ?? "register"}`} primary />
               )}
               {mark.ventureUrl && (
-                <VCard title="The venture"
-                  body={`${mark.ventureName ?? mark.markName}'s own site, where the work this mark protects is described in full.`}
+                <VCard title={L.verifyVentureTitle}
+                  body={fill(L.verifyVentureBody, { venture: mark.ventureName ?? mark.markName })}
                   href={mark.ventureUrl} label={`Visit ${mark.ventureName ?? mark.markName}`} />
               )}
               {proprietor && (
-                <VCard title="The proprietor"
-                  body={`${proprietor.legalName}, as recorded on the application.`}
+                <VCard title={L.verifyProprietorTitle}
+                  body={fill(L.verifyProprietorBody, { proprietor: proprietor.legalName })}
                   href={proprietor.verifyUrl || "/about"} label="About the proprietor" />
               )}
             </div>
@@ -289,7 +315,7 @@ export default async function TrademarkDetail({ params }: { params: Promise<{ sl
           {/* ── Related ──────────────────────────────────────── */}
           {related.length > 0 && (
             <section className="mb-20 border-t border-white/5 pt-16">
-              <h2 className="text-3xl md:text-4xl font-display text-white mb-10">Other marks in the ecosystem</h2>
+              <h2 className="text-3xl md:text-4xl font-display text-white mb-10">{L.related}</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {related.map(r => (
                   <Link key={r.id} href={`/trademarks/${r.slug}`}
@@ -311,7 +337,7 @@ export default async function TrademarkDetail({ params }: { params: Promise<{ sl
           {/* ── FAQ ──────────────────────────────────────────── */}
           {faqs.length > 0 && (
             <section className="border-t border-white/5 pt-16">
-              <h2 className="text-3xl md:text-4xl font-display text-white mb-10">Questions about this mark</h2>
+              <h2 className="text-3xl md:text-4xl font-display text-white mb-10">{L.faq}</h2>
               <FAQGrid questions={faqs.map(f => ({ q: f.question, a: f.answer }))} />
             </section>
           )}
