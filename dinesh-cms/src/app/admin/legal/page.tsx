@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { legalPageService } from "@/lib/firebase-services";
 import { revalidate } from "@/lib/revalidate";
+import { formatHtml } from "@/lib/format-html";
 import type { LegalPage } from "@/lib/types";
 import { LEGAL_DEFAULTS, LEGAL_SLUGS, type LegalSlug } from "@/lib/legal-defaults";
-import { ExternalLink, RotateCcw } from "lucide-react";
+import { ExternalLink, RotateCcw, Wand2 } from "lucide-react";
 import {
   AdminPageHeader, Field, Input, Textarea,
   SaveButton, Alert, Card, SectionTitle,
@@ -48,7 +49,8 @@ export default function LegalAdmin() {
       const data = await legalPageService.get(s);
       if (data) {
         // Fill any blank field from the defaults so nothing renders empty
-        setForm({ ...defaultsFor(s), ...stripEmpty(data) });
+        const merged = { ...defaultsFor(s), ...stripEmpty(data) };
+        setForm({ ...merged, content: formatHtml(merged.content ?? "") });
         setFromDefaults(false);
       } else {
         setForm(defaultsFor(s));
@@ -166,10 +168,17 @@ export default function LegalAdmin() {
           <Card className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <SectionTitle>Page Content</SectionTitle>
-              <button onClick={resetToDefault}
-                className="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors">
-                <RotateCcw size={14} /> Restore original wording
-              </button>
+              <div className="flex items-center gap-4">
+                <button onClick={() => set("content", formatHtml(form.content ?? ""))}
+                  className="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors"
+                  title="Re-indent the HTML. Does not change the published page.">
+                  <Wand2 size={14} /> Tidy HTML
+                </button>
+                <button onClick={resetToDefault}
+                  className="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors">
+                  <RotateCcw size={14} /> Restore original wording
+                </button>
+              </div>
             </div>
             <p className="text-xs text-white/30 mb-4 leading-relaxed">
               HTML. Use <code className="text-white/60">&lt;h2&gt;</code> for numbered sections,
@@ -182,8 +191,9 @@ export default function LegalAdmin() {
               <Textarea
                 value={form.content ?? ""}
                 onChange={e => set("content", e.target.value)}
-                rows={26}
-                className="font-mono text-xs"
+                rows={30}
+                spellCheck={false}
+                className="font-mono text-xs leading-relaxed whitespace-pre"
               />
             </Field>
           </Card>
