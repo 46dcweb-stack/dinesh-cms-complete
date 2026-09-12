@@ -7,7 +7,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { blogService } from "@/lib/firebase-services";
 import type { BlogPost } from "@/lib/types";
 import { formatDistanceToNow } from "date-fns";
-import { Plus, Search, Eye, Pencil, Trash2, Globe, FileText } from "lucide-react";
+import { Plus, Search, Eye, Pencil, Trash2, Globe, FileText, Pin, PinOff } from "lucide-react";
 import { AdminPageHeader, StatusBadge, Card, SectionTitle, Field, Input, Textarea, SaveButton, Alert } from "../components/ui";
 import { publish } from "@/lib/cms-publish";
 
@@ -87,6 +87,13 @@ export default function BlogAdmin() {
   async function handleDelete(id: string) {
     if (!confirm("Delete this post? This cannot be undone.")) return;
     await blogService.delete(id);
+    await publish("blog");
+    load();
+  }
+
+  // Pinning from the list, so a post can be moved to the top without opening it.
+  async function handlePin(id: string, currentlyPinned: boolean) {
+    await blogService.update(id, { pinned: !currentlyPinned } as Partial<BlogPost>);
     await publish("blog");
     load();
   }
@@ -253,6 +260,11 @@ export default function BlogAdmin() {
                         Featured
                       </span>
                     )}
+                    {post.pinned && (
+                      <span className="ml-2 text-xs bg-amber-300/15 text-amber-300 px-2 py-0.5 rounded-full border border-amber-300/25">
+                        Pinned
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-4 text-xs text-white/40">
                     {post.publishDate}
@@ -266,6 +278,15 @@ export default function BlogAdmin() {
                   </td>
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-1 justify-end">
+                      <button
+                        onClick={() => handlePin(post.id!, !!post.pinned)}
+                        title={post.pinned ? "Unpin from top of blog" : "Pin to top of blog"}
+                        className={`p-2 rounded-lg transition-colors ${post.pinned
+                          ? "text-amber-300 hover:bg-amber-300/10"
+                          : "text-white/40 hover:text-white hover:bg-white/10"}`}
+                      >
+                        {post.pinned ? <PinOff size={14} /> : <Pin size={14} />}
+                      </button>
                       <button
                         onClick={() => handlePublish(post.id!, post.status)}
                         title={post.status === "published" ? "Unpublish" : "Publish"}

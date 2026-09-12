@@ -14,7 +14,7 @@ import { publish } from "@/lib/cms-publish";
 const EMPTY: Omit<BlogPost, "id"> = {
   title: "", slug: "", excerpt: "", content: "",
   tags: [], categories: [], publishDate: new Date().toISOString().split("T")[0],
-  featuredImage: "", featuredPost: false,
+  featuredImage: "", featuredPost: false, pinned: false, pinnedOrder: 0,
   status: "draft", readingTime: 5, canonicalUrl: "",
   language: "en", series: "",
   seoMetaTitle: "", seoMetaDescription: "", author: "Dinesh Koyyalamudi",
@@ -318,6 +318,23 @@ export default function BlogEditor() {
               <SectionTitle>Options</SectionTitle>
               <div className="space-y-3">
                 <Toggle checked={form.featuredPost} onChange={v => set("featuredPost", v)} label="Featured Post" />
+
+                {/* Pinning holds a post at the top of /blog no matter how old it is. */}
+                <div className="mt-5 pt-5 border-t border-white/10">
+                  <Toggle checked={!!form.pinned} onChange={v => set("pinned", v)} label="Pin to top of blog" />
+                  <p className="text-xs text-white/30 mt-2 leading-relaxed">
+                    Pinned posts appear above everything else on the blog, in pin order, whatever their date.
+                    Turning this off puts the post straight back into date order.
+                  </p>
+                  {form.pinned && (
+                    <div className="mt-4">
+                      <Field label="Pin order" hint="Lowest first. Only matters when more than one post is pinned.">
+                        <Input type="number" value={String(form.pinnedOrder ?? 0)}
+                          onChange={e => set("pinnedOrder", Number(e.target.value) || 0)} />
+                      </Field>
+                    </div>
+                  )}
+                </div>
               </div>
             </Card>
 

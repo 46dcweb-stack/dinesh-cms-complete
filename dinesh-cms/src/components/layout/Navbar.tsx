@@ -15,7 +15,7 @@ import {
     Menu,
     X,
     ChevronRight,
-    Image as GalleryIcon,
+    Network,
     BadgeCheck
 } from "lucide-react";
 
@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils";
 const navItems = [
     { name: 'Home', url: '/', icon: Home },
     { name: 'About', url: '/about', icon: User },
-    { name: 'Gallery', url: '/gallery', icon: GalleryIcon },
+    { name: 'Ecosystem', url: '/ecosystem', icon: Network },
     { name: 'Blog', url: '/blog', icon: FileText },
     { name: 'Press', url: '/press', icon: Newspaper },
     { name: 'Trademarks', url: '/trademarks', icon: BadgeCheck },

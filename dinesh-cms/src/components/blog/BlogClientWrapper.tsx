@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowUpRight, Search, X } from "lucide-react";
+import { ArrowUpRight, Search, X, Pin } from "lucide-react";
 import { format } from "date-fns";
 import { useState, useMemo } from "react";
 import Image from "next/image";
@@ -183,6 +183,11 @@ export default function BlogClientWrapper({ initialPosts, heroData }: BlogClient
                         {!post.categories?.[0] && post.tags?.[0] && (
                           <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full border border-brand-primary/20">
                             {post.tags[0]}
+                          </span>
+                        )}
+                        {post.pinned && (
+                          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.25em] text-amber-300 bg-amber-300/10 px-3 py-1 rounded-full border border-amber-300/25">
+                            <Pin size={10} /> Pinned
                           </span>
                         )}
                         <span className="text-white/30 text-[10px] font-mono uppercase tracking-widest">

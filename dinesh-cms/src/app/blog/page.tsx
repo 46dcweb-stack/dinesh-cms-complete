@@ -3,6 +3,7 @@ import ContactForm from "@/components/sections/ContactForm";
 import { getPublishedBlogs } from "@/lib/firebase-data";
 import { getAdminDb } from "@/lib/firebase-admin";
 import { blogPosts } from "@/lib/data";
+import { sortPinnedFirst } from "@/lib/blog-order";
 import type { Metadata } from "next";
 import { PageSchema } from "@/components/seo/JsonLd";
 
@@ -37,7 +38,7 @@ const HERO_DEFAULTS = {
 
 export default async function BlogListingPage() {
   const fbPosts = await getPublishedBlogs();
-  const posts = fbPosts.length > 0 ? fbPosts : (blogPosts as any[]);
+  const posts = sortPinnedFirst(fbPosts.length > 0 ? fbPosts : (blogPosts as any[]));
 
   let heroData = { ...HERO_DEFAULTS };
 

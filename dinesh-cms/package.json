@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "indexnow": "node scripts/submit-sitemap-to-indexnow.mjs"
   },
   "dependencies": {
     "@tsparticles/engine": "^3.9.1",

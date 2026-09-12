@@ -12,6 +12,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { getAdminAuth, getAdminDb } from "@/lib/firebase-admin";
+import { submitUrlsToIndexNow } from "@/lib/indexnow";
 
 export async function POST(req: NextRequest) {
   try {
@@ -42,7 +43,20 @@ export async function POST(req: NextRequest) {
     // there has to drop every page, not just the one being edited.
     if (layout) revalidatePath("/", "layout");
 
-    return NextResponse.json({ revalidated: true, paths, tags, layout });
+    // Tell search engines what changed. This is the only place that knows the
+    // exact pages a CMS save touched, so every admin screen gets IndexNow for
+    // free rather than each one having to remember to call it.
+    //
+    // Machine-readable routes are excluded: IndexNow wants the pages a crawler
+    // should fetch, not the files that list them.
+    const pageUrls = paths.filter(p => p.startsWith("/") && !p.includes("."));
+    const indexnow = await submitUrlsToIndexNow(pageUrls);
+    if (!indexnow.ok) {
+      // Never fail the save over this — the revalidation already succeeded.
+      console.error("[revalidate] IndexNow submission failed", indexnow.status, indexnow.body);
+    }
+
+    return NextResponse.json({ revalidated: true, paths, tags, layout, indexnow });
   } catch (err: any) {
     console.error("[revalidate]", err);
     return NextResponse.json({ error: err?.message ?? "Failed" }, { status: 500 });

@@ -17,6 +17,10 @@ export interface BlogPost {
   publishDate: string; // ISO date string
   featuredImage: string;
   featuredPost: boolean;
+  /** Pinned posts are held at the top of /blog regardless of date. Ordered
+   *  among themselves by `pinnedOrder` (lowest first), then by publish date. */
+  pinned?: boolean;
+  pinnedOrder?: number;
   status: "draft" | "published" | "archived";
   readingTime: number; // minutes
   canonicalUrl?: string;
