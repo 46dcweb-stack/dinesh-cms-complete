@@ -165,6 +165,6 @@ export async function getLegalPage(slug: string) {
       const db = getAdminDb();
       const s = await db.collection("legalPages").doc(slug).get();
       return s.exists ? serialize(s.data()) : null;
-    }, ["legalPage", slug], { revalidate: SHORT_REVALIDATE_SECONDS })();
+    }, ["legalPage", slug], { revalidate: SHORT_REVALIDATE_SECONDS, tags: [`legalPage-${slug}`] })();
   } catch (e) { console.error("[getLegalPage]", slug, e); return null; }
 }

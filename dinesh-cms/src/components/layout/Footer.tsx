@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Twitter, Linkedin, Instagram, Youtube, Facebook, Mail, MapPin } from "lucide-react";
+import { Twitter, Linkedin, Instagram, Youtube, Facebook, Mail, MapPin, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import { settingsService } from "@/lib/firebase-services";
 import type { SiteSettings } from "@/lib/types";
@@ -103,6 +103,14 @@ export default function Footer() {
                 ))}
               </div>
             )}
+
+            {/* Compliance badge */}
+            <div className="relative z-20 mt-6 flex items-center gap-2">
+              <ShieldCheck size={16} className="text-emerald-500 flex-shrink-0" />
+              <span className="text-text-secondary text-[11px] uppercase font-mono tracking-[0.12em] leading-tight">
+                UK GDPR &middot; ICO Registered &middot; ZC243765
+              </span>
+            </div>
           </div>
 
           {/* Navigation */}
@@ -179,9 +187,6 @@ export default function Footer() {
             </p>
           </div>
 
-          <p className="text-text-muted text-[10px] uppercase font-mono tracking-[0.12em] sm:tracking-[0.2em] text-center relative z-10">
-            UK GDPR &middot; ICO Registered &middot; ZC243765
-          </p>
         </div>
 
         <div className="mt-8 text-center space-y-2">

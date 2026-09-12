@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { legalPageService } from "@/lib/firebase-services";
+import { revalidate } from "@/lib/revalidate";
 import type { LegalPage } from "@/lib/types";
 import { LEGAL_DEFAULTS, LEGAL_SLUGS, type LegalSlug } from "@/lib/legal-defaults";
 import { ExternalLink, RotateCcw } from "lucide-react";
@@ -32,6 +33,7 @@ export default function LegalAdmin() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
   const [fromDefaults, setFromDefaults] = useState(false);
+  const [liveNote, setLiveNote] = useState("");
 
   // `load` is defined below and only depends on the slug argument.
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -41,6 +43,7 @@ export default function LegalAdmin() {
     setLoading(true);
     setError("");
     setSaved(false);
+    setLiveNote("");
     try {
       const data = await legalPageService.get(s);
       if (data) {
@@ -77,6 +80,11 @@ export default function LegalAdmin() {
     setError("");
     try {
       await legalPageService.save(slug, form);
+      // Push the change live now rather than waiting for the ISR window.
+      const pushed = await revalidate({ paths: [`/${slug}`], tags: [`legalPage-${slug}`] });
+      setLiveNote(pushed
+        ? "Saved and published — refresh the live page to see it."
+        : "Saved. The live page will update within about two minutes.");
       setSaved(true);
       setFromDefaults(false);
       setTimeout(() => setSaved(false), 3000);
@@ -101,6 +109,7 @@ export default function LegalAdmin() {
       />
 
       {error && <Alert message={error} className="mb-6" />}
+      {liveNote && <Alert type="success" message={liveNote} className="mb-6" />}
 
       {/* Which page ────────────────────────────────────────────── */}
       <div className="flex flex-wrap gap-2 mb-6">
